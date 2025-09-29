@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <memory>
 #include <functional>
+#include <vector>
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
 
@@ -89,5 +90,37 @@ class Utils {
 
         }
 
+         /******************************************************************************************************
+         * @brief Returns a set of strings coorelating with intrest on SQL witha  max of five intrest
+         * @details once called from qt this sets the persons class interest
+         * @return returns a vector of strings which are their interest
+         ******************************************************************************************************/
+        static std::vector<std::string> GatherIntrest() {
+            //this can be two ways for now we will pretend there is a call made to QT
+            std::vector<std::string> intrestVect;
+            //some call to qt
+            //QtFunctionToGiveUserOptions();
+
+            while (intrestVect.size() > 5) {
+                intrestVect.pop_back();
+            }
+
+            ////////////////////////////TEMPORARY//////////////////////////////////
+            intrestVect.push_back("Music");
+            intrestVect.push_back("Food");
+            intrestVect.push_back("Link");
+            intrestVect.push_back("fitness");
+
+            //sets all chars to lower to make sql easier and more consistent
+            for (int i = 0; i < intrestVect.size(); i++) {
+                for (int j = 0; j < intrestVect[i].size(); j++) {
+                    intrestVect[i][j] = std::tolower(intrestVect[i][j]);
+                }
+            }
+            ////////////////////////////TEMPORARY//////////////////////////////////
+
+            //Class person can now have a std::vector of strings to reference this
+            return  intrestVect;
+        }
 
 };
