@@ -1,18 +1,15 @@
+#include "../hdr/Testing.h"
 #include <stdlib.h>
 #include <iostream>
-#include "mysql_connection.h"
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/prepared_statement.h>
+#include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
 
 using namespace std;
 
+void Testing::SQLExample(){
 const string server = "localhost:3306";
 const string username = "root";
-const string password = "";
+const string password = "Ddomo2001@";
 
-int main()
-{
     sql::Driver* driver;
     sql::Connection* con;
     sql::Statement* stmt; //creates database statements
@@ -60,5 +57,4 @@ int main()
     delete pstmt;
     delete con;
     system("pause");
-    return 0;
 }
