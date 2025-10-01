@@ -13,36 +13,39 @@ struct date
 
 class Profile
 {
-	private:
-		std::string username;
-		std::string f_pfp;
-		std::string bio;
-		
-		date creationDate;
-		date birthday;
+private:
+	std::string username;
+	std::string userpass;
+	std::string f_pfp;
+	std::string bio;
 
-		int uid;
-		int interests;
+	date creationDate;
+	date birthday;
 
-	public:
-		Profile();
+	unsigned int uid;
+	int interests;
 
-		std::string getUsername(void);
-		std::string getProfilePicture(void);
-		std::string getBio(void);
+public:
+	Profile();
 
-		date getCreationDate(void);
-		date getBirthday(void);
+	std::string getUsername(void);
+	std::string getUserpass(void);
+	std::string getProfilePicture(void);
+	std::string getBio(void);
 
-		int getUid(void);
-		int getInterests(void);
+	date getCreationDate(void);
+	date getBirthday(void);
 
-		bool setUsername(std::string newUsername);
-		bool setProfilePicture(std::string newProfilePicture);
-		bool setBio(std::string newBio);
+	int getUid(void);
+	int getInterests(void);
 
-		void setCreationDate(void);
-		bool setBirthday(date newBirthday);
+	bool setUsername(std::string newUsername);
+	bool setUserpass(std::string newUserpass);
+	bool setProfilePicture(std::string newProfilePicture);
+	bool setBio(std::string newBio);
+
+	void setCreationDate(void);
+	bool setBirthday(date newBirthday);
 };
 
 #endif
