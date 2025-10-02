@@ -3,6 +3,7 @@
 
 #include <string>
 #include <ctime>
+#include <vector>
 
 struct date
 {
@@ -23,7 +24,7 @@ private:
 	date birthday;
 
 	unsigned int uid;
-	int interests;
+	std::vector<std::string> interests;
 
 public:
 	Profile();
@@ -37,7 +38,7 @@ public:
 	date getBirthday(void);
 
 	int getUid(void);
-	int getInterests(void);
+	std::vector<std::string> getInterests(void);
 
 	bool setUsername(std::string newUsername);
 	bool setUserpass(std::string newUserpass);

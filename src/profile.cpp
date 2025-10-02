@@ -14,7 +14,7 @@ Profile::Profile()
 	birthday = { 0, 0, 0 };
 
 	uid = 0;
-	interests = 0;
+	interests = {};
 
 	return;
 }
@@ -54,7 +54,7 @@ int Profile::getUid(void)
 	return uid;
 }
 
-int Profile::getInterests(void)
+std::vector<std::string> Profile::getInterests(void)
 {
 	return interests;
 }
