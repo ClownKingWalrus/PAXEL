@@ -14,12 +14,21 @@ find_library(MYSQL_LIB #Sets the var
     PATHS "../mysql-connector-c++-9.4.0-winx64/lib64/vs14"
     )
 
+message(STATUS "MYSQL_INCLUDE_DIR = ${MYSQL_INCLUDE_DIR}")
+message(STATUS "MYSQL_LIB = ${MYSQL_LIB}")
+
+
 #Sql error checking
 if (NOT MYSQL_INCLUDE_DIR OR NOT MYSQL_LIB)
     message(FATAL_ERROR "Could not find MySql connector relative path?")
 endif()
 
 qt_standard_project_setup()
+
+file(GLOB SOURCES
+    ../hdr/*.h
+    ../src/*.cpp
+)
 
 qt_add_executable(Paxel
     WIN32 MACOSX_BUNDLE
@@ -29,6 +38,9 @@ qt_add_executable(Paxel
     mainwindow.ui
     signup.h signup.cpp signup.ui
     homescreen.h homescreen.cpp homescreen.ui
+    threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
+    utils.h utils.cpp
+    ${SOURCES}
 )
 
 target_include_directories(Paxel

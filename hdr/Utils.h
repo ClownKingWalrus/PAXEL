@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <cstdlib>
 #include <memory>
 #include <functional>
@@ -23,21 +24,10 @@ class Utils {
             std::string UserName = "";
             std::string UserPassword = "";
 
-            std::cout << "Please enter Username: ";
-            while (UserName.size() == 0) {
-                std::getline(std::cin, UserName);
-                if (UserName.size() == 0) {
-                    std::cout << "Invalid input please try again: ";
-                }
-            }
+            ///testing purposes
+            UserName = "Trunks";
+            UserPassword = "Password";
 
-            std::cout << "Please enter Password: ";
-              while (UserPassword.size() == 0) {
-                std::getline(std::cin, UserPassword);
-                if (UserPassword.size() == 0) {
-                    std::cout << "Invalid input please try again: ";
-                }
-            }
             std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
             UserPassword.clear(); //no except this cannot fail
 
@@ -48,7 +38,7 @@ class Utils {
                 //simple test
                 connection = driver->connect(sqlIp, sqlUser, sqlPassword);
                 connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n"; 
+                std::cout << "connected to sql\n";
                 
                 //create statement
                 sql::Statement* statement;
@@ -78,6 +68,7 @@ class Utils {
                 }
                 delete res;
                 delete statement;
+                delete connection;
 
             } 
             catch(sql::SQLException& e) {
@@ -85,9 +76,6 @@ class Utils {
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
-
-            delete connection;
-
         }
 
          /******************************************************************************************************
@@ -123,4 +111,64 @@ class Utils {
             return  intrestVect;
         }
 
+        /******************************************************************************************************
+         * @brief Gets around 50 threads
+         * @details calls sql and pulls 10
+         * @return returns UserID, threadNam
+         ******************************************************************************************************/
+        static std::vector<std::pair<std::string, std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
+            std::vector<std::pair<std::string, std::string>> threadVect;
+            try {
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            driver = sql::mysql::get_mysql_driver_instance();
+
+            //simple test
+            connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+            connection->setSchema(sqlDatabase);
+            std::cout << "connected to sql\n";
+
+            //create statement
+            sql::Statement* statement;
+            statement = connection->createStatement();
+            //create a result object
+            sql::ResultSet* res;
+
+            ///TESTING
+            if (boardID.front() != '\'') {
+                boardID = '\'' + boardID;
+            }
+
+            if (boardID.back() != '\'') {
+                boardID += '\'';
+            }
+
+            std::string query = "SELECT Threads.ThreadName, Threads.UserID FROM Threads WHERE Threads.BoardID = ";
+            query += boardID;
+
+            std::cout << query;
+
+            //this statement should be optimized this is essentially a select * statement
+            res = statement->executeQuery(query);
+            int i = 0;
+            while (res->next() && i < 10) {
+                std::string threadName = res->getString("ThreadName");
+                std::string userID = res->getString("UserID");
+                threadVect.push_back(std::pair<std::string, std::string>(userID, threadName));
+                i++;
+            }
+            delete res;
+            delete statement;
+            delete connection;
+
+        }
+        catch(sql::SQLException& e) {
+            std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+            std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+            std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+        }
+        return threadVect;
+
+    }
 };
