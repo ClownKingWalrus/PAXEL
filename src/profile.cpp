@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "profile.h"
+#include "../hdr/profile.h"
 
 using namespace std;
 
