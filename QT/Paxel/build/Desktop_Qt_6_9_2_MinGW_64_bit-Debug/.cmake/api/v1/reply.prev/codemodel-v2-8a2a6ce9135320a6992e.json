@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-50c31639317960709cd1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Paxel",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Paxel::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Paxel-Debug-0e7ec74642c163ff8a7e.json",
+					"name" : "Paxel",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Paxel_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Paxel_autogen-Debug-379ad96e1ac62a67faa8.json",
+					"name" : "Paxel_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Paxel_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Paxel_autogen_timestamp_deps-Debug-ac17b6934f42842d76c7.json",
+					"name" : "Paxel_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Tami/Downloads/QT/Paxel/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug",
+		"source" : "C:/Users/Tami/Downloads/QT/Paxel"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
