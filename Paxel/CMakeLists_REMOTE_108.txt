@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.19)
 project(Paxel LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 #Sql find for cmake
 find_path(MYSQL_INCLUDE_DIR #Sets the var
@@ -14,9 +13,6 @@ find_library(MYSQL_LIB #Sets the var
     NAMES mysqlcppconn
     PATHS "../mysql-connector-c++-9.4.0-winx64/lib64/vs14"
     )
-
-qt_add_resources(RESOURCES images.qrc)
-qt_add_resources(RESOURCES PaxelFont.qrc)
 
 message(STATUS "MYSQL_INCLUDE_DIR = ${MYSQL_INCLUDE_DIR}")
 message(STATUS "MYSQL_LIB = ${MYSQL_LIB}")
@@ -42,19 +38,10 @@ qt_add_executable(Paxel
     mainwindow.ui
     signup.h signup.cpp signup.ui
     homescreen.h homescreen.cpp homescreen.ui
-    profile.h profile.cpp profile.ui
     discussionboard.h discussionboard.cpp discussionboard.ui
     threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
-        
-    interestselect.h interestselect.cpp interestselect.ui
-    replieswindow.h replieswindow.cpp replieswindow.ui
-    threadbannerbox.h threadbannerbox.cpp
-    YourPaxelBoard.h YourPaxelBoard.cpp YourPaxelBoard.ui
-    createboardorthread.h createboardorthread.cpp createboardorthread.ui
     utils.h utils.cpp
-    windowsettings.h
     ${SOURCES}
-    ${RESOURCES}
 )
 
 target_include_directories(Paxel
@@ -68,7 +55,6 @@ target_link_libraries(Paxel
         Qt::Widgets
         ${MYSQL_LIB}
 )
-target_link_libraries(Paxel PRIVATE Qt6::Core Qt6::Widgets)
 
 include(GNUInstallDirs)
 

@@ -1,0 +1,105 @@
+#include "discussionboard.h"
+#include "ui_discussionboard.h"
+#include "../hdr/Utils.h"
+<<<<<<< HEAD
+#include "../hdr/proc.h"
+#include "threadmenuwindow.h"
+=======
+>>>>>>> 81e55ee (Discussion Board connected to SQL and displays boards)
+
+#include <QScrollBar>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+using namespace std;
+
+DiscussionBoard::DiscussionBoard(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::DiscussionBoard)
+{
+    ui->setupUi(this);
+     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &DiscussionBoard::onScroll);
+
+    loadBoards(proc::ip, proc::user, proc::password, proc::db);
+}
+
+DiscussionBoard::DiscussionBoard(QWidget *parent, int UserID)
+    : QMainWindow(parent)
+    , ui(new Ui::DiscussionBoard)
+{
+    ui->setupUi(this);
+    connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &DiscussionBoard::onScroll);
+
+    loadBoards(proc::ip, proc::user, proc::password, proc::db);
+}
+
+
+DiscussionBoard::~DiscussionBoard()
+{
+    delete ui;
+}
+
+void DiscussionBoard::loadBoards(const string& host, const string& user, const string& password, const string& dbName) {
+
+    vector<pair<string, string>> boardVect;
+    boardVect = Utils::BoardUpdate(host, user, password, dbName);
+
+    for (const auto& board : boardVect ) {
+        QHBoxLayout* boardBanner = CreateBoardBanner(board.first, board.second);
+        ui->verticalLayout->addLayout(boardBanner);
+    }
+}
+
+void DiscussionBoard::loadBoards(const string& host, const string& user, const string& password, const string& dbName, int UserID) {
+
+    vector<pair<string, string>> boardVect;
+    boardVect = Utils::BoardUpdate(host, user, password, dbName);
+
+    for (const auto& board : boardVect ) {
+        QHBoxLayout* boardBanner = CreateBoardBanner(board.first, board.second);
+        ui->verticalLayout->addLayout(boardBanner);
+    }
+}
+
+QHBoxLayout* DiscussionBoard::CreateBoardBanner(const string& boardID, const string& boardName) {
+    QHBoxLayout* bannerBox = new QHBoxLayout();
+
+    QPushButton* idButton = new QPushButton(QString::fromStdString(boardID));
+    QPushButton* titleButton = new QPushButton(QString::fromStdString(boardName));
+
+    idButton->setFixedSize(150, 80);
+    idButton->setFlat(true);
+
+    titleButton->setMinimumSize(250, 80);
+    titleButton->setFlat(true);
+
+    //connect functions saving each unique arg
+    QPushButton::connect(titleButton, &QPushButton::clicked, this, [this, boardID]() {
+        ClickOnBoardName(boardID);
+    });
+
+
+    bannerBox->addWidget(idButton);
+    bannerBox->addWidget(titleButton);
+
+    return bannerBox;
+}
+
+void DiscussionBoard::ClickOnBoardName(std::string boardID) {
+    ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
+    threadList->show();
+
+}
+
+void DiscussionBoard::onScroll(int value)
+{
+    QScrollBar* bar = ui->scrollArea->verticalScrollBar();
+    if (value >= bar->maximum() - 50) {
+        qDebug() << "User scrolled near bottom";
+        // You can implement paginated loading if needed
+    }
+}
+
+
