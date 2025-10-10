@@ -1,10 +1,16 @@
 #include <iostream>
 #include <vector>
+<<<<<<< HEAD
 #include <utility>
 #include <cstdlib>
 #include <memory>
 #include <functional>
 #include <vector>
+=======
+#include <cstdlib>
+#include <memory>
+#include <functional>
+>>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
 
@@ -24,10 +30,28 @@ class Utils {
             std::string UserName = "";
             std::string UserPassword = "";
 
+<<<<<<< HEAD
             ///testing purposes
             UserName = "Trunks";
             UserPassword = "Password";
 
+=======
+            std::cout << "Please enter Username: ";
+            while (UserName.size() == 0) {
+                std::getline(std::cin, UserName);
+                if (UserName.size() == 0) {
+                    std::cout << "Invalid input please try again: ";
+                }
+            }
+
+            std::cout << "Please enter Password: ";
+              while (UserPassword.size() == 0) {
+                std::getline(std::cin, UserPassword);
+                if (UserPassword.size() == 0) {
+                    std::cout << "Invalid input please try again: ";
+                }
+            }
+>>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
             std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
             UserPassword.clear(); //no except this cannot fail
 
@@ -38,7 +62,11 @@ class Utils {
                 //simple test
                 connection = driver->connect(sqlIp, sqlUser, sqlPassword);
                 connection->setSchema(sqlDatabase);
+<<<<<<< HEAD
                 std::cout << "connected to sql\n";
+=======
+                std::cout << "connected to sql\n"; 
+>>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
                 
                 //create statement
                 sql::Statement* statement;
@@ -68,7 +96,10 @@ class Utils {
                 }
                 delete res;
                 delete statement;
+<<<<<<< HEAD
                 delete connection;
+=======
+>>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
 
             } 
             catch(sql::SQLException& e) {
@@ -76,6 +107,7 @@ class Utils {
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
+<<<<<<< HEAD
         }
 
          /******************************************************************************************************
@@ -172,3 +204,12 @@ class Utils {
 
     }
 };
+=======
+
+            delete connection;
+
+        }
+
+
+};
+>>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
