@@ -38,6 +38,7 @@ qt_add_executable(Paxel
     mainwindow.ui
     signup.h signup.cpp signup.ui
     homescreen.h homescreen.cpp homescreen.ui
+    discussionboard.h discussionboard.cpp discussionboard.ui
     threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
     utils.h utils.cpp
     ${SOURCES}

@@ -4,6 +4,8 @@
 #include "signup.h"
 #include "ui_signup.h"
 #include "homescreen.h"
+// #include "ui_discussionboard.h"
+// #include "discussionboard.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     SignUp *SignUpSignUp = new SignUp;
     HomeScreen *HomeScreenHomeScreen = new HomeScreen;
+   // DiscussionBoard *DiscussionBoardDiscussionBoard = new DiscussionBoard;
 
     connect(ui->SignUp1,SIGNAL(clicked(bool)),this,SLOT(hide()));
     connect(ui->SignUp1,SIGNAL(clicked(bool)),SignUpSignUp,SLOT(show()));
@@ -24,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(HomeScreenHomeScreen->ui->LogOut,SIGNAL(clicked(bool)),HomeScreenHomeScreen,SLOT(hide()));
     connect(HomeScreenHomeScreen->ui->LogOut,SIGNAL(clicked(bool)),this,SLOT(show()));
+
+   // connect(HomeScreenHomeScreen->ui->pushButton_2,SIGNAL(clicked(bool)),this,SLOT(hide()));
+   // connect(HomeScreenHomeScreen->ui->pushButton_2,SIGNAL(clicked(bool)),DiscussionBoardDiscussionBoard,SLOT(show()));
 }
 
 MainWindow::~MainWindow()
