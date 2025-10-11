@@ -44,13 +44,13 @@ qt_add_executable(Paxel
     homescreen.h homescreen.cpp homescreen.ui
     profile.h profile.cpp profile.ui
     discussionboard.h discussionboard.cpp discussionboard.ui
-    threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
-        
+    threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui        
     interestselect.h interestselect.cpp interestselect.ui
     replieswindow.h replieswindow.cpp replieswindow.ui
     threadbannerbox.h threadbannerbox.cpp
     YourPaxelBoard.h YourPaxelBoard.cpp YourPaxelBoard.ui
     createboardorthread.h createboardorthread.cpp createboardorthread.ui
+    replieswindow.h replieswindow.cpp replieswindow.ui
     utils.h utils.cpp
     windowsettings.h
     ${SOURCES}

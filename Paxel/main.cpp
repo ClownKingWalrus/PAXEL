@@ -2,8 +2,12 @@
 #include "threadmenuwindow.h"
 #include "discussionboard.h"
 #include "replieswindow.h"
+<<<<<<< HEAD
 #include "interestselect.h"
 #include "windowsettings.h"
+=======
+
+>>>>>>> 20a5abd (View Replies on Thread Through SQL)
 #include <QApplication>
 #include <QFontDatabase>
 #include <QDebug>
