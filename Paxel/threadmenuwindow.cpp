@@ -53,7 +53,7 @@ QHBoxLayout* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::str
 
     //connect functions saving each unique arg
     QPushButton::connect(pButton1, &QPushButton::clicked, this, [this, userName]() {
-    ClickOnProfile(userName);
+        ClickOnProfile(userName);
     });
 
     //connect functions saving each unique arg

@@ -169,6 +169,47 @@ class Utils {
             std::cerr << "SQLState: " << e.getSQLState() << std::endl;
         }
         return threadVect;
-
     }
+        static std::vector<std::pair<std::string, std::string>> BoardUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+            std::vector<std::pair<std::string, std::string>> boardVect;
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                // Adjust this query to match your actual table/column names
+                std::string query = "SELECT BoardID, BoardName FROM Board";
+                res = statement->executeQuery(query);
+
+                // statement gets all the boards and loads them onto the window
+                while (res->next()) {
+                    std::string boardID = res->getString("BoardID");
+                    std::string boardName = res->getString("BoardName");
+                    boardVect.push_back(std::make_pair(boardID, boardName));
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch (sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+            return boardVect;
+        }
 };
