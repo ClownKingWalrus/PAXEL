@@ -41,6 +41,7 @@ qt_add_executable(Paxel
     homescreen.h homescreen.cpp homescreen.ui
     threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
     utils.h utils.cpp
+replieswindow.h replieswindow.cpp replieswindow.ui
     ${SOURCES}
 )
 
