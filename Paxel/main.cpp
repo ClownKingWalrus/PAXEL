@@ -13,11 +13,13 @@ int main(int argc, char *argv[])
     //DiscussionBoard w;
     //w.show();
 
-    // ThreadMenuWindow test(nullptr, "Q0VHY6CUENSWOD1");
-    // test.show();
+     ThreadMenuWindow test(nullptr, "boardip");
+     test.show();
 
-    RepliesWindow test(nullptr, "2T2EF1CIGLX7H2D");
-    test.show();
+    //RepliesWindow test(nullptr, "2T2EF1CIGLX7H2D");
+    //test.show();
 
+    MainWindow w;
+    w.show();
     return a.exec();
 }

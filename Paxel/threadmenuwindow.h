@@ -18,7 +18,7 @@ public:
 
 private:
     Ui::ThreadMenuWindow *ui;
-    class QHBoxLayout* CreateThreadBanner(std::string userName, std::string threadName);
+    class QHBoxLayout* CreateThreadBanner(std::string userName, std::string threadName, std::string threadID);
     void ClickOnBanner(std::string threadCommentPage);
     void ClickOnProfile(std::string userID);
 };
