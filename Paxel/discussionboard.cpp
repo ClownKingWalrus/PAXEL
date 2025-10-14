@@ -16,7 +16,7 @@ DiscussionBoard::DiscussionBoard(QWidget *parent)
      connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &DiscussionBoard::onScroll);
 
-    loadBoards("localhost::3306", "root", "EnterPassword", "paxel");;
+    loadBoards("73.17.181.142", "paxel", "Password1!", "paxel");;
 }
 DiscussionBoard::~DiscussionBoard()
 {
