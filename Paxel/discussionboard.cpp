@@ -46,6 +46,7 @@ QHBoxLayout* DiscussionBoard::CreateBoardBanner(const string& boardID, const str
     titleButton->setMinimumSize(250, 80);
     titleButton->setFlat(true);
 
+
     bannerBox->addWidget(idButton);
     bannerBox->addWidget(titleButton);
 
