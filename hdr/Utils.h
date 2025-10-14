@@ -116,8 +116,8 @@ class Utils {
          * @details calls sql and pulls 10
          * @return returns UserID, threadNam
          ******************************************************************************************************/
-        static std::vector<std::pair<std::string, std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
-            std::vector<std::pair<std::string, std::string>> threadVect;
+        static std::vector<std::vector<std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
+            std::vector<std::vector<std::string>> threadVect;
             try {
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
@@ -144,18 +144,19 @@ class Utils {
                 boardID += '\'';
             }
 
-            std::string query = "SELECT Threads.ThreadName, Threads.UserID FROM Threads WHERE Threads.BoardID = ";
+            std::string query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.BoardID = ";
             query += boardID;
 
-            std::cout << query;
+            std::cout << query << "\n";
 
             //this statement should be optimized this is essentially a select * statement
             res = statement->executeQuery(query);
             int i = 0;
             while (res->next() && i < 10) {
+                std::string threadID = res->getString("ThreadID");
                 std::string threadName = res->getString("ThreadName");
                 std::string userID = res->getString("UserID");
-                threadVect.push_back(std::pair<std::string, std::string>(userID, threadName));
+                threadVect.push_back(std::vector<std::string>{ threadName, userID, threadID });
                 i++;
             }
             delete res;
