@@ -86,4 +86,3 @@ void RepliesWindow::ClickOnProfile(std::string userID) {
 void RepliesWindow::on_backToThreads_clicked() {
 
 }
-
