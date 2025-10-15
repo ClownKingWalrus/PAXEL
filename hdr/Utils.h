@@ -1,16 +1,10 @@
 #include <iostream>
 #include <vector>
-<<<<<<< HEAD
 #include <utility>
 #include <cstdlib>
 #include <memory>
 #include <functional>
 #include <vector>
-=======
-#include <cstdlib>
-#include <memory>
-#include <functional>
->>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
 
@@ -30,28 +24,10 @@ class Utils {
             std::string UserName = "";
             std::string UserPassword = "";
 
-<<<<<<< HEAD
             ///testing purposes
             UserName = "Trunks";
             UserPassword = "Password";
 
-=======
-            std::cout << "Please enter Username: ";
-            while (UserName.size() == 0) {
-                std::getline(std::cin, UserName);
-                if (UserName.size() == 0) {
-                    std::cout << "Invalid input please try again: ";
-                }
-            }
-
-            std::cout << "Please enter Password: ";
-              while (UserPassword.size() == 0) {
-                std::getline(std::cin, UserPassword);
-                if (UserPassword.size() == 0) {
-                    std::cout << "Invalid input please try again: ";
-                }
-            }
->>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
             std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
             UserPassword.clear(); //no except this cannot fail
 
@@ -62,11 +38,7 @@ class Utils {
                 //simple test
                 connection = driver->connect(sqlIp, sqlUser, sqlPassword);
                 connection->setSchema(sqlDatabase);
-<<<<<<< HEAD
                 std::cout << "connected to sql\n";
-=======
-                std::cout << "connected to sql\n"; 
->>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
                 
                 //create statement
                 sql::Statement* statement;
@@ -96,10 +68,7 @@ class Utils {
                 }
                 delete res;
                 delete statement;
-<<<<<<< HEAD
                 delete connection;
-=======
->>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b
 
             } 
             catch(sql::SQLException& e) {
@@ -107,7 +76,6 @@ class Utils {
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
-<<<<<<< HEAD
         }
 
          /******************************************************************************************************
@@ -148,8 +116,8 @@ class Utils {
          * @details calls sql and pulls 10
          * @return returns UserID, threadNam
          ******************************************************************************************************/
-        static std::vector<std::pair<std::string, std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
-            std::vector<std::pair<std::string, std::string>> threadVect;
+        static std::vector<std::vector<std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
+            std::vector<std::vector<std::string>> threadVect;
             try {
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
@@ -176,18 +144,19 @@ class Utils {
                 boardID += '\'';
             }
 
-            std::string query = "SELECT Threads.ThreadName, Threads.UserID FROM Threads WHERE Threads.BoardID = ";
+            std::string query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.BoardID = ";
             query += boardID;
 
-            std::cout << query;
+            std::cout << query << "\n";
 
             //this statement should be optimized this is essentially a select * statement
             res = statement->executeQuery(query);
             int i = 0;
             while (res->next() && i < 10) {
+                std::string threadID = res->getString("ThreadID");
                 std::string threadName = res->getString("ThreadName");
                 std::string userID = res->getString("UserID");
-                threadVect.push_back(std::pair<std::string, std::string>(userID, threadName));
+                threadVect.push_back(std::vector<std::string>{ threadName, userID, threadID });
                 i++;
             }
             delete res;
@@ -201,15 +170,112 @@ class Utils {
             std::cerr << "SQLState: " << e.getSQLState() << std::endl;
         }
         return threadVect;
-
     }
-};
-=======
+        static std::vector<std::pair<std::string, std::string>> BoardUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+            std::vector<std::pair<std::string, std::string>> boardVect;
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
 
-            delete connection;
+                driver = sql::mysql::get_mysql_driver_instance();
 
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                // Adjust this query to match your actual table/column names
+                std::string query = "SELECT BoardID, BoardName FROM Board";
+                res = statement->executeQuery(query);
+
+                // statement gets all the boards and loads them onto the window
+                while (res->next()) {
+                    std::string boardID = res->getString("BoardID");
+                    std::string boardName = res->getString("BoardName");
+                    boardVect.push_back(std::make_pair(boardID, boardName));
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch (sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+            return boardVect;
         }
 
+        static std::vector<std::pair<std::string, std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
+            std::vector<std::pair<std::string, std::string>> commentVect;
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
 
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                ///TESTING
+                if (threadID.front() != '\'') {
+                    threadID = '\'' + threadID;
+                }
+
+                if (threadID.back() != '\'') {
+                    threadID += '\'';
+                }
+
+                std::string query = "SELECT Threads.ThreadName, Threads.UserID FROM Threads WHERE Threads.ThreadID = ";
+                query += threadID;
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    std::string threadName = res->getString("ThreadName");
+                    std::string userID = res->getString("UserID");
+                    commentVect.push_back(std::pair<std::string, std::string>(userID, threadName));
+                }
+
+                query = "SELECT Comments.CommentName, Comments.UserID FROM Comments WHERE Comments.ThreadID = ";
+                query += threadID;
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(query);
+                int i = 0;
+                while (res->next()) {
+                    std::string commentName = res->getString("CommentName");
+                    std::string userID = res->getString("UserID");
+                    commentVect.push_back(std::pair<std::string, std::string>(userID, commentName));
+                    i++;
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return commentVect;
+        }
 };
->>>>>>> d0026905569ce309e51e78cf5bf594451ab92d8b

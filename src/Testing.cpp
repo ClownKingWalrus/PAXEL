@@ -8,7 +8,7 @@ using namespace std;
 void Testing::SQLExample(){
 const string server = "localhost:3306";
 const string username = "root";
-const string password = "Ddomo2001@";
+const string password = "EnterPassword";
 
     sql::Driver* driver;
     sql::Connection* con;

@@ -1,6 +1,7 @@
 #include "threadmenuwindow.h"
 #include "ui_threadmenuwindow.h"
 #include "../hdr/Utils.h"
+#include "replieswindow.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
@@ -21,11 +22,11 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     scrollBoxMain->setLayout(vertLayout);
 
     //call thread info from sql and stores it into the vector
-    std::vector<std::pair<std::string, std::string>> threadVect;
+    std::vector<std::vector<std::string>> threadVect;
     threadVect = Utils::ThreadUpdate("localhost::3306", "root", "Ddomo2001@", "paxel", boardID);
 
     for (int i = 0; i < threadVect.size(); i++) {
-        QHBoxLayout* threadBanner = CreateThreadBanner(threadVect[i].first, threadVect[i].second);
+        QHBoxLayout* threadBanner = CreateThreadBanner(threadVect[i][0], threadVect[i][1], threadVect[i][2]);
         ui->verticalLayout->addLayout(threadBanner);
     }
 }
@@ -35,7 +36,7 @@ ThreadMenuWindow::~ThreadMenuWindow()
     delete ui;
 }
 
-QHBoxLayout* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::string threadName) {
+QHBoxLayout* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::string threadName, std::string threadID) {
     //create HBox to store the banners content
     QHBoxLayout* bannerBox = new QHBoxLayout();
 
@@ -53,12 +54,12 @@ QHBoxLayout* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::str
 
     //connect functions saving each unique arg
     QPushButton::connect(pButton1, &QPushButton::clicked, this, [this, userName]() {
-    ClickOnProfile(userName);
+        ClickOnProfile(userName);
     });
 
     //connect functions saving each unique arg
-    QPushButton::connect(pButton2, &QPushButton::clicked, this, [this, threadName]() {
-        ClickOnBanner(threadName);
+    QPushButton::connect(pButton2, &QPushButton::clicked, this, [this, threadID]() {
+        ClickOnBanner(threadID);
     });
 
     bannerBox->addWidget(pButton1); //should be a small box -users icon or info or somthing
@@ -70,8 +71,10 @@ QHBoxLayout* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::str
 
 ///Place holder function, implement the comment opening method
 ///Already connected to button so do not remove this actual function just define it
-void ThreadMenuWindow::ClickOnBanner(std::string threadCommentPage) {
+void ThreadMenuWindow::ClickOnBanner(std::string threadID) {
 
+    RepliesWindow* replyThread = new RepliesWindow(this, threadID);
+    replyThread->show();
 }
 
 ///Place holder function, implement the profile opening method

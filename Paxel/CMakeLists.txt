@@ -37,11 +37,11 @@ qt_add_executable(Paxel
     mainwindow.h
     mainwindow.ui
     signup.h signup.cpp signup.ui
-    profile.h profile.cpp profile.ui
     homescreen.h homescreen.cpp homescreen.ui
+    discussionboard.h discussionboard.cpp discussionboard.ui
     threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
+	replieswindow.h replieswindow.cpp replieswindow.ui
     utils.h utils.cpp
-    replieswindow.h replieswindow.cpp replieswindow.ui
     ${SOURCES}
 )
 
