@@ -20,4 +20,5 @@ public:
 public:
     Ui::MainWindow *ui;
 };
+
 #endif // MAINWINDOW_H
