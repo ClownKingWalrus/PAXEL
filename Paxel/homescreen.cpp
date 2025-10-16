@@ -160,4 +160,3 @@ void HomeScreen::on_CreateBoardButton_clicked()
     CreateBoardWindow* newWin = new CreateBoardWindow(this);
     newWin->show();
 }
-
