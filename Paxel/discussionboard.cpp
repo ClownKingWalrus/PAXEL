@@ -16,7 +16,7 @@ DiscussionBoard::DiscussionBoard(QWidget *parent)
      connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &DiscussionBoard::onScroll);
 
-    loadBoards("73.17.181.142", "paxel", "Password1!", "paxel");;
+    loadBoards("ip", "user", "password", "db");;
 }
 DiscussionBoard::~DiscussionBoard()
 {
@@ -60,5 +60,3 @@ void DiscussionBoard::onScroll(int value)
         // You can implement paginated loading if needed
     }
 }
-
-
