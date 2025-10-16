@@ -22,7 +22,7 @@ RepliesWindow::RepliesWindow(QWidget *parent, std::string threadID)
 
     //call thread info from sql and stores it into the vector
     std::vector<std::pair<std::string, std::string>> threadVect;
-    threadVect = Utils::RepliesUpdate("73.17.181.142", "paxel", "Password1!", "paxel", threadID);
+    threadVect = Utils::RepliesUpdate("", "", "", "paxel", threadID);
 
     QHBoxLayout* threadBanner = CreateBanner(threadVect[0].first, threadVect[0].second, 100);
     ui->verticalLayout->addLayout(threadBanner);
