@@ -25,8 +25,8 @@ class Utils {
             std::string UserPassword = "";
 
             ///testing purposes
-            UserName = "Trunks";
-            UserPassword = "Password";
+            UserName = "";
+            UserPassword = "";
 
             std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
             UserPassword.clear(); //no except this cannot fail

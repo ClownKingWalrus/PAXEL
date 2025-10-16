@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "ui_homescreen.h"
 #include "ui_mainwindow.h"
 #include "signup.h"
 #include "ui_signup.h"
@@ -24,12 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->Login1,SIGNAL(clicked(bool)),this,SLOT(hide()));
     connect(ui->Login1,SIGNAL(clicked(bool)),HomeScreenHomeScreen,SLOT(show()));
-
-    connect(HomeScreenHomeScreen->ui->LogOut,SIGNAL(clicked(bool)),HomeScreenHomeScreen,SLOT(hide()));
-    connect(HomeScreenHomeScreen->ui->LogOut,SIGNAL(clicked(bool)),this,SLOT(show()));
-
-   // connect(HomeScreenHomeScreen->ui->pushButton_2,SIGNAL(clicked(bool)),this,SLOT(hide()));
-   // connect(HomeScreenHomeScreen->ui->pushButton_2,SIGNAL(clicked(bool)),DiscussionBoardDiscussionBoard,SLOT(show()));
 }
 
 MainWindow::~MainWindow()
