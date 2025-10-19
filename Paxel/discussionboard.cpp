@@ -1,6 +1,7 @@
 #include "discussionboard.h"
 #include "ui_discussionboard.h"
 #include "../hdr/Utils.h"
+#include "threadmenuwindow.h"
 
 #include <QScrollBar>
 #include <QPushButton>
@@ -46,10 +47,22 @@ QHBoxLayout* DiscussionBoard::CreateBoardBanner(const string& boardID, const str
     titleButton->setMinimumSize(250, 80);
     titleButton->setFlat(true);
 
+    //connect functions saving each unique arg
+    QPushButton::connect(titleButton, &QPushButton::clicked, this, [this, boardID]() {
+        ClickOnBoardName(boardID);
+    });
+
+
     bannerBox->addWidget(idButton);
     bannerBox->addWidget(titleButton);
 
     return bannerBox;
+}
+
+void DiscussionBoard::ClickOnBoardName(std::string boardID) {
+    ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
+    threadList->show();
+
 }
 
 void DiscussionBoard::onScroll(int value)

@@ -156,7 +156,7 @@ class Utils {
                 std::string threadID = res->getString("ThreadID");
                 std::string threadName = res->getString("ThreadName");
                 std::string userID = res->getString("UserID");
-                threadVect.push_back(std::vector<std::string>{ threadName, userID, threadID });
+                threadVect.push_back(std::vector<std::string>{ userID, threadName, threadID });
                 i++;
             }
             delete res;
