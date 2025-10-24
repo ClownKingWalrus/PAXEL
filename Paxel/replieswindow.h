@@ -16,12 +16,21 @@ public:
     explicit RepliesWindow(QWidget *parent = nullptr, std::string boardID = "");
     ~RepliesWindow();
 
+private slots:
+    void on_replySend_clicked();
+    void on_replyCancel_clicked();
+    void on_backToThreads_clicked();
+
 private:
+    std::string threadID;
+    std::string replyID;
+
     Ui::RepliesWindow *ui;
-    class QHBoxLayout* CreateBanner(std::string userName, std::string threadName, int height);
+    class QHBoxLayout* CreateBanner(std::string userName, std::string threadName, std::string threadCommentID, std::string commentReply, int height);
     void ClickOnBanner(std::string threadCommentPage);
     void ClickOnProfile(std::string userID);
-    void on_backToThreads_clicked();
+    void ClickOnReply(std::string userID);
+    void endReply(void);
 };
 
 #endif // MAINWINDOW_H

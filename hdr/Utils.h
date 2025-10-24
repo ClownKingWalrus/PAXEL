@@ -214,8 +214,8 @@ class Utils {
             return boardVect;
         }
 
-        static std::vector<std::pair<std::string, std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
-            std::vector<std::pair<std::string, std::string>> commentVect;
+        static std::vector<std::tuple<std::string, std::string, std::string, std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
+            std::vector<std::tuple<std::string, std::string, std::string, std::string>> commentVect;
             try {
                 sql::mysql::MySQL_Driver* driver;
                 sql::Connection* connection;
@@ -242,7 +242,7 @@ class Utils {
                     threadID += '\'';
                 }
 
-                std::string query = "SELECT Threads.ThreadName, Threads.UserID FROM Threads WHERE Threads.ThreadID = ";
+                std::string query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.ThreadID = ";
                 query += threadID;
 
                 //this statement should be optimized this is essentially a select * statement
@@ -250,20 +250,22 @@ class Utils {
                 while (res->next()) {
                     std::string threadName = res->getString("ThreadName");
                     std::string userID = res->getString("UserID");
-                    commentVect.push_back(std::pair<std::string, std::string>(userID, threadName));
+                    std::string threadID = res->getString("ThreadID");
+                    std::string threadReply = "";
+                    commentVect.push_back(std::tuple<std::string, std::string, std::string, std::string>(userID, threadName, threadID, threadReply));
                 }
 
-                query = "SELECT Comments.CommentName, Comments.UserID FROM Comments WHERE Comments.ThreadID = ";
+                query = "SELECT Comments.CommentName, Comments.UserID, Comments.CommentID, Comments.CommentReply FROM Comments WHERE Comments.ThreadID = ";
                 query += threadID;
 
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(query);
-                int i = 0;
                 while (res->next()) {
                     std::string commentName = res->getString("CommentName");
                     std::string userID = res->getString("UserID");
-                    commentVect.push_back(std::pair<std::string, std::string>(userID, commentName));
-                    i++;
+                    std::string commentID = res->getString("CommentID");
+                    std::string commentReply = res->getString("CommentReply");
+                    commentVect.push_back(std::tuple<std::string, std::string, std::string, std::string>(userID, commentName, commentID, commentReply));
                 }
 
                 delete res;
@@ -277,5 +279,52 @@ class Utils {
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
             return commentVect;
+        }
+
+        ///gets comment information and sends it to sql
+        static void CreateReply(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string commentName, std::string commentReply)
+        {
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "INSERT INTO Comments (CommentID, ThreadID, UserID, CommentName, CommentReply) VALUES ('";
+                //placeholder for commentID - needs to be original
+                query += "YI5JDQX64CEL33N";
+                query += "','";
+                query += threadID;
+                query += "','";
+                //placeholder for userID
+                query += "8X0Y5BGOFFGJALH";
+                query += "','";
+                query += commentName;
+                query += "','";
+                query += commentReply;
+                query += "')";
+
+                statement->executeUpdate(query);
+                connection->close();
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return;
         }
 };
