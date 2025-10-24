@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.19)
 project(Paxel LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 #Sql find for cmake
 find_path(MYSQL_INCLUDE_DIR #Sets the var
@@ -42,6 +43,7 @@ qt_add_executable(Paxel
     discussionboard.h discussionboard.cpp discussionboard.ui
     threadmenuwindow.h threadmenuwindow.cpp threadmenuwindow.ui
 	replieswindow.h replieswindow.cpp replieswindow.ui
+        threadbannerbox.h threadbannerbox.cpp
     utils.h utils.cpp
     ${SOURCES}
 )
@@ -57,6 +59,7 @@ target_link_libraries(Paxel
         Qt::Widgets
         ${MYSQL_LIB}
 )
+target_link_libraries(Paxel PRIVATE Qt6::Core Qt6::Widgets)
 
 include(GNUInstallDirs)
 

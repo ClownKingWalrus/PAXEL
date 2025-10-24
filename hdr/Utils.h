@@ -10,6 +10,9 @@
 
 class Utils {
     public:
+    static std::string GetUserID() {
+        return "0QRPRCBBBA7PSV2";
+    }
          /******************************************************************************************************
          * @brief validates the users login info
          * @details Once called this function takes the user and pass and checks to see if it's
@@ -111,6 +114,69 @@ class Utils {
             return  intrestVect;
         }
 
+        static void ThreadLike(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string userID) {
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT * FROM LikeThreads WHERE ThreadID = ";
+
+                std::string thd = "'";
+                thd += threadID;
+                thd += "'";
+                query += thd;
+
+                query += " AND UserID = ";
+
+                std::string user = "'";
+                user += userID;
+                user += "'";
+
+                query += user;
+
+                std::cout << query << "\n";
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(query);
+                if (res->next()) {
+                    std::cout << "User already liked\n";
+                    connection->close();
+                } else {
+                    std::string query = "INSERT INTO LikeThreads (UserID, ThreadID) VALUES ('";
+                    query += userID;
+                    query += "','";
+                    query += threadID;
+                    query += "')";
+                    std::cout << "LIKING: \n" << query << "\n";
+                    statement->executeUpdate(query);
+                    connection->close();
+
+                }
+                delete res;
+                delete statement;
+                delete connection;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+        }
+
         /******************************************************************************************************
          * @brief Gets around 50 threads
          * @details calls sql and pulls 10
@@ -171,6 +237,7 @@ class Utils {
         }
         return threadVect;
     }
+
         static std::vector<std::pair<std::string, std::string>> BoardUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
             std::vector<std::pair<std::string, std::string>> boardVect;
             try {
