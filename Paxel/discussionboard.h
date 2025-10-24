@@ -25,6 +25,7 @@ private:
     Ui::DiscussionBoard *ui;
     void loadBoards(const string& host, const string& user, const string& password, const string& dbName);
     class QHBoxLayout* CreateBoardBanner(const string& boardID, const string& boardName);
+    void ClickOnBoardName(std::string boardThreads);
 };
 
 #endif // DISCUSSIONBOARD_H

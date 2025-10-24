@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    //DiscussionBoard w;
-    //w.show();
+    DiscussionBoard w;
+    w.show();
 
      //ThreadMenuWindow test(nullptr, "IYGS9O9EVDZVPLF");
      //test.show();
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     //RepliesWindow test(nullptr, "2T2EF1CIGLX7H2D");
     //test.show();
 
-    MainWindow w;
-    w.show();
+    //MainWindow w;
+    //w.show();
     return a.exec();
 }
