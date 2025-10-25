@@ -15,6 +15,9 @@ find_library(MYSQL_LIB #Sets the var
     PATHS "../mysql-connector-c++-9.4.0-winx64/lib64/vs14"
     )
 
+qt_add_resources(RESOURCES images.qrc)
+qt_add_resources(RESOURCES PaxelFont.qrc)
+
 message(STATUS "MYSQL_INCLUDE_DIR = ${MYSQL_INCLUDE_DIR}")
 message(STATUS "MYSQL_LIB = ${MYSQL_LIB}")
 
@@ -46,6 +49,7 @@ qt_add_executable(Paxel
         threadbannerbox.h threadbannerbox.cpp
     utils.h utils.cpp
     ${SOURCES}
+    ${RESOURCES}
 )
 
 target_include_directories(Paxel

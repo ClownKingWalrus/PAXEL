@@ -2,6 +2,9 @@
 #define HOMESCREEN_H
 
 #include <QMainWindow>
+#include <QHBoxLayout>
+
+using namespace std;
 
 namespace Ui {
 class HomeScreen;
@@ -24,6 +27,11 @@ public:
 
 private slots:
     void on_Profile_clicked();
+    void onScroll(int value);
+
+private:
+    void loadBoards(const string& host, const string& user, const string& password, const string& dbName);
+    class QHBoxLayout* CreateBoardBanner(const string& boardID, const string& boardName);
 };
 
 #endif // HOMESCREEN_H
