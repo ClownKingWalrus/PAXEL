@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
-    <height>611</height>
+    <width>1242</width>
+    <height>747</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(30, 213, 216);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -35,6 +38,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="Home">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>70</width>
@@ -42,7 +51,14 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">QPushButton { font: 16pt &quot;MS Serif&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(35, 193, 24);
+}
+
+QPushButton:hover {
+    background-color: rgb(35, 203, 24);   
+}</string>
         </property>
         <property name="text">
          <string>Back</string>
@@ -80,7 +96,8 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">font: 18pt &quot;Bahnschrift&quot;;
+background-color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
          <string>UserName</string>
@@ -105,14 +122,35 @@
       </item>
       <item>
        <widget class="QPushButton" name="Logout">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
           <width>70</width>
           <height>30</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <family>MS Serif</family>
+          <pointsize>16</pointsize>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">QPushButton {
+Font: 16pt &quot;MS Serif&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);
+}
+QPushButton:Hover {
+background-color: rgb(180, 10, 10);
+}</string>
         </property>
         <property name="text">
          <string>Logout</string>
@@ -137,10 +175,44 @@
       </item>
      </layout>
     </item>
+    <item row="3" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QPlainTextEdit" name="plainTextEdit">
+        <property name="styleSheet">
+         <string notr="true">font: 14pt &quot;Bahnschrift&quot;;
+color: rgb(0, 0, 0);</string>
+        </property>
+        <property name="plainText">
+         <string>Enter Profile Bio Here:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item>
        <widget class="QLabel" name="ProfPic">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="styleSheet">
          <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
         </property>
@@ -156,9 +228,33 @@
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
        <widget class="QPushButton" name="Followers">
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 16pt &quot;MS Serif&quot;;
+background-color: rgb(0, 0, 127);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 10, 137);
+}</string>
         </property>
         <property name="text">
          <string>Followers</string>
@@ -168,7 +264,14 @@
       <item>
        <widget class="QPushButton" name="Following">
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 16pt &quot;MS Serif&quot;;
+background-color: rgb(0, 0, 157);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 10, 167);
+}</string>
         </property>
         <property name="text">
          <string>Following</string>
@@ -176,29 +279,6 @@
        </widget>
       </item>
      </layout>
-    </item>
-    <item row="2" column="0">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>400</height>
-       </size>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>689</width>
-         <height>398</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
     </item>
    </layout>
   </widget>
