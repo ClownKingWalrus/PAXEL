@@ -1,18 +1,35 @@
 #include "profile.h"
 #include "ui_profile.h"
 #include "mainwindow.h"
-#include <QMessageBox>
 #include "homescreen.h"
+#include "followers.h"
+#include "follow.h"
+#include <QString>
+#include <QMessageBox>
 Profile::Profile(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Profile)
 {
     ui->setupUi(this);
+    QString FollowerTxt = ui->Followers->text();
+    QString FollowingTxt = ui->Following->text();
+
 }
 
 Profile::~Profile()
 {
     delete ui;
+}
+
+void Profile::FollowCount() {
+    extern int followingcount;
+    extern int followercount;
+    if(followercount == 1){
+        ui->Followers->setText(QString::number(followingcount) + " Follower");
+    }
+    else {
+        ui->Followers->setText(QString::number(followingcount) + " Followers");
+    }
 }
 
 void Profile::on_Logout_clicked()
@@ -28,11 +45,25 @@ void Profile::on_Logout_clicked()
     }
 }
 
-
-void Profile::on_Home_clicked()
+void Profile::on_Back_clicked()
 {
     HomeScreen *HomescreenHomescreen = new HomeScreen;
     hide();
     HomescreenHomescreen->show();
 }
 
+
+void Profile::on_Followers_clicked()
+{
+    Followers *FriendsFriends = new Followers;
+    hide();
+    FriendsFriends -> show();
+}
+
+
+void Profile::on_Following_clicked()
+{
+    Followers *FriendsFriends = new Followers;
+    hide();
+    FriendsFriends -> show();
+}

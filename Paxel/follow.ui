@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Profile</class>
- <widget class="QMainWindow" name="Profile">
+ <class>Follow</class>
+ <widget class="QMainWindow" name="Follow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
-    <height>611</height>
+    <width>693</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <spacer name="horizontalSpacer_4">
@@ -35,10 +35,13 @@
       </item>
       <item>
        <widget class="QPushButton" name="Back">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>70</width>
-          <height>30</height>
+          <height>40</height>
          </size>
         </property>
         <property name="styleSheet">
@@ -55,11 +58,11 @@
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Policy::Expanding</enum>
+         <enum>QSizePolicy::Policy::Preferred</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
+          <width>120</width>
           <height>20</height>
          </size>
         </property>
@@ -103,44 +106,24 @@
         </property>
        </spacer>
       </item>
-      <item>
-       <widget class="QPushButton" name="Logout">
-        <property name="minimumSize">
-         <size>
-          <width>70</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
-        </property>
-        <property name="text">
-         <string>Logout</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Policy::Minimum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
      </layout>
     </item>
-    <item row="1" column="0">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QLabel" name="ProfPic">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
         </property>
@@ -156,34 +139,67 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="Followers">
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
-        </property>
-        <property name="text">
-         <string>0 Followers</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Following">
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
-        </property>
-        <property name="text">
-         <string>0 Following</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="Followers">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+            </property>
+            <property name="text">
+             <string>0 Followers</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Following">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+            </property>
+            <property name="text">
+             <string>0 Following</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="FollowButton">
+          <property name="styleSheet">
+           <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+          </property>
+          <property name="text">
+           <string>+ Follow</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
-    <item row="2" column="0">
+    <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
         <height>400</height>
        </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="widgetResizable">
        <bool>true</bool>
@@ -193,10 +209,15 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>689</width>
-         <height>398</height>
+         <width>677</width>
+         <height>396</height>
         </rect>
        </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_2"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
