@@ -25,7 +25,7 @@ HomeScreen::HomeScreen(QWidget *parent) :
     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &HomeScreen::onScroll);
 
-    loadBoards("localhost:3306", "root", "Shiloh4250!", "Paxel");;
+    loadBoards("ip", "user", "password", "db");;
 
     QPixmap pixmapHS1(":/images/Images/Home.png");
     QIcon buttonIcon1(pixmapHS1);
