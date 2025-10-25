@@ -1,6 +1,7 @@
 #include "discussionboard.h"
 #include "ui_discussionboard.h"
 #include "../hdr/Utils.h"
+#include "../hdr/proc.h"
 #include "threadmenuwindow.h"
 
 #include <QScrollBar>
@@ -17,7 +18,7 @@ DiscussionBoard::DiscussionBoard(QWidget *parent)
      connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &DiscussionBoard::onScroll);
 
-    loadBoards("ip", "user", "password", "db");;
+    loadBoards(proc::ip, proc::user, proc::password, proc::db);;
 }
 DiscussionBoard::~DiscussionBoard()
 {

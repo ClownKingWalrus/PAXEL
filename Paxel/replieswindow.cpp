@@ -1,6 +1,7 @@
 #include "replieswindow.h"
 #include "ui_replieswindow.h"
 #include "../hdr/Utils.h"
+#include "../hdr/proc.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
@@ -22,7 +23,7 @@ RepliesWindow::RepliesWindow(QWidget *parent, std::string threadID)
 
     //call thread info from sql and stores it into the vector
     std::vector<std::pair<std::string, std::string>> threadVect;
-    threadVect = Utils::RepliesUpdate("ip", "user", "password", "db", threadID);
+    threadVect = Utils::RepliesUpdate(proc::ip, proc::user, proc::password, proc::db, threadID);
 
     QHBoxLayout* threadBanner = CreateBanner(threadVect[0].first, threadVect[0].second, 100);
     ui->verticalLayout->addLayout(threadBanner);
