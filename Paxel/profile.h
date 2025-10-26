@@ -15,7 +15,11 @@ public:
     explicit Profile(QWidget *parent = nullptr);
     ~Profile();
 
+public slots:
+    void on_Logout_clicked();
+
 private slots:
+    void on_Back_clicked();
     void on_Followers_clicked();
     void on_Following_clicked();
 
