@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
-    <height>611</height>
+    <width>679</width>
+    <height>658</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@
          <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
         </property>
         <property name="text">
-         <string>UserName</string>
+         <string>SamDo</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -141,6 +141,18 @@
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="QLabel" name="ProfPic">
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
         </property>
@@ -156,24 +168,40 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="Followers">
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
-        </property>
-        <property name="text">
-         <string>0 Followers</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Following">
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
-        </property>
-        <property name="text">
-         <string>0 Following</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QPushButton" name="Followers">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+          </property>
+          <property name="text">
+           <string>0 Followers</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="Following">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+          </property>
+          <property name="text">
+           <string>0 Following</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -193,7 +221,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>689</width>
+         <width>665</width>
          <height>398</height>
         </rect>
        </property>

@@ -24,7 +24,10 @@ Followers::~Followers()
 }
 
 void Followers::on_Back_clicked()
-{}
+{
+    Follow *FollowFollow = new Follow;
+    QString UserList = ui->UserList->text();
+}
 
 void Followers::loadProfiles(int count) {
     for (int i = 0; i < count; ++i) {

@@ -24,7 +24,6 @@ Follow::~Follow()
 void Follow::on_FollowButton_clicked()
 {
     QString currentText = ui->FollowButton->text();
-    QString FlwCount = ui->Followers->text();
     if(currentText == "+ Follow")
     {
         ui->FollowButton->setText("- Unfollow");

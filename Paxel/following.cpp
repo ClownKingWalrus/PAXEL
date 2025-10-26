@@ -26,6 +26,8 @@ void Following::on_Back_clicked()
 {
     Follow *FollowFollow = new Follow;
     QString UserList = ui->UserList->text();
+    hide();
+    FollowFollow->show();
 }
 
 void Following::loadProfiles(int count) {
@@ -46,7 +48,7 @@ void Following::onScroll(int value) {
 void Following::onClicked() {
     Follow *FollowFollow = new Follow;
     hide();
-    FollowFollow -> show();
+    FollowFollow->show();
 }
 
 void Following::on_Followers_2_clicked()

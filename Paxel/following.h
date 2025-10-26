@@ -21,7 +21,7 @@ public:
 private slots:
     void on_Followers_2_clicked();
 
-private:
+public:
     Ui::Following *ui;
     int ProfileCount = 0;
     void loadProfiles(int count);
