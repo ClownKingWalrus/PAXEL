@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1270</width>
-    <height>741</height>
+    <width>931</width>
+    <height>645</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Paxel</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(75, 222, 255);</string>
@@ -52,6 +58,22 @@
          </widget>
         </item>
         <item>
+         <spacer name="horizontalSpacer_12">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>15</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QLineEdit" name="lineEdit_2">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -74,7 +96,16 @@
           <property name="styleSheet">
            <string notr="true">color: rgb(0, 0, 0);
 background-color: rgb(255, 255, 255);
-font: 9pt &quot;MS Serif&quot;;</string>
+font: 9pt &quot;MS Sans Serif&quot;;</string>
+          </property>
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::EchoMode::Password</enum>
           </property>
          </widget>
         </item>
@@ -105,14 +136,14 @@ font: 9pt &quot;MS Serif&quot;;</string>
           </property>
           <property name="font">
            <font>
-            <family>Bahnschrift</family>
-            <pointsize>30</pointsize>
+            <family>MS Sans Serif</family>
+            <pointsize>26</pointsize>
             <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 700 30pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 700 26pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Hop in!</string>
@@ -125,7 +156,7 @@ font: 9pt &quot;MS Serif&quot;;</string>
         <item>
          <widget class="QLabel" name="Pool">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -140,9 +171,12 @@ font: 9pt &quot;MS Serif&quot;;</string>
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Fixed</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>55</width>
             <height>20</height>
            </size>
           </property>
@@ -158,17 +192,17 @@ font: 9pt &quot;MS Serif&quot;;</string>
           </property>
           <property name="font">
            <font>
-            <family>Bahnschrift</family>
+            <family>MS Sans Serif</family>
             <pointsize>30</pointsize>
             <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 700 30pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 700 30pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
-           <string> Join the Disccusion!</string>
+           <string> Join the Discussion!</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -178,7 +212,7 @@ font: 9pt &quot;MS Serif&quot;;</string>
         <item>
          <widget class="QLabel" name="Boards">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -219,7 +253,7 @@ font: 9pt &quot;MS Serif&quot;;</string>
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 15pt &quot;Bahnschrift&quot;;</string>
+             <string notr="true">font: 17pt &quot;MS Sans Serif&quot;;</string>
             </property>
             <property name="text">
              <string>Don't Have An Account?</string>
@@ -267,14 +301,14 @@ font: 9pt &quot;MS Serif&quot;;</string>
             </property>
             <property name="font">
              <font>
-              <family>MS Serif</family>
+              <family>MS Sans Serif</family>
               <pointsize>13</pointsize>
               <italic>false</italic>
               <bold>true</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 700 13pt &quot;MS Serif&quot;;
+             <string notr="true">font: 700 13pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 170, 127);</string>
             </property>
             <property name="text">
@@ -319,7 +353,7 @@ background-color: rgb(0, 170, 127);</string>
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">font: 700 13pt &quot;MS Serif&quot;;
+             <string notr="true">font: 700 13pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 0, 255);</string>
             </property>
             <property name="text">
@@ -406,10 +440,13 @@ background-color: rgb(0, 0, 255);</string>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);
 color: rgb(0, 0, 0);
-font: 9pt &quot;MS Serif&quot;;</string>
+font: 9pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -490,6 +527,9 @@ font: 9pt &quot;MS Serif&quot;;</string>
             <pointsize>72</pointsize>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(255, 255, 255);</string>
+          </property>
           <property name="text">
            <string>PAXEL</string>
           </property>
@@ -538,7 +578,7 @@ font: 9pt &quot;MS Serif&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1270</width>
+     <width>931</width>
      <height>25</height>
     </rect>
    </property>

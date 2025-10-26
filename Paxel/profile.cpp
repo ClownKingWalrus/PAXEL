@@ -3,7 +3,7 @@
 #include "mainwindow.h"
 #include <QMessageBox>
 #include "homescreen.h"
-Profile::Profile(QWidget *parent)
+Profile::Profile(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::Profile)
 {
@@ -17,7 +17,7 @@ Profile::~Profile()
 
 void Profile::on_Logout_clicked()
 {
-    MainWindow *MainWindowMainWindow = new MainWindow;
+    MainWindow* MainWindowMainWindow = new MainWindow;
     QMessageBox::StandardButton reply;
 
     reply = QMessageBox::question(this,"Logout","Do You Want to Logout",QMessageBox::Yes|QMessageBox::No);
@@ -31,7 +31,7 @@ void Profile::on_Logout_clicked()
 
 void Profile::on_Home_clicked()
 {
-    HomeScreen *HomescreenHomescreen = new HomeScreen;
+    HomeScreen* HomescreenHomescreen = new HomeScreen;
     hide();
     HomescreenHomescreen->show();
 }

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
-    <height>602</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Paxel</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(11, 117, 255);</string>
@@ -51,7 +51,7 @@
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);
-font: 9pt &quot;MS Serif&quot;;
+font: 9pt &quot;MS Sans Serif&quot;;
 color: rgb(0, 0, 0);</string>
           </property>
          </widget>
@@ -95,7 +95,7 @@ color: rgb(0, 0, 0);</string>
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 21pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Username:</string>
@@ -144,7 +144,7 @@ color: rgb(0, 0, 0);</string>
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 21pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Email:</string>
@@ -172,7 +172,7 @@ color: rgb(0, 0, 0);</string>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="styleSheet">
-         <string notr="true">font: 40pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">font: 40pt &quot;MS Sans Serif&quot;;</string>
         </property>
         <property name="text">
          <string>Create Your PAXEL Account</string>
@@ -213,7 +213,7 @@ color: rgb(0, 0, 0);</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);
-font: 9pt &quot;MS Serif&quot;;
+font: 9pt &quot;MS Sans Serif&quot;;
 color: rgb(0, 0, 0);</string>
           </property>
          </widget>
@@ -268,14 +268,14 @@ color: rgb(0, 0, 0);</string>
           </property>
           <property name="font">
            <font>
-            <family>MS Serif</family>
+            <family>MS Sans Serif</family>
             <pointsize>13</pointsize>
             <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 700 13pt &quot;MS Serif&quot;;
+           <string notr="true">font: 700 13pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 0, 255);</string>
           </property>
           <property name="text">
@@ -309,7 +309,7 @@ background-color: rgb(0, 0, 255);</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(0, 170, 127);
-font: 700 13pt &quot;MS Serif&quot;;</string>
+font: 700 13pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Signup</string>
@@ -356,13 +356,17 @@ font: 700 13pt &quot;MS Serif&quot;;</string>
           </property>
           <property name="font">
            <font>
-            <family>MS Serif</family>
-            <pointsize>16</pointsize>
+            <family>MS Sans Serif</family>
+            <pointsize>17</pointsize>
+            <italic>false</italic>
+            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {
+font: 700 17pt&quot;MS Sans Serif&quot;;
 background-color: rgb(170, 245, 0);
+color: rgb(0, 0, 0);
 }
 QPushButton:Hover {
 background-color: rgb(180, 255, 10);
@@ -405,13 +409,17 @@ background-color: rgb(180, 255, 10);
           </property>
           <property name="font">
            <font>
-            <family>MS Serif</family>
-            <pointsize>16</pointsize>
+            <family>MS Sans Serif</family>
+            <pointsize>17</pointsize>
+            <italic>false</italic>
+            <bold>true</bold>
            </font>
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {
+font: 700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(170, 0, 0);
+color: rgb(0, 0, 0);
 }
 QPushButton:Hover {
 background-color: rgb(180, 10, 10);
@@ -474,7 +482,7 @@ background-color: rgb(180, 10, 10);
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);
-font: 9pt &quot;MS Serif&quot;;
+font: 9pt &quot;MS Sans Serif&quot;;
 color: rgb(0, 0, 0);</string>
           </property>
          </widget>
@@ -518,7 +526,7 @@ color: rgb(0, 0, 0);</string>
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 21pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Password: </string>
@@ -554,7 +562,7 @@ color: rgb(0, 0, 0);</string>
            </sizepolicy>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 21pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Are you over 18?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -575,7 +583,7 @@ color: rgb(0, 0, 0);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1266</width>
+     <width>800</width>
      <height>25</height>
     </rect>
    </property>
