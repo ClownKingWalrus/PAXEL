@@ -2,10 +2,11 @@
 #include "ui_homescreen.h"
 #include "profile.h"
 #include "../hdr/Utils.h"
+#include "../hdr/proc.h"
+#include "threadmenuwindow.h"
 
 #include <QTimer>
 #include <QDateTime>
-
 #include <QScrollBar>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -19,13 +20,18 @@ HomeScreen::HomeScreen(QWidget *parent) :
     , ui(new Ui::HomeScreen)
 {
     ui->setupUi(this);
+
+    bannerLayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
+    ui->scrollAreaWidgetContents->setLayout(bannerLayout);
+
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(timefunction()));
     timer->start(1000);
+
     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &HomeScreen::onScroll);
 
-    loadBoards("ip", "user", "password", "db");;
+    loadBoards(proc::ip, proc::user, proc::password, proc::db);
 
     QPixmap pixmapHS1(":/images/Images/Home.png");
     QIcon buttonIcon1(pixmapHS1);
@@ -33,8 +39,8 @@ HomeScreen::HomeScreen(QWidget *parent) :
     ui->home_Button->setIconSize(QSize(100, 100));
 
     QPixmap pixmapHS2(":/images/Images/Banner2.png");
-    QPixmap scaledPixmapHS2 = pixmapHS2.scaled(500, 500, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    ui->Banner->setPixmap(pixmapHS2);
+    QPixmap scaledPixmapHS2 = pixmapHS2.scaled(300, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    ui->Banner->setPixmap(scaledPixmapHS2);
 
     QPixmap pixmapHS3(":/images/Images/Followers.png");
     QIcon buttonIcon2(pixmapHS3);
@@ -45,7 +51,7 @@ HomeScreen::HomeScreen(QWidget *parent) :
     QPixmap scaledPixmapHS4 = pixmapHS4.scaled(350, 500, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     QPainter painter(&scaledPixmapHS4);
     painter.setPen(Qt::black);
-    painter.setFont(QFont("MS Serif", 16, QFont::Bold));
+    painter.setFont(QFont("MS Sans Serif", 16, QFont::Bold));
     painter.drawText(scaledPixmapHS4.rect(), Qt::AlignCenter, "Paxel Boards");
     painter.end();
     ui->boards_Banner->setPixmap(scaledPixmapHS4);
@@ -74,7 +80,7 @@ HomeScreen::~HomeScreen()
 
 void HomeScreen::on_Profile_clicked()
 {
-    Profile *ProfileProfile = new Profile;
+    Profile* ProfileProfile = new Profile;
     hide();
     ProfileProfile->show();
 }
@@ -91,7 +97,7 @@ void HomeScreen::loadBoards(const string& host, const string& user, const string
 
     for (const auto& board : boardVect ) {
         QHBoxLayout* boardBanner = CreateBoardBanner(board.first, board.second);
-        ui->verticalLayout->addLayout(boardBanner);
+        bannerLayout->addLayout(boardBanner);
     }
 }
 
@@ -101,8 +107,8 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
     QPushButton* idButton = new QPushButton(QString::fromStdString(boardID));
     QPushButton* titleButton = new QPushButton(QString::fromStdString(boardName));
 
-    idButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    titleButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    idButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    titleButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     idButton->setMinimumSize(150, 45);
     idButton->setFlat(true);
@@ -111,12 +117,12 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
     titleButton->setFlat(true);
 
     idButton->setStyleSheet(
-        "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Serif; font-weight: bold; }"  // green
+        "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
         "border-radius: 8px;"        // rounded corners
         );
 
     titleButton->setStyleSheet(
-        "QPushButton { background-color: rgb(8, 136, 245); color: black; font-family: MS Serif; font-weight: bold;}"  // blue
+        "QPushButton { background-color: rgb(8, 136, 245); color: black; font-family: MS Sans Serif; font-weight: bold;}"  // blue
         "border-radius: 8px;"
         );
 
@@ -126,7 +132,17 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
     bannerBox->setContentsMargins(10, 5, 10, 5);
     bannerBox->setSpacing(15);
 
+    QPushButton::connect(titleButton, &QPushButton::clicked, this, [this, boardID]() {
+        ClickOnBoardName(boardID);
+    });
+
     return bannerBox;
+}
+
+void HomeScreen::ClickOnBoardName (string boardID) {
+    ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
+    threadList->show();
+
 }
 
 void HomeScreen::onScroll(int value)

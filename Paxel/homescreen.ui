@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1274</width>
-    <height>781</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Paxel</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(75, 222, 255);</string>
@@ -45,7 +45,7 @@
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton { color: rgb(0, 0, 0);
-font: 700 14pt &quot;MS Serif&quot;;
+font: 700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 170, 245);
 }
 
@@ -65,7 +65,7 @@ background-color: rgb(10, 180, 255);
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {color: rgb(0, 0, 0);
-font: 700 14pt &quot;MS Serif&quot;;
+font: 700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(222, 222, 7);
 }
 
@@ -81,7 +81,7 @@ background-color: rgb(232, 232, 17);
         <item>
          <widget class="QLabel" name="Banner">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -133,6 +133,9 @@ background-color: rgb(232, 232, 17);
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
           </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+          </property>
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
@@ -141,8 +144,8 @@ background-color: rgb(232, 232, 17);
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>944</width>
-             <height>659</height>
+             <width>413</width>
+             <height>478</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -181,7 +184,7 @@ background-color: rgb(232, 232, 17);
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {color: rgb(0, 0, 0);
-font: 700 14pt &quot;MS Serif&quot;;
+font: 700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 170, 245);
 }
 
@@ -201,7 +204,7 @@ background-color: rgb(10, 180, 255);
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton { color: rgb(0, 0, 0);
-font:  700 14pt &quot;MS Serif&quot;;
+font:  700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 0, 127);
 }
 
@@ -221,7 +224,7 @@ background-color: rgb(10, 10, 137);
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {color: rgb(0, 0, 0);
-font: 700 14pt &quot;MS Serif&quot;;
+font: 700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(4, 122, 33);
 }
 
@@ -274,8 +277,8 @@ background-color: rgb(14, 132, 43);
          <bool>true</bool>
         </property>
         <property name="styleSheet">
-         <string notr="true">QPushButton { font: 16pt &quot;MS Serif&quot;;
-color: rgb(255, 255, 255);
+         <string notr="true">QPushButton { font: 700 17pt &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);
 background-color: rgb(8, 136, 245);
 }
 
@@ -316,7 +319,7 @@ background-color: rgb(18, 146, 255);
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;MS Serif&quot;;
+         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;
 color: rgb(0, 0, 0);</string>
         </property>
         <property name="text">
@@ -358,8 +361,8 @@ color: rgb(0, 0, 0);</string>
          <bool>true</bool>
         </property>
         <property name="styleSheet">
-         <string notr="true">QPushButton { font: 16pt &quot;MS Serif&quot;;
-color: rgb(255, 255, 255);
+         <string notr="true">QPushButton { font: 700 17pt  &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);
 background-color: rgb(35, 193, 24);
 }
 

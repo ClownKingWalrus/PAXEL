@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    //DiscussionBoard w;
-    //w.show();
+    // DiscussionBoard w;
+    // w.show();
 
      //ThreadMenuWindow test(nullptr, "IYGS9O9EVDZVPLF");
      //test.show();
