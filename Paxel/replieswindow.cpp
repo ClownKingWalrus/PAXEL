@@ -24,7 +24,7 @@ RepliesWindow::RepliesWindow(QWidget *parent, std::string threadID)
 
     //call thread info from sql and stores it into the vector
     std::vector<std::vector<std::string>> threadVect;
-    threadVect = Utils::RepliesUpdate(sqlIp, sqlUser, sqlPassword, sqlDatabase, threadID);
+    threadVect = Utils::RepliesUpdate(proc::ip, proc::user, proc::password, proc::db, threadID);
 
     RepliesWindow::threadID = threadID;
 
@@ -133,7 +133,7 @@ void RepliesWindow::on_replySend_clicked()
     if (threadID == replyID)
         replyID = "";
 
-    Utils::CreateReply(sqlIp, sqlUser, sqlPassword, sqlDatabase, threadID, commentName, replyID);
+    Utils::CreateReply(proc::ip, proc::user, proc::password, proc::db, threadID, commentName, replyID);
 
     endReply();
 }
