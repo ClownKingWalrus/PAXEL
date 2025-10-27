@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>Images/flat-design-pixel-art-cloud-illustration.png</file>
+        <file>Images/Clouds reverse.png</file>
+        <file>Images/clouds.png</file>
+        <file>Images/Pool.png</file>
+        <file>Images/Boards.png</file>
+        <file>Images/Home.png</file>
+        <file>Images/Small Board.png</file>
+        <file>Images/Banner1.png</file>
+        <file>Images/Followers.png</file>
+        <file>Images/Paxel banner.png</file>
+        <file>Images/Banner2.png</file>
+        <file>Images/Paxel P.png</file>
+        <file>Images/Question Mark.png</file>
+        <file>Images/Text Bubble.png</file>
+    </qresource>
+</RCC>

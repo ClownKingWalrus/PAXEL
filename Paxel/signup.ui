@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1266</width>
-    <height>602</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Paxel</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(222, 222, 222);</string>
+   <string notr="true">background-color: rgb(11, 117, 255);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -50,7 +50,9 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
+           <string notr="true">background-color: rgb(255, 255, 255);
+font: 9pt &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);</string>
           </property>
          </widget>
         </item>
@@ -86,11 +88,20 @@
         </item>
         <item>
          <widget class="QLabel" name="label_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="styleSheet">
-           <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
-           <string>UserName:</string>
+           <string>Username:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -126,11 +137,20 @@
         </item>
         <item>
          <widget class="QLabel" name="label_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="styleSheet">
-           <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
-           <string>Email</string>
+           <string>Email:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -152,7 +172,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="styleSheet">
-         <string notr="true">font: 40pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">font: 40pt &quot;MS Sans Serif&quot;;</string>
         </property>
         <property name="text">
          <string>Create Your PAXEL Account</string>
@@ -192,7 +212,9 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
+           <string notr="true">background-color: rgb(255, 255, 255);
+font: 9pt &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);</string>
           </property>
          </widget>
         </item>
@@ -232,7 +254,7 @@
            <string notr="true">font: 15pt &quot;Bahnschrift&quot;;</string>
           </property>
           <property name="text">
-           <string>Already Have An Account</string>
+           <string>Already Have An Account?</string>
           </property>
          </widget>
         </item>
@@ -244,8 +266,17 @@
             <height>25</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>13</pointsize>
+            <italic>false</italic>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="styleSheet">
-           <string notr="true">font: 15pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 700 13pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 0, 255);</string>
           </property>
           <property name="text">
            <string>Login</string>
@@ -256,6 +287,9 @@
          <spacer name="horizontalSpacer_18">
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Fixed</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -274,7 +308,8 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 15pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">background-color: rgb(0, 170, 127);
+font: 700 13pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Signup</string>
@@ -312,24 +347,39 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="YesButton">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>30</height>
-           </size>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>17</pointsize>
+            <italic>false</italic>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
+           <string notr="true">QPushButton {
+font: 700 17pt&quot;MS Sans Serif&quot;;
+background-color: rgb(170, 245, 0);
+color: rgb(0, 0, 0);
+}
+QPushButton:Hover {
+background-color: rgb(180, 255, 10);
+}</string>
           </property>
           <property name="text">
-           <string>YES</string>
+           <string>Yes</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>15</width>
+            <height>30</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -350,24 +400,39 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="NoButton">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="minimumSize">
-           <size>
-            <width>150</width>
-            <height>30</height>
-           </size>
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>17</pointsize>
+            <italic>false</italic>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
+           <string notr="true">QPushButton {
+font: 700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(170, 0, 0);
+color: rgb(0, 0, 0);
+}
+QPushButton:Hover {
+background-color: rgb(180, 10, 10);
+}</string>
           </property>
           <property name="text">
-           <string>NO</string>
+           <string>No</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>15</width>
+            <height>30</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -416,7 +481,9 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
+           <string notr="true">background-color: rgb(255, 255, 255);
+font: 9pt &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);</string>
           </property>
          </widget>
         </item>
@@ -452,11 +519,20 @@
         </item>
         <item>
          <widget class="QLabel" name="label_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="styleSheet">
-           <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
           </property>
           <property name="text">
            <string>Password: </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -479,8 +555,17 @@
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
          <widget class="QLabel" name="label_5">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 21pt &quot;MS Sans Serif&quot;;</string>
+          </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;Are You 18 Or Older&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Are you over 18?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -498,8 +583,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1266</width>
-     <height>17</height>
+     <width>800</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

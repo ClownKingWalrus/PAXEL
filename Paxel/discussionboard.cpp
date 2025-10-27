@@ -18,7 +18,7 @@ DiscussionBoard::DiscussionBoard(QWidget *parent)
      connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &DiscussionBoard::onScroll);
 
-    loadBoards(proc::ip, proc::user, proc::password, proc::db);;
+    loadBoards(proc::ip, proc::user, proc::password, proc::db);
 }
 DiscussionBoard::~DiscussionBoard()
 {
