@@ -214,8 +214,8 @@ class Utils {
             return boardVect;
         }
 
-        static std::vector<std::tuple<std::string, std::string, std::string, std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
-            std::vector<std::tuple<std::string, std::string, std::string, std::string>> commentVect;
+        static std::vector<std::vector<std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
+            std::vector<std::vector<std::string>> commentVect;
             try {
                 sql::mysql::MySQL_Driver* driver;
                 sql::Connection* connection;
@@ -248,11 +248,12 @@ class Utils {
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(query);
                 while (res->next()) {
-                    std::string threadName = res->getString("ThreadName");
-                    std::string userID = res->getString("UserID");
-                    std::string threadID = res->getString("ThreadID");
-                    std::string threadReply = "";
-                    commentVect.push_back(std::tuple<std::string, std::string, std::string, std::string>(userID, threadName, threadID, threadReply));
+                    std::vector<std::string> tempVect;
+                    tempVect.push_back(res->getString("UserID"));
+                    tempVect.push_back(res->getString("ThreadName"));
+                    tempVect.push_back(res->getString("ThreadID"));
+                    tempVect.push_back("");
+                    commentVect.push_back(tempVect);
                 }
 
                 query = "SELECT Comments.CommentName, Comments.UserID, Comments.CommentID, Comments.CommentReply FROM Comments WHERE Comments.ThreadID = ";
@@ -261,11 +262,12 @@ class Utils {
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(query);
                 while (res->next()) {
-                    std::string commentName = res->getString("CommentName");
-                    std::string userID = res->getString("UserID");
-                    std::string commentID = res->getString("CommentID");
-                    std::string commentReply = res->getString("CommentReply");
-                    commentVect.push_back(std::tuple<std::string, std::string, std::string, std::string>(userID, commentName, commentID, commentReply));
+                    std::vector<std::string> tempVect;
+                    tempVect.push_back(res->getString("UserID"));
+                    tempVect.push_back(res->getString("CommentName"));
+                    tempVect.push_back(res->getString("CommentID"));
+                    tempVect.push_back(res->getString("CommentReply"));
+                    commentVect.push_back(tempVect);
                 }
 
                 delete res;
@@ -304,7 +306,7 @@ class Utils {
 
                 std::string query = "INSERT INTO Comments (CommentID, ThreadID, UserID, CommentName, CommentReply) VALUES ('";
                 //placeholder for commentID - needs to be original
-                query += "YI5JDQX64CEL33N";
+                query += "YI5JDQX64CEL34N";
                 query += "','";
                 query += threadID;
                 query += "','";

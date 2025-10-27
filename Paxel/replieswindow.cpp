@@ -1,6 +1,7 @@
 #include "replieswindow.h"
 #include "ui_replieswindow.h"
 #include "../hdr/Utils.h"
+#include "../hdr/proc.h"
 
 #include <QPushButton>
 #include <QSizePolicy>
@@ -8,12 +9,6 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QPlainTextEdit>
-
-///change these for testing
-const std::string sqlIp = "localhost::3306";
-const std::string sqlUser = "root";
-const std::string sqlPassword = "password";
-const std::string sqlDatabase = "paxel";
 
 RepliesWindow::RepliesWindow(QWidget *parent, std::string threadID)
     : QMainWindow(parent)
@@ -28,16 +23,16 @@ RepliesWindow::RepliesWindow(QWidget *parent, std::string threadID)
     scrollBoxMain->setLayout(vertLayout);
 
     //call thread info from sql and stores it into the vector
-    std::vector<std::tuple<std::string, std::string, std::string, std::string>> threadVect;
+    std::vector<std::vector<std::string>> threadVect;
     threadVect = Utils::RepliesUpdate(sqlIp, sqlUser, sqlPassword, sqlDatabase, threadID);
 
     RepliesWindow::threadID = threadID;
 
-    QHBoxLayout* threadBanner = CreateBanner(std::get<0>(threadVect[0]), std::get<1>(threadVect[0]), std::get<2>(threadVect[0]), std::get<3>(threadVect[0]), 100);
+    QHBoxLayout* threadBanner = CreateBanner(threadVect[0][0], threadVect[0][1], threadVect[0][2], threadVect[0][3], 100);
     ui->verticalLayout->addLayout(threadBanner);
 
     for (int i = 1; i < threadVect.size(); i++) {
-        QHBoxLayout* repliesBanner = CreateBanner(std::get<0>(threadVect[i]), std::get<1>(threadVect[i]), std::get<2>(threadVect[i]), std::get<3>(threadVect[i]), 60);
+        QHBoxLayout* repliesBanner = CreateBanner(threadVect[i][0], threadVect[i][1], threadVect[i][2], threadVect[i][3], 60);
         ui->verticalLayout->addLayout(repliesBanner);
     }
 
@@ -56,52 +51,52 @@ QHBoxLayout* RepliesWindow::CreateBanner(std::string userName, std::string threa
     QHBoxLayout* bannerBox = new QHBoxLayout();
 
     ///creating buttons
-    QPushButton* bUserName = new QPushButton(QString::fromStdString(userName));
-    QPushButton* bThreadCommentName = new QPushButton(QString::fromStdString(threadCommentName));
-    QPushButton* bThreadCommentID = new QPushButton(QString::fromStdString(threadCommentID));
-    QPushButton* bCommentReply = new QPushButton(QString::fromStdString(commentReply));
-    QPushButton* bReply = new QPushButton("R");
+    QPushButton* pbUserName = new QPushButton(QString::fromStdString(userName));
+    QPushButton* pbThreadCommentName = new QPushButton(QString::fromStdString(threadCommentName));
+    QPushButton* pbThreadCommentID = new QPushButton(QString::fromStdString(threadCommentID));
+    QPushButton* pbCommentReply = new QPushButton(QString::fromStdString(commentReply));
+    QPushButton* pbReply = new QPushButton("R");
 
     ///resizing buttons
-    bUserName->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    bUserName->setFixedHeight(height);
-    bUserName->setFixedWidth(150);
-    bUserName->setFlat(true);
+    pbUserName->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    pbUserName->setFixedHeight(height);
+    pbUserName->setFixedWidth(150);
+    pbUserName->setFlat(true);
 
-    bThreadCommentName->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
-    bThreadCommentName->setFixedHeight(height);
+    pbThreadCommentName->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+    pbThreadCommentName->setFixedHeight(height);
 
-    bThreadCommentID->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    bThreadCommentID->setFixedHeight(height/2);
-    bThreadCommentID->setFixedWidth(125);
+    pbThreadCommentID->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    pbThreadCommentID->setFixedHeight(height/2);
+    pbThreadCommentID->setFixedWidth(125);
 
-    bCommentReply->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    bCommentReply->setFixedHeight(height/2);
-    bCommentReply->setFixedWidth(125);
+    pbCommentReply->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    pbCommentReply->setFixedHeight(height/2);
+    pbCommentReply->setFixedWidth(125);
 
-    bReply->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    bReply->setFixedWidth(20);
-    bReply->setFixedHeight(20);
+    pbReply->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    pbReply->setFixedWidth(20);
+    pbReply->setFixedHeight(20);
 
     //connect functions saving each unique arg
-    QPushButton::connect(bUserName, &QPushButton::clicked, this, [this, userName]() {
+    QPushButton::connect(pbUserName, &QPushButton::clicked, this, [this, userName]() {
         ClickOnProfile(userName);
     });
 
-    QPushButton::connect(bThreadCommentName, &QPushButton::clicked, this, [this, threadCommentName]() {
+    QPushButton::connect(pbThreadCommentName, &QPushButton::clicked, this, [this, threadCommentName]() {
         ClickOnBanner(threadCommentName);
     });
 
-    QPushButton::connect(bReply, &QPushButton::clicked, this, [this, threadCommentID] ()
+    QPushButton::connect(pbReply, &QPushButton::clicked, this, [this, threadCommentID] ()
     {
         ClickOnReply(threadCommentID);
     });
 
-    bannerBox->addWidget(bUserName);
-    bannerBox->addWidget(bThreadCommentName, 1);
-    bannerBox->addWidget(bThreadCommentID);
-    bannerBox->addWidget(bCommentReply);
-    bannerBox->addWidget(bReply);
+    bannerBox->addWidget(pbUserName);
+    bannerBox->addWidget(pbThreadCommentName, 1);
+    bannerBox->addWidget(pbThreadCommentID);
+    bannerBox->addWidget(pbCommentReply);
+    bannerBox->addWidget(pbReply);
 
     return bannerBox;
 
