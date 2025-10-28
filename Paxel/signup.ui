@@ -36,7 +36,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_3">
+         <widget class="QLineEdit" name="lineEditEmail">
           <property name="minimumSize">
            <size>
             <width>400</width>
@@ -198,7 +198,7 @@ color: rgb(0, 0, 0);</string>
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit">
+         <widget class="QLineEdit" name="lineEditUserName">
           <property name="minimumSize">
            <size>
             <width>400</width>
@@ -467,7 +467,7 @@ background-color: rgb(180, 10, 10);
          </spacer>
         </item>
         <item>
-         <widget class="QLineEdit" name="lineEdit_2">
+         <widget class="QLineEdit" name="lineEditPassword">
           <property name="minimumSize">
            <size>
             <width>400</width>
@@ -584,7 +584,7 @@ color: rgb(0, 0, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

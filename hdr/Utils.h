@@ -7,6 +7,7 @@
 #include <vector>
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
+#include "../hdr/proc.h"
 
 class Utils {
     public:
@@ -19,17 +20,9 @@ class Utils {
          *          a valid user it logs them in
          * @return returns a vector of strings which are their interest
          ******************************************************************************************************/
-        static void Login(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+        static void Login(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UserName, std::string UserPassword) {
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
-            
-            //initlize user and pass
-            std::string UserName = "";
-            std::string UserPassword = "";
-
-            ///testing purposes
-            UserName = "";
-            UserPassword = "";
 
             std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
             UserPassword.clear(); //no except this cannot fail
@@ -50,12 +43,12 @@ class Utils {
                 sql::ResultSet* res;
 
                 //this statement should be optimized this is essentially a select * statement
-                res = statement->executeQuery("SELECT UserName, UserPass FROM user");
+                res = statement->executeQuery("SELECT UserName, Salt FROM User");
                 int i = 0;
                 bool foundMatch = false;
                 while (res->next()) {
-                    std::string name = res->getString("UserName");
-                    std::string pass = res->getString("UserPass");
+                    std::string name = res->getString("Username");
+                    std::string pass = res->getString("Salt");
                     if (name == UserName && pass == hashedPass) {
                         //at this point we should call a function or implement some sort of functionailty here that actually logs the user in
                         foundMatch = true;
@@ -79,6 +72,145 @@ class Utils {
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
+        }
+
+
+        //salt needs to be added but thats not a rn problem
+        static void CreateProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
+                                  std::string UserName, std::string UserPassword, std::string Email) {
+
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
+            UserPassword.clear(); //no except this cannot fail
+
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string arg = "INSERT INTO User (Username, Salt, Email, UserID, Age, DayCreated) VALUES ('" + UserName + "', '" + hashedPass + "', '" + Email + "', '" + UserName + "', '1', '2025-10-10')";
+
+                res = statement->executeQuery(arg);
+                delete res;
+                delete statement;
+                delete connection;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+        }
+
+        static bool UsernameChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UN) {
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            //set Username
+            std::string UserName = UN;
+
+            if (UserName == "") {
+                return false; //bad string
+            }
+
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string arg = "SELECT Username FROM User WHERE Username = '" + UserName + "'";
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(arg);
+                if (!res->next()) { //implies its true as if there is one that means we have a match
+                    delete res;
+                    delete statement;
+                    delete connection;
+                    return true;
+                }
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e) {
+                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
+            }
+            return true; //assuming somthing failed we will return false
+        }
+
+        static bool EmailChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string EM) {
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            //initlize user and pass
+            std::string Email = EM;
+
+            if (Email == "") {
+                return false; //bad string
+            }
+
+
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string arg = "SELECT Email FROM User WHERE Email = '" + Email + "'";
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(arg);
+                if (!res->next()) { //implies its true as if there is one that means we have a match
+                        delete res;
+                        delete statement;
+                        delete connection;
+                        return true;
+                    }
+                delete res;
+                delete statement;
+                delete connection;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return false; //assuming somthing failed we will return false
         }
 
          /******************************************************************************************************

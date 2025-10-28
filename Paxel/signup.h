@@ -17,6 +17,13 @@ public:
 
 public:
     Ui::SignUp *ui;
+private:
+        bool over18 = false;
+
+private slots:
+    void on_YesButton_clicked();
+    void on_NoButton_clicked();
+    void on_SignUp2_clicked();
 };
 
 #endif // SIGNUP_H
