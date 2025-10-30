@@ -48,6 +48,7 @@ qt_add_executable(Paxel
 	replieswindow.h replieswindow.cpp replieswindow.ui
         threadbannerbox.h threadbannerbox.cpp
     utils.h utils.cpp
+    windowsettings.h
     ${SOURCES}
     ${RESOURCES}
 )

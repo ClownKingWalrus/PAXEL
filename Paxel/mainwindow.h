@@ -19,6 +19,7 @@ public:
 
 public:
     Ui::MainWindow *ui;
+    void showEvent(QShowEvent *event);
 };
 
 #endif // MAINWINDOW_H
