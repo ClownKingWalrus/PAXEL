@@ -21,7 +21,7 @@
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="6" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
          <spacer name="horizontalSpacer_12">
           <property name="orientation">
@@ -121,7 +121,7 @@ color: rgb(0, 0, 0);</string>
        </layout>
       </item>
       <item row="5" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
          <spacer name="horizontalSpacer_10">
           <property name="orientation">
@@ -183,7 +183,7 @@ color: rgb(0, 0, 0);</string>
        </widget>
       </item>
       <item row="2" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <spacer name="horizontalSpacer_4">
           <property name="orientation">
@@ -332,7 +332,7 @@ font: 700 13pt &quot;MS Sans Serif&quot;;</string>
        </layout>
       </item>
       <item row="8" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
          <spacer name="horizontalSpacer_16">
           <property name="orientation">
@@ -452,7 +452,7 @@ background-color: rgb(180, 10, 10);
        </layout>
       </item>
       <item row="4" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <spacer name="horizontalSpacer_7">
           <property name="orientation">
@@ -552,7 +552,7 @@ color: rgb(0, 0, 0);</string>
        </layout>
       </item>
       <item row="7" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
          <widget class="QLabel" name="label_5">
           <property name="sizePolicy">
@@ -584,12 +584,21 @@ color: rgb(0, 0, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>17</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>lineEditUserName</tabstop>
+  <tabstop>lineEditPassword</tabstop>
+  <tabstop>lineEditEmail</tabstop>
+  <tabstop>YesButton</tabstop>
+  <tabstop>NoButton</tabstop>
+  <tabstop>Login2</tabstop>
+  <tabstop>SignUp2</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -2,7 +2,7 @@
 #include "threadmenuwindow.h"
 #include "discussionboard.h"
 #include "replieswindow.h"
-
+#include "windowsettings.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QDebug>
@@ -23,5 +23,6 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     w.show();
+    centerOnScreen(&w);
     return a.exec();
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>931</width>
+    <width>802</width>
     <height>645</height>
    </rect>
   </property>
@@ -19,13 +19,19 @@
   <property name="windowTitle">
    <string>Paxel</string>
   </property>
+  <property name="layoutDirection">
+   <enum>Qt::LayoutDirection::LeftToRight</enum>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(75, 222, 255);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout1">
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
       <item row="12" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
@@ -578,12 +584,18 @@ font: 9pt &quot;MS Sans Serif&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>931</width>
+     <width>802</width>
      <height>25</height>
     </rect>
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>lineEdit_2</tabstop>
+  <tabstop>SignUp1</tabstop>
+  <tabstop>Login1</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

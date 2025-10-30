@@ -3,7 +3,9 @@
 #include "signup.h"
 #include "ui_signup.h"
 #include "homescreen.h"
+#include "windowsettings.h"
 #include <QPixmap>
+#include <QScreen>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,4 +52,10 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+    centerOnScreen(this);
 }
