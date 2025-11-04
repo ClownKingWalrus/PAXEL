@@ -16,6 +16,7 @@ class DiscussionBoard : public QMainWindow
 
 public:
     explicit DiscussionBoard(QWidget *parent = nullptr);
+    explicit DiscussionBoard(QWidget *parent, int UserID);
     ~DiscussionBoard();
 
 private slots:
@@ -24,6 +25,7 @@ private slots:
 private:
     Ui::DiscussionBoard *ui;
     void loadBoards(const string& host, const string& user, const string& password, const string& dbName);
+    void loadBoards(const string& host, const string& user, const string& password, const string& dbName, int userID);
     class QHBoxLayout* CreateBoardBanner(const string& boardID, const string& boardName);
     void ClickOnBoardName(std::string boardThreads);
 };
