@@ -22,6 +22,8 @@ public:
 private slots:
     void on_pushButton_2_clicked();
 
+
+
 private:
     void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID);
     Ui::CreateBoardOrThread *ui;

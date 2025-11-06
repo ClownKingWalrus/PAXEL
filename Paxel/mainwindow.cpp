@@ -4,6 +4,7 @@
 #include "ui_signup.h"
 #include "homescreen.h"
 #include "windowsettings.h"
+#include "interestselect.h"
 #include <QPixmap>
 #include <QScreen>
 
@@ -59,3 +60,11 @@ void MainWindow::showEvent(QShowEvent *event)
     QMainWindow::showEvent(event);
     centerOnScreen(this);
 }
+/*
+void MainWindow::on_interestPushButton_clicked()
+{
+    interestselect* InterestScreen = new interestselect;
+    //hide();
+    InterestScreen->show();
+}*/
+

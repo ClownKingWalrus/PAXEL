@@ -1,28 +1,22 @@
-#include "createboardorthread.h"
-#include "ui_createboardorthread.h"
+#include "interestselect.h"
+#include "ui_interestselect.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
 #include <QMessageBox>
 
-CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::CreateBoardOrThread)
+
+interestselect::interestselect(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::interestselect)
 {
     ui->setupUi(this);
-    //lay out in vertical format
     bannerLayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(bannerLayout);
-
-    //create Horzonatal boxes and return like 4 buttons per row
     LoadInterest(proc::ip, proc::user, proc::password, proc::db, proc::userID);
+
 }
 
-CreateBoardOrThread::~CreateBoardOrThread()
-{
-    delete ui;
-}
-
-void CreateBoardOrThread::LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID) {
+void interestselect::LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID) {
 
     std::vector<std::pair<std::string, std::string>> boardVect;
     boardVect = Utils::GetInterestButtons(host, user, password, dbName);
@@ -57,7 +51,7 @@ void CreateBoardOrThread::LoadInterest(const std::string& host, const std::strin
                                             }
                                             )");
                 interestButtonMap[intrestID] = true;
-               onInterestButtonClick(intrestID);
+                onInterestButtonClick(intrestID);
             } else {
                 *clicked = false;
                 interestButtonMap[intrestID] = false;
@@ -86,23 +80,20 @@ void CreateBoardOrThread::LoadInterest(const std::string& host, const std::strin
     }
 }
 
-void CreateBoardOrThread::onInterestButtonClick(std::string InterestID) {
+void interestselect::onInterestButtonClick(std::string InterestID) {
     //the lambda honestly handels everything we need above
 }
 
-void CreateBoardOrThread::ChangeToThreadWindow() {
-    std::cout << "Change to Threads Window Called\n\n\n";
-    ui->verticalLayout_2->removeWidget(ui->scrollArea);
-    ui->scrollArea->deleteLater();
-    QLineEdit* lineEdit = new QLineEdit("Enter Description...");
-    ui->verticalLayout_2->addWidget(lineEdit);
-    ui->pushButton_2->disconnect(ui->pushButton_2, &QPushButton::clicked, this, &CreateBoardOrThread::on_pushButton_2_clicked);//unbinding
-    ui->pushButton_2->connect(ui->pushButton_2, &QPushButton::clicked, this, &CreateBoardOrThread::ThreadSumbit);// this is called binding functions gamers, used in game dev btw
-    std::cout << "Did it Bind????\n\n\n";
-    this->isThread = true;
+interestselect::~interestselect()
+{
+    delete ui;
 }
 
-void CreateBoardOrThread::on_pushButton_2_clicked()
+
+
+
+
+void interestselect::on_pushButton_clicked()
 {
     if (interestButtonMap.empty()) {
         QMessageBox* box = new QMessageBox();
@@ -127,76 +118,27 @@ void CreateBoardOrThread::on_pushButton_2_clicked()
         return;
     }
 
-    if (ui->lineEdit->text().isEmpty()) {
+
+
+    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, proc::userID, IntrestList)) {
         QMessageBox* box = new QMessageBox();
-        box->setText("Please insert a title");
+        box->setText("Interests not set");
         box->show();
         return;
     }
 
-    if (ui->lineEdit->text().size() <= 2) {
+    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList, this->userName);
+    std::cout << "passed 1\n";
+    if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, proc::userID, IntrestList)) {
         QMessageBox* box = new QMessageBox();
-        box->setText("Title must be atleast 3 characters long");
+        box->setText("Interests set");
         box->show();
         return;
     }
+    std::cout << "passed 2\n";
 
-    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("BoardName Already Taken");
-        box->show();
-        return;
-    }
 
-    QMessageBox* box = new QMessageBox();
-    box->setText("Creating board");
-    box->show();
-    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), IntrestList, proc::userID);
 
-    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("Board Created");
-        box->show();
-        return;
-    }
 }
-
-void CreateBoardOrThread::ThreadSumbit()
-{
-    if (ui->lineEdit->text().isEmpty()) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("Please insert a title");
-        box->show();
-        return;
-    }
-
-    if (ui->lineEdit->text().size() <= 2) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("Title must be atleast 3 characters long");
-        box->show();
-        return;
-    }
-
-    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("Thread Title Already Taken");
-        box->show();
-        return;
-    }
-
-    QMessageBox* box = new QMessageBox();
-    box->setText("Creating Thread");
-    box->show();
-    Utils::CreateThread(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), boardID, std::to_string(proc::userID));
-
-    if (!Utils::ThreadNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("Thread Created");
-        box->show();
-        return;
-    }
-}
-
-
 
 
