@@ -144,8 +144,8 @@ background-color: rgb(232, 232, 17);
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>413</width>
-             <height>478</height>
+             <width>542</width>
+             <height>502</height>
             </rect>
            </property>
            <property name="sizePolicy">
@@ -177,6 +177,23 @@ background-color: rgb(232, 232, 17);
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QPushButton" name="CreateBoardButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {color: rgb(0, 0, 0);
+font: 700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
+          </property>
+          <property name="text">
+           <string>Your Boards</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QPushButton" name="home_Button">
           <property name="mouseTracking">

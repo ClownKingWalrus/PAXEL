@@ -114,6 +114,149 @@ class Utils {
             }
         }
 
+        //salt needs to be added but thats not a rn problem
+        static void CreateBoard(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string BoardName, std::vector<std::string> interestList, int UUID) {
+
+            //set user ud
+            UUID = proc::userID;
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+
+                sql::PreparedStatement* pstmt = connection->prepareStatement(
+                    "INSERT INTO Board (BoardName, DayCreated) VALUES (?, ?)" //use nullable values for ease of use
+                );
+                pstmt->setString(1, BoardName);
+                pstmt->setString(2, "2025-10-10");
+                pstmt->executeUpdate();
+
+                sql::PreparedStatement* pstmtbdID = connection->prepareStatement(
+                    "SELECT BoardID FROM Board WHERE BoardName = ?"
+                    );
+
+                pstmtbdID->setString(1, BoardName);
+                sql::ResultSet* res = pstmtbdID->executeQuery();
+                int boardID = 0;
+                std::cout << "2\n\n";
+
+                if (res->next()) {
+                    boardID = res->getInt("BoardID");
+                } else {
+                    return; //bad means no thread was created
+                }
+
+                sql::PreparedStatement* pstmt2 = connection->prepareStatement(
+                    "INSERT INTO BoardInterests (BoardID, InterestID) VALUES (?, ?)"
+                    );
+
+                for (const auto& interestID : interestList) {
+                    pstmt2->setInt(1, boardID);
+                    pstmt2->setString(2, interestID);
+                    pstmt2->executeUpdate(); //insert alot of interest if need be
+                }
+
+                sql::PreparedStatement* pstmtO = connection->prepareStatement(
+                    "INSERT INTO UserBoards (UserID, BoardID) VALUES (?, ?)" //use nullable values for ease of use
+                    );
+                pstmtO->setInt(1, UUID);
+                pstmtO->setInt(2, boardID);
+                pstmtO->executeUpdate();
+
+                delete pstmt;
+                delete pstmt2;
+                delete pstmtbdID;
+                delete pstmtO;
+                delete res;
+                delete statement;
+                delete connection;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+        }
+
+        static void CreateThread(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string ThreadName, std::string BoardID, std::string UUID) {
+            std::cout << "Creating Thread\n\n";
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+
+                sql::PreparedStatement* pstmt = connection->prepareStatement(
+                    "INSERT INTO Threads (ThreadName, DayCreated, BoardID, UserID) VALUES (?, ?, ?, ?)" //use nullable values for ease of use
+                    );
+                pstmt->setString(1, ThreadName);
+                pstmt->setString(2, "2025-10-10");
+                pstmt->setString(3, BoardID);
+                pstmt->setString(4, UUID);
+                pstmt->executeUpdate();
+                std::cout << "1\n\n";
+
+                sql::PreparedStatement* pstmt2 = connection->prepareStatement(
+                    "SELECT ThreadID FROM Threads WHERE ThreadName = ?"
+                    );
+
+                pstmt2->setString(1, ThreadName);
+                sql::ResultSet* res = pstmt2->executeQuery();
+                int threadID = 0;
+                std::cout << "2\n\n";
+
+                if (res->next()) {
+                    threadID = res->getInt("ThreadID");
+                } else {
+                    return; //bad means no thread was created
+                }
+
+                sql::PreparedStatement* pstmt3 = connection->prepareStatement(
+                    "INSERT INTO UserThreads (UserID, ThreadID) VALUES (?, ?)"
+                    );
+
+                pstmt3->setString(1, UUID);
+                pstmt3->setInt(2, threadID);
+                pstmt3->executeUpdate();
+
+                std::cout << "3\n\n";
+
+                delete pstmt;
+                delete pstmt2;
+                delete pstmt3;
+                delete statement;
+                delete connection;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+        }
+
         static bool UsernameChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UN) {
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
@@ -391,6 +534,190 @@ class Utils {
 
                 // Adjust this query to match your actual table/column names
                 std::string query = "SELECT BoardID, BoardName FROM Board";
+                res = statement->executeQuery(query);
+
+                // statement gets all the boards and loads them onto the window
+                while (res->next()) {
+                    std::string boardID = res->getString("BoardID");
+                    std::string boardName = res->getString("BoardName");
+                    boardVect.push_back(std::make_pair(boardID, boardName));
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch (sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+            return boardVect;
+        }
+
+        static bool BoardNameCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string BoardName) {
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            //set Username
+            std::string BN = BoardName;
+
+            if (BN == "") {
+                return false; //bad string
+            }
+
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string arg = "SELECT Board.BoardName FROM Board WHERE Board.BoardName = '" + BN + "'";
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(arg);
+                if (!res->next()) { //implies its true as if there is one that means we have a match
+                    delete res;
+                    delete statement;
+                    delete connection;
+                    return true;
+                }
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e) {
+                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
+            }
+            return true; //assuming somthing failed we will return false
+        }
+
+        static bool ThreadNameCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string ThreadName) {
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            //set Username
+            std::string BN = ThreadName;
+
+            if (BN == "") {
+                return false; //bad string
+            }
+
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string arg = "SELECT Threads.ThreadName FROM Threads WHERE Threads.ThreadName = '" + BN + "'";
+
+                //this statement should be optimized this is essentially a select * statement
+                res = statement->executeQuery(arg);
+                if (!res->next()) { //implies its true as if there is one that means we have a match
+                    delete res;
+                    delete statement;
+                    delete connection;
+                    return true;
+                }
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e) {
+                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
+            }
+            return true; //assuming somthing failed we will return false
+        }
+
+        static std::vector<std::pair<std::string, std::string>> GetInterestButtons(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+            std::vector<std::pair<std::string, std::string>> boardVect;
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                // Adjust this query to match your actual table/column names
+                std::string query = "SELECT Interests.InterestName, Interests.InterestID FROM Interests";
+                res = statement->executeQuery(query);
+
+                // statement gets all the boards and loads them onto the window
+                while (res->next()) {
+                    std::string InterestName = res->getString("InterestName");
+                    std::string InterestID = res->getString("InterestID");
+                    boardVect.push_back(std::make_pair(InterestName, InterestID));
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch (sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+            return boardVect;
+        }
+
+        static std::vector<std::pair<std::string, std::string>> GetOwnBoards(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int userID) {
+            std::vector<std::pair<std::string, std::string>> boardVect;
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                // Adjust this query to match your actual table/column names
+                std::string query = "SELECT Board.BoardID, Board.BoardName FROM Board JOIN UserBoards ON Board.BoardID = UserBoards.BoardID Where UserBoards.UserID = '" + std::to_string(userID) + "'";
                 res = statement->executeQuery(query);
 
                 // statement gets all the boards and loads them onto the window

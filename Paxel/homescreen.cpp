@@ -4,6 +4,7 @@
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
 #include "threadmenuwindow.h"
+#include "YourPaxelBoard.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -153,3 +154,10 @@ void HomeScreen::onScroll(int value)
         // You can implement paginated loading if needed
     }
 }
+
+void HomeScreen::on_CreateBoardButton_clicked()
+{
+    CreateBoardWindow* newWin = new CreateBoardWindow(this);
+    newWin->show();
+}
+

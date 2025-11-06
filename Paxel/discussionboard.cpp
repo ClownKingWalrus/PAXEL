@@ -20,12 +20,36 @@ DiscussionBoard::DiscussionBoard(QWidget *parent)
 
     loadBoards(proc::ip, proc::user, proc::password, proc::db);
 }
+
+DiscussionBoard::DiscussionBoard(QWidget *parent, int UserID)
+    : QMainWindow(parent)
+    , ui(new Ui::DiscussionBoard)
+{
+    ui->setupUi(this);
+    connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
+            this, &DiscussionBoard::onScroll);
+
+    loadBoards(proc::ip, proc::user, proc::password, proc::db);
+}
+
+
 DiscussionBoard::~DiscussionBoard()
 {
     delete ui;
 }
 
 void DiscussionBoard::loadBoards(const string& host, const string& user, const string& password, const string& dbName) {
+
+    vector<pair<string, string>> boardVect;
+    boardVect = Utils::BoardUpdate(host, user, password, dbName);
+
+    for (const auto& board : boardVect ) {
+        QHBoxLayout* boardBanner = CreateBoardBanner(board.first, board.second);
+        ui->verticalLayout->addLayout(boardBanner);
+    }
+}
+
+void DiscussionBoard::loadBoards(const string& host, const string& user, const string& password, const string& dbName, int UserID) {
 
     vector<pair<string, string>> boardVect;
     boardVect = Utils::BoardUpdate(host, user, password, dbName);
