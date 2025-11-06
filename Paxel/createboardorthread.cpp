@@ -1,6 +1,7 @@
 #include "createboardorthread.h"
 #include "ui_createboardorthread.h"
 #include "../hdr/Utils.h"
+#include "../hdr/proc.h"
 #include <QMessageBox>
 
 CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
@@ -150,7 +151,7 @@ void CreateBoardOrThread::on_pushButton_2_clicked()
     QMessageBox* box = new QMessageBox();
     box->setText("Creating board");
     box->show();
-    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), IntrestList);
+    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), IntrestList, proc::userID);
 
     if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
         QMessageBox* box = new QMessageBox();

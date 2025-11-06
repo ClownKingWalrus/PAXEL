@@ -115,8 +115,10 @@ class Utils {
         }
 
         //salt needs to be added but thats not a rn problem
-        static void CreateBoard(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string BoardName, std::vector<std::string> interestList) {
+        static void CreateBoard(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string BoardName, std::vector<std::string> interestList, int UUID) {
 
+            //set user ud
+            UUID = proc::userID;
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
             try {
@@ -127,38 +129,55 @@ class Utils {
                 connection = driver->connect(sqlIp, sqlUser, sqlPassword);
                 connection->setSchema(sqlDatabase);
 
-                std::string HashedBoardName = picosha2::hash256_hex_string(BoardName);
-                std::string ShortHash;
-                for (int i = 0; i < 15; i++) {
-                    ShortHash.push_back(HashedBoardName[i]);
-                }
-
                 //create statement
                 sql::Statement* statement;
                 statement = connection->createStatement();
                 //create a result object
 
                 sql::PreparedStatement* pstmt = connection->prepareStatement(
-                    "INSERT INTO Board (BoardName, DayCreated, BoardID) VALUES (?, ?, ?)" //use nullable values for ease of use
+                    "INSERT INTO Board (BoardName, DayCreated) VALUES (?, ?)" //use nullable values for ease of use
                 );
                 pstmt->setString(1, BoardName);
                 pstmt->setString(2, "2025-10-10");
-                pstmt->setString(3, ShortHash);
                 pstmt->executeUpdate();
 
+                sql::PreparedStatement* pstmtbdID = connection->prepareStatement(
+                    "SELECT BoardID FROM Board WHERE BoardName = ?"
+                    );
+
+                pstmtbdID->setString(1, BoardName);
+                sql::ResultSet* res = pstmtbdID->executeQuery();
+                int boardID = 0;
+                std::cout << "2\n\n";
+
+                if (res->next()) {
+                    boardID = res->getInt("BoardID");
+                } else {
+                    return; //bad means no thread was created
+                }
 
                 sql::PreparedStatement* pstmt2 = connection->prepareStatement(
                     "INSERT INTO BoardInterests (BoardID, InterestID) VALUES (?, ?)"
                     );
 
                 for (const auto& interestID : interestList) {
-                    pstmt2->setString(1, ShortHash);
+                    pstmt2->setInt(1, boardID);
                     pstmt2->setString(2, interestID);
                     pstmt2->executeUpdate(); //insert alot of interest if need be
                 }
 
+                sql::PreparedStatement* pstmtO = connection->prepareStatement(
+                    "INSERT INTO UserBoards (UserID, BoardID) VALUES (?, ?)" //use nullable values for ease of use
+                    );
+                pstmtO->setInt(1, UUID);
+                pstmtO->setInt(2, boardID);
+                pstmtO->executeUpdate();
+
                 delete pstmt;
                 delete pstmt2;
+                delete pstmtbdID;
+                delete pstmtO;
+                delete res;
                 delete statement;
                 delete connection;
 
