@@ -29,6 +29,11 @@
         likeButton->setMaximumSize(50,60);
         likeButton->setObjectName("likeButton");
 
+        followThreadButton = new QPushButton("F", threadButton);
+        followThreadButton->setMinimumSize(25,30);
+        followThreadButton->setMaximumSize(50,60);
+        followThreadButton->setObjectName("followThreadButton");
+
         QPushButton::connect(profileButton, &QPushButton::clicked, this, [this, userName]() {
             OnClickProfile(userName);
         });
@@ -40,6 +45,10 @@
 
         QPushButton::connect(likeButton, &QPushButton::clicked, this, [this, threadID]() {
             OnClickLike(threadID, Utils::GetUserID());
+        });
+
+        QPushButton::connect(followThreadButton, &QPushButton::clicked, this, [this, threadID]() {
+            OnClickFollowThread(threadID, Utils::GetUserID());
         });
 
         QHBoxLayout* bannerBox = new QHBoxLayout(this);
@@ -79,6 +88,15 @@
         QPushButton#likeButton:hover {
             background-color: rgb(102, 102, 102);
         }
+        QPushButton#followThreadButton {
+            background-color: rgb(255, 255, 255);
+            color: rgb(20, 255, 20);
+            font-size: 14px;
+            border-radius: 6px;
+        }
+        QPushButton#followThreadButton:hover {
+            background-color: rgb(102, 102, 102);
+        }
     )");
     }
 
@@ -96,6 +114,10 @@
         Utils::ThreadLike(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString(), userID);
     }
 
+    void ThreadBannerBox::OnClickFollowThread(const QString& threadID, const std::string& userID) {
+        Utils::ThreadFollow(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString(), userID);
+    }
+
     ///Place holder function, implement the profile opening method
     ///Already connected to button so do not remove this actual function just define it
     void ThreadBannerBox::OnClickProfile(const QString& userID) {
@@ -109,5 +131,9 @@
         likeButton->move(threadButton->width() - likeButton->width() - margin, //width
                          threadButton->height() - likeButton->height() - margin); //height
         likeButton->raise(); //put above the thread button
+
+        followThreadButton->move(threadButton->width() - 3 * followThreadButton->width() - margin,
+                                 threadButton->height() - followThreadButton->height() - margin);
+        followThreadButton->raise();
     }
 
