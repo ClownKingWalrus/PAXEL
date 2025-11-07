@@ -934,14 +934,11 @@ class Utils {
                 //create a result object
                 sql::ResultSet* res;
 
-                std::string query = "INSERT INTO Comments (CommentID, ThreadID, UserID, CommentName, CommentReply) VALUES ('";
+                std::string query = "INSERT INTO Comments (ThreadID, UserID, CommentName, CommentReply) VALUES ('";
                 //placeholder for commentID - needs to be original
-                query += "YI5JDQX64CEL35N";
-                query += "','";
                 query += threadID;
                 query += "','";
-                //placeholder for userID
-                query += "8X0Y5BGOFFGJALH";
+                query += GetUserID();
                 query += "','";
                 query += commentName;
                 query += "','";
