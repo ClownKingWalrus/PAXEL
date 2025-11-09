@@ -2,6 +2,7 @@
 #include "threadmenuwindow.h"
 #include "discussionboard.h"
 #include "replieswindow.h"
+#include "interestselect.h"
 #include "windowsettings.h"
 #include <QApplication>
 #include <QFontDatabase>
@@ -21,7 +22,10 @@ int main(int argc, char *argv[])
     //RepliesWindow test(nullptr, "2T2EF1CIGLX7H2D");
     //test.show();
 
+    interestselect i;
     MainWindow w;
+    //i.show();
+    //centerOnScreen(&i);
     w.show();
     centerOnScreen(&w);
     return a.exec();

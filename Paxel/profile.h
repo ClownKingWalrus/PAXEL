@@ -21,6 +21,8 @@ public slots:
 private slots:
     void on_Home_clicked();
 
+    void on_AddInterestsProfile_clicked();
+
 public:
     Ui::Profile *ui;
 };

@@ -20,6 +20,8 @@ public:
 public:
     Ui::MainWindow *ui;
     void showEvent(QShowEvent *event);
+private slots:
+
 };
 
 #endif // MAINWINDOW_H

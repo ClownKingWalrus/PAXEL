@@ -3,6 +3,8 @@
 #include "mainwindow.h"
 #include <QMessageBox>
 #include "homescreen.h"
+#include "interestselect.h"
+#include "createboardorthread.h"
 Profile::Profile(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::Profile)
@@ -34,5 +36,12 @@ void Profile::on_Home_clicked()
     HomeScreen* HomescreenHomescreen = new HomeScreen;
     hide();
     HomescreenHomescreen->show();
+}
+
+
+void Profile::on_AddInterestsProfile_clicked()
+{
+    interestselect* InterestScreen = new interestselect;
+    InterestScreen->show();
 }
 

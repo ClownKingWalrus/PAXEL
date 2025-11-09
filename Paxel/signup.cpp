@@ -4,6 +4,7 @@
 #include "../hdr/proc.h"
 #include <QRegularExpression>
 #include <QMessageBox>
+#include "interestselect.h"
 
 SignUp::SignUp(QWidget *parent)
     : QMainWindow(parent)
@@ -98,6 +99,10 @@ void SignUp::on_SignUp2_clicked()
         QMessageBox* box = new QMessageBox();
         box->setText("Account Created");
         box->show();
+        interestselect* InterestScreen = new interestselect(this);
+        InterestScreen->userName = ui->lineEditUserName->text().toStdString();
+        InterestScreen->show();
+
         //at this point account created so we can take the user to the interest selector
     } else {
         QMessageBox* box = new QMessageBox();
