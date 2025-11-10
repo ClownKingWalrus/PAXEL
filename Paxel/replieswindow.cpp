@@ -15,7 +15,6 @@ RepliesWindow::RepliesWindow(QWidget *parent, std::string threadID)
     , ui(new Ui::RepliesWindow)
 {
     ui->setupUi(this);
-
     QScrollArea* scrollBoxMain = new QScrollArea();
     QVBoxLayout* vertLayout = new QVBoxLayout();
 
@@ -75,8 +74,8 @@ QHBoxLayout* RepliesWindow::CreateBanner(std::string userName, std::string threa
     pbCommentReply->setFixedWidth(125);
 
     pbReply->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    pbReply->setFixedWidth(20);
-    pbReply->setFixedHeight(20);
+    pbReply->setFixedWidth(35);
+    pbReply->setFixedHeight(35);
 
     //connect functions saving each unique arg
     QPushButton::connect(pbUserName, &QPushButton::clicked, this, [this, userName]() {
@@ -97,6 +96,34 @@ QHBoxLayout* RepliesWindow::CreateBanner(std::string userName, std::string threa
     bannerBox->addWidget(pbThreadCommentID);
     bannerBox->addWidget(pbCommentReply);
     bannerBox->addWidget(pbReply);
+    pbReply->setStyleSheet("background-color: rgb(35, 193, 24);");
+
+    setStyleSheet(R"(
+    QWidget {
+        font: 14pt "MS Sans Serif";
+    }
+
+    QPushButton {
+        background-color: rgb(0, 170, 245);
+        color: black;
+        border: 1px solid rgb(68, 68, 68);
+        border-radius: 8px;
+        padding: 6px 10px;
+    }
+
+    QPushButton:hover {
+        background-color: rgb(10, 190, 255);
+    }
+
+  QPlainTextEdit {
+        background-color: rgb(44, 44, 44);
+        color: black;
+        border: 1px solid rgb(68, 68, 68);
+        border-radius: 6px;
+        font: 14pt "MS Sans Serif";
+    }
+
+)");
 
     return bannerBox;
 
@@ -122,6 +149,11 @@ void RepliesWindow::ClickOnReply(std::string threadCommentID)
 
 ///Will go back to threads in board user was previously in
 void RepliesWindow::on_backToThreads_clicked() {
+    QWidget* parentWin = this->parentWidget();
+    if (parentWin) {
+        parentWin->show();
+    }
+    this->close();
 
 }
 

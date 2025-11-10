@@ -265,11 +265,11 @@ color: rgb(0, 0, 0);</string>
         <property name="styleSheet">
          <string notr="true">QPushButton { color: rgb(0, 0, 0);
 font:  700 17pt &quot;MS Sans Serif&quot;;
-background-color: rgb(0, 0, 127);
+background-color: rgb(0, 170, 245);
 }
 
 QPushButton:Hover {
-background-color: rgb(10, 10, 137);
+background-color: rgb(10, 180, 255);
 }</string>
         </property>
         <property name="text">
@@ -282,11 +282,11 @@ background-color: rgb(10, 10, 137);
         <property name="styleSheet">
          <string notr="true">QPushButton { color: rgb(0, 0, 0);
 font:  700 17pt &quot;MS Sans Serif&quot;;
-background-color: rgb(0, 0, 157);
+background-color: rgb(0, 170, 245);
 }
 
 QPushButton:Hover {
-background-color: rgb(10, 10, 167);
+background-color: rgb(10, 180, 255);
 }</string>
         </property>
         <property name="text">

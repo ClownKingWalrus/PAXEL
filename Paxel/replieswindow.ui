@@ -20,6 +20,16 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="6" column="0">
      <widget class="QPushButton" name="backToThreads">
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+font: 700 15pt &quot;MS Sans Serif&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);
+}
+QPushButton:Hover {
+background-color: rgb(180, 10, 10);
+}</string>
+      </property>
       <property name="text">
        <string>Back to Threads</string>
       </property>
@@ -33,7 +43,7 @@
          <bool>true</bool>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -63,7 +73,7 @@
            <bool>true</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -76,8 +86,8 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>25</width>
+            <height>25</height>
            </size>
           </property>
           <property name="baseSize">
@@ -85,6 +95,17 @@
             <width>0</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton { font: 700 12pt  &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(35, 193, 24);
+}
+
+QPushButton:hover {
+    background-color: rgb(35, 203, 24);   
+}
+</string>
           </property>
           <property name="text">
            <string>S</string>
@@ -94,16 +115,26 @@
         <item>
          <widget class="QPushButton" name="replyCancel">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="maximumSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>25</width>
+            <height>25</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton { font: 700 12pt  &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(35, 193, 24);
+}
+
+QPushButton:hover {
+    background-color: rgb(35, 203, 24);   
+}</string>
           </property>
           <property name="text">
            <string>X</string>
@@ -124,8 +155,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>652</width>
-         <height>328</height>
+         <width>648</width>
+         <height>301</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout"/>
@@ -140,7 +171,7 @@
      <x>0</x>
      <y>0</y>
      <width>672</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

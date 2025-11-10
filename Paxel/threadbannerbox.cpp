@@ -57,16 +57,18 @@
             background-color: rgb(44, 44, 44);
             border: 1px solid rgb(68, 68, 68);
             border-radius: 8px;
+            border-bottom: 8px solid rgb(44, 44, 44);
         }
         QPushButton#threadButton {
-            background-color: rgb(58, 58, 58);
+            background-color: rgb(0, 170, 245);
             color: rgb(255, 255, 255);
             border-radius: 1px;
             text-align: left;
             padding-left: 10px;
+            font: 15pt "MS Sans Serif";
         }
         QPushButton#threadButton:hover {
-            background-color: rgb(74, 74, 74);
+            background-color: rgb(10, 190, 255);
         }
         QPushButton#likeButton {
             background-color: rgb(255, 255, 255);

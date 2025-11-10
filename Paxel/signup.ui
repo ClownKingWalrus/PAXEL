@@ -14,7 +14,7 @@
    <string>Paxel</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(11, 117, 255);</string>
+   <string notr="true">background-color: rgb(2, 125, 240);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
