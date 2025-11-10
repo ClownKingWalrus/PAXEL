@@ -9,7 +9,7 @@
 class Utils {
     public:
     static std::string GetUserID() {
-        return "0QRPRCBBBA7PSV2";
+        return "3";
     }
          /******************************************************************************************************
          * @brief validates the users login info
@@ -934,14 +934,11 @@ class Utils {
                 //create a result object
                 sql::ResultSet* res;
 
-                std::string query = "INSERT INTO Comments (CommentID, ThreadID, UserID, CommentName, CommentReply) VALUES ('";
+                std::string query = "INSERT INTO Comments (ThreadID, UserID, CommentName, CommentReply) VALUES ('";
                 //placeholder for commentID - needs to be original
-                query += "YI5JDQX64CEL35N";
-                query += "','";
                 query += threadID;
                 query += "','";
-                //placeholder for userID
-                query += "8X0Y5BGOFFGJALH";
+                query += GetUserID();
                 query += "','";
                 query += commentName;
                 query += "','";
@@ -959,4 +956,62 @@ class Utils {
             }
             return;
         }
-};
+
+        static void ThreadFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string userID) {
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT * FROM UserThreads WHERE UserID = '";
+                query += userID;
+                query += "' AND ThreadID = '";
+                query += threadID;
+                query += "'";
+
+                res = statement->executeQuery(query);
+                if (res->next())
+                {
+                    std::string query = "DELETE FROM UserThreads WHERE UserID = '";
+                    query += userID;
+                    query += "' AND ThreadID = '";
+                    query += threadID;
+                    query += "'";
+                    std::cout << "No longer following" << std::endl;
+                    statement->executeUpdate(query);
+                    connection->close();
+                }
+                else
+                {
+                    std::string query = "INSERT INTO UserThreads (UserID, ThreadID) VALUES ('";
+                    query += userID;
+                    query += "','";
+                    query += threadID;
+                    query += "')";
+                    std::cout << "Now following" << std::endl;
+                    statement->executeUpdate(query);
+                    connection->close();
+                }
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return;
+        }
+    };
