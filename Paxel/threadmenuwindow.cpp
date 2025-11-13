@@ -72,5 +72,4 @@ void ThreadMenuWindow::CreateThreadButtonClicked(std::string uuid)
     createThreadWindow->boardID = boardIDT;
     createThreadWindow->ChangeToThreadWindow();
     createThreadWindow->show();
-
 }

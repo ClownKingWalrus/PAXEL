@@ -136,4 +136,3 @@
                                  threadButton->height() - followThreadButton->height() - margin);
         followThreadButton->raise();
     }
-

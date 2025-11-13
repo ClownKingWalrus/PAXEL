@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     SignUp *SignUpSignUp = new SignUp;
     HomeScreen *HomeScreenHomeScreen = new HomeScreen;
    // DiscussionBoard *DiscussionBoardDiscussionBoard = new DiscussionBoard;
+   // DiscussionBoard *DiscussionBoardDiscussionBoard = new DiscussionBoard;
 
     connect(ui->SignUp1,SIGNAL(clicked(bool)),this,SLOT(hide()));
     connect(ui->SignUp1,SIGNAL(clicked(bool)),SignUpSignUp,SLOT(show()));
