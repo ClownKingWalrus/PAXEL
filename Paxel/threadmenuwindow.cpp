@@ -3,10 +3,7 @@
 #include "../hdr/Utils.h"
 #include "threadbannerbox.h"
 #include "../hdr/proc.h"
-<<<<<<< HEAD
 #include "createboardorthread.h"
-=======
->>>>>>> d545aad (Adding Followers)
 
 #include <QPushButton>
 #include <QSizePolicy>
@@ -14,10 +11,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QWidget>
-<<<<<<< HEAD
 #include <QMessageBox>
-=======
->>>>>>> d545aad (Adding Followers)
 
 ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     : QMainWindow(parent)
@@ -46,11 +40,7 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     threadVect = Utils::ThreadUpdate(proc::ip, proc::user, proc::password, proc::db, boardID);
 
     for (int i = 0; i < threadVect.size(); i++) {
-<<<<<<< HEAD
         ThreadBannerBox* threadBanner = CreateThreadBanner(threadVect[i][0], threadVect[i][1], threadVect[i][2]);
-=======
-        ThreadBannerBox* threadBanner = CreateThreadBanner(threadVect[i][1], threadVect[i][1], threadVect[i][2]);
->>>>>>> d545aad (Adding Followers)
         QHBoxLayout* temp = new QHBoxLayout();
         temp->addWidget(threadBanner);
         ui->verticalLayout->addLayout(temp);
@@ -66,7 +56,6 @@ ThreadBannerBox* ThreadMenuWindow::CreateThreadBanner(std::string userName, std:
         //more styling options since qwidget and not just a QHBox
     ThreadBannerBox* bannerWidget = new ThreadBannerBox(QString::fromStdString(userName), QString::fromStdString(threadName), QString::fromStdString(threadID), this);
     return bannerWidget;
-<<<<<<< HEAD
 }
 
 void ThreadMenuWindow::CreateThreadButtonClicked(std::string uuid)
@@ -83,7 +72,4 @@ void ThreadMenuWindow::CreateThreadButtonClicked(std::string uuid)
     createThreadWindow->boardID = boardIDT;
     createThreadWindow->ChangeToThreadWindow();
     createThreadWindow->show();
-
-=======
->>>>>>> d545aad (Adding Followers)
 }

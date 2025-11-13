@@ -43,11 +43,7 @@ background-color: rgb(180, 10, 10);
          <bool>true</bool>
         </property>
         <property name="sizePolicy">
-<<<<<<< HEAD
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-=======
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
->>>>>>> d545aad (Adding Followers)
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -77,11 +73,7 @@ background-color: rgb(180, 10, 10);
            <bool>true</bool>
           </property>
           <property name="sizePolicy">
-<<<<<<< HEAD
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-=======
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
->>>>>>> d545aad (Adding Followers)
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -94,13 +86,8 @@ background-color: rgb(180, 10, 10);
           </property>
           <property name="maximumSize">
            <size>
-<<<<<<< HEAD
             <width>25</width>
             <height>25</height>
-=======
-            <width>20</width>
-            <height>20</height>
->>>>>>> d545aad (Adding Followers)
            </size>
           </property>
           <property name="baseSize">
@@ -109,7 +96,6 @@ background-color: rgb(180, 10, 10);
             <height>0</height>
            </size>
           </property>
-<<<<<<< HEAD
           <property name="styleSheet">
            <string notr="true">QPushButton { font: 700 12pt  &quot;MS Sans Serif&quot;;
 color: rgb(0, 0, 0);
@@ -121,8 +107,6 @@ QPushButton:hover {
 }
 </string>
           </property>
-=======
->>>>>>> d545aad (Adding Followers)
           <property name="text">
            <string>S</string>
           </property>
@@ -131,18 +115,13 @@ QPushButton:hover {
         <item>
          <widget class="QPushButton" name="replyCancel">
           <property name="sizePolicy">
-<<<<<<< HEAD
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-=======
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
->>>>>>> d545aad (Adding Followers)
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="maximumSize">
            <size>
-<<<<<<< HEAD
             <width>25</width>
             <height>25</height>
            </size>
@@ -157,12 +136,6 @@ QPushButton:hover {
     background-color: rgb(35, 203, 24);
 }</string>
           </property>
-=======
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
->>>>>>> d545aad (Adding Followers)
           <property name="text">
            <string>X</string>
           </property>
@@ -182,13 +155,8 @@ QPushButton:hover {
         <rect>
          <x>0</x>
          <y>0</y>
-<<<<<<< HEAD
          <width>648</width>
          <height>301</height>
-=======
-         <width>652</width>
-         <height>328</height>
->>>>>>> d545aad (Adding Followers)
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout"/>

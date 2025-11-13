@@ -33,4 +33,4 @@ private:
     void endReply(void);
 };
 
-#endif // MAINWINDOW_H
+#endif // REPLIESWINDOW_H
