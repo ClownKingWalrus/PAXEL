@@ -1,7 +1,4 @@
 #include "mainwindow.h"
-#include "threadmenuwindow.h"
-#include "discussionboard.h"
-#include "replieswindow.h"
 #include "interestselect.h"
 #include "windowsettings.h"
 #include <QApplication>

@@ -45,7 +45,7 @@ class Utils {
                 sql::ResultSet* res;
 
                 //this statement should be optimized this is essentially a select * statement
-                statement = connection->prepareStatement("SELECT User.Username, User.Password FROM User WHERE User.Username = ? AND User.Password = ?");
+                statement = connection->prepareStatement("SELECT User.Username, User.Password FROM User WHERE User.Username COLLATE utf8mb4_general_ci = ? AND User.Password = ?");
                 statement->setString(1, UserName);
                 statement->setString(2, hashedPass);
                 res = statement->executeQuery();
@@ -177,6 +177,62 @@ class Utils {
 
                 for (const auto& interestID : interestList) {
                     pstmt2->setInt(1, userCred.second);
+                    pstmt2->setString(2, interestID);
+                    pstmt2->executeUpdate(); //insert alot of interest if need be
+                }
+
+                delete pstmt2;
+                delete connection;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+        }
+
+        //this function purely serves for CreateProfile as we dont generate session tokens until user logins
+        static void AddInterest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
+                                std::vector<std::string> interestList, std::string userName) {
+
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            try {
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                sql::PreparedStatement* getUUID = connection->prepareStatement(
+                    "SELECT User.UserID FROM User WHERE User.Username = ?");
+                getUUID->setString(1, userName);
+
+                //create a result object
+                sql::ResultSet* resUUID;
+
+                resUUID = getUUID->executeQuery();
+                int userID = -1;
+                if (resUUID->next()) {
+                    userID = resUUID->getInt("UserID");
+                }
+
+                delete resUUID;
+                delete getUUID;
+
+                if (userID == -1) {
+                    return;
+                }
+
+                sql::PreparedStatement* pstmt2 = connection->prepareStatement(
+                    "INSERT INTO UserInterests (UserID, InterestID) VALUES (?, ?)"
+                    );
+
+                for (const auto& interestID : interestList) {
+                    pstmt2->setInt(1, userID);
                     pstmt2->setString(2, interestID);
                     pstmt2->executeUpdate(); //insert alot of interest if need be
                 }
@@ -416,15 +472,16 @@ class Utils {
                 connection->setSchema(sqlDatabase);
 
                 //create statement
-                sql::Statement* statement;
-                statement = connection->createStatement();
+                sql::PreparedStatement* statement;
                 //create a result object
                 sql::ResultSet* res;
 
-                std::string arg = "SELECT Username FROM User WHERE Username = '" + UserName + "'";
+                //this statement should be optimized this is essentially a select * statement
+                statement = connection->prepareStatement("SELECT User.Username FROM User WHERE User.Username COLLATE utf8mb4_general_ci = ?");
+                statement->setString(1, UserName);
 
                 //this statement should be optimized this is essentially a select * statement
-                res = statement->executeQuery(arg);
+                res = statement->executeQuery();
                 if (res->next()) { //implies its true as if there is one that means we have a match
                     delete res;
                     delete statement;
@@ -493,38 +550,6 @@ class Utils {
             return false; //assuming somthing failed we will return false
         }
 
-         /******************************************************************************************************
-         * @brief Returns a set of strings coorelating with intrest on SQL witha  max of five intrest
-         * @details once called from qt this sets the persons class interest
-         * @return returns a vector of strings which are their interest
-         ******************************************************************************************************/
-        static std::vector<std::string> GatherIntrest() {
-            //this can be two ways for now we will pretend there is a call made to QT
-            std::vector<std::string> intrestVect;
-            //some call to qt
-            //QtFunctionToGiveUserOptions();
-
-            while (intrestVect.size() > 5) {
-                intrestVect.pop_back();
-            }
-
-            ////////////////////////////TEMPORARY//////////////////////////////////
-            intrestVect.push_back("Music");
-            intrestVect.push_back("Food");
-            intrestVect.push_back("Link");
-            intrestVect.push_back("fitness");
-
-            //sets all chars to lower to make sql easier and more consistent
-            for (int i = 0; i < intrestVect.size(); i++) {
-                for (int j = 0; j < intrestVect[i].size(); j++) {
-                    intrestVect[i][j] = std::tolower(intrestVect[i][j]);
-                }
-            }
-            ////////////////////////////TEMPORARY//////////////////////////////////
-
-            //Class person can now have a std::vector of strings to reference this
-            return  intrestVect;
-        }
 
         static void ThreadLike(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
 
@@ -654,6 +679,7 @@ class Utils {
     }
 
         static std::vector<std::pair<std::string, std::string>> BoardUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             std::vector<std::pair<std::string, std::string>> boardVect;
             try {
                 sql::mysql::MySQL_Driver* driver;
@@ -667,14 +693,16 @@ class Utils {
                 std::cout << "Connected to sql\n";
 
                 //create statement
-                sql::Statement* statement;
-                statement = connection->createStatement();
+                sql::PreparedStatement* statement = connection->prepareStatement(
+                    "SELECT DISTINCT Board.BoardID, Board.BoardName FROM Board "
+                    "JOIN BoardInterests ON Board.BoardID = BoardInterests.BoardID "
+                    "JOIN UserInterests ON UserInterests.InterestID = BoardInterests.InterestID "
+                    "WHERE UserInterests.UserID = ?"); // very long easier to read like so
+                statement->setInt(1, userCred.second);
                 //create a result object
                 sql::ResultSet* res;
 
-                // Adjust this query to match your actual table/column names
-                std::string query = "SELECT BoardID, BoardName FROM Board";
-                res = statement->executeQuery(query);
+                res = statement->executeQuery();
 
                 // statement gets all the boards and loads them onto the window
                 while (res->next()) {
@@ -910,6 +938,74 @@ class Utils {
 
 
                     std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(userCred.second) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
+
+                    //this statement should be optimized this is essentially a select * statement
+                    res = statement->executeQuery(arg);
+                    if (!res->next()) { //implies its true as if there is one that means we have a match
+                        delete res;
+                        delete statement;
+                        delete connection;
+                        return true;
+                    }
+                    delete res;
+                    delete statement;
+                    delete connection;
+                }
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+
+            }
+            return false;
+        }
+
+        //this function purely serves for CreateProfile as we dont generate session tokens until user logins
+        static bool UserInterestCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::vector<std::string> interestList, std::string userName) {
+
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+            //std::string BN = test;
+            try {
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                sql::PreparedStatement* getUUID = connection->prepareStatement(
+                    "SELECT User.UserID FROM User WHERE User.Username = ?");
+                getUUID->setString(1, userName);
+
+                //create a result object
+                sql::ResultSet* resUUID;
+
+                resUUID = getUUID->executeQuery();
+                std::string userID = "";
+                if (resUUID->next()) {
+                    userID = resUUID->getString("UserID");
+                }
+
+                delete resUUID;
+                delete getUUID;
+
+                if (userID == "") {
+                    return false;
+                }
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                int size = interestList.size();
+                for(int i = 0; i < size; i++) {
+
+
+
+                std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + userID + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
 
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(arg);

@@ -19,9 +19,6 @@ public:
     std::string userName;
 
 private slots:
-    //void On_Interests_Clicked();
-    //void on_pushButton_2_clicked();
-
     void on_pushButton_clicked();
 
 private:
