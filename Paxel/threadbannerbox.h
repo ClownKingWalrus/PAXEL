@@ -13,8 +13,8 @@ public:
 
     void OnClickProfile(const QString& userName);
     void OnClickBanner(const QString& threadName);
-    void OnClickLike(const QString& threadID, const std::string& userID);
-    void OnClickFollowThread(const QString& threadID, const std::string& userID);
+    void OnClickLike(const QString& threadID);
+    void OnClickFollowThread(const QString& threadID);
 signals:
 
 protected:

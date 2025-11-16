@@ -12,11 +12,11 @@ interestselect::interestselect(QWidget *parent)
     ui->setupUi(this);
     bannerLayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(bannerLayout);
-    LoadInterest(proc::ip, proc::user, proc::password, proc::db, proc::userID);
+    LoadInterest(proc::ip, proc::user, proc::password, proc::db);
 
 }
 
-void interestselect::LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID) {
+void interestselect::LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName) {
 
     std::vector<std::pair<std::string, std::string>> boardVect;
     boardVect = Utils::GetInterestButtons(host, user, password, dbName);
@@ -120,16 +120,16 @@ void interestselect::on_pushButton_clicked()
 
 
 
-    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, proc::userID, IntrestList)) {
+    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests not set");
         box->show();
         return;
     }
 
-    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList, this->userName);
+    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList);
     std::cout << "passed 1\n";
-    if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, proc::userID, IntrestList)) {
+    if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests set");
         box->show();

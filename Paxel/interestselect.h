@@ -27,7 +27,7 @@ private slots:
 private:
 
     Ui::interestselect *ui;
-    void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID);
+    void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName);
     QVBoxLayout* bannerLayout;
     void onInterestButtonClick(std::string InterestID);
     std::map<std::string, bool> interestButtonMap;

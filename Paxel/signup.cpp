@@ -76,7 +76,7 @@ void SignUp::on_SignUp2_clicked()
 
     //should be the last check as it's the most taxing
     //if UsernameChecker returns true that means there is no username in the database implying its free to use
-    if (!Utils::UsernameChecker(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString())) {
+    if (Utils::UsernameChecker(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
         box->setText("Username already taken");
         box->show();
@@ -95,6 +95,7 @@ void SignUp::on_SignUp2_clicked()
     box->show();
 
     Utils::CreateProfile(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString(), ui->lineEditPassword->text().toStdString(), ui->lineEditEmail->text().toStdString());
+
     if (Utils::UsernameChecker(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
         box->setText("Account Created");

@@ -4,6 +4,7 @@
 #include "../hdr/Utils.h"
 #include "threadmenuwindow.h"
 #include "createboardorthread.h"
+#include "../hdr/proc.h"
 
 #include <QMessageBox>
 #include <QPainter>
@@ -17,7 +18,7 @@ CreateBoardWindow::CreateBoardWindow(QWidget *parent)
     bannerLayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(bannerLayout);
 
-    loadOwnBoards(proc::ip, proc::user, proc::password, proc::db, proc::userID);
+    loadOwnBoards(proc::ip, proc::user, proc::password, proc::db);
 
     QPixmap pixmapHS4(":/images/Images/Paxel banner.png");
     QPixmap scaledPixmapHS4 = pixmapHS4.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -30,10 +31,10 @@ CreateBoardWindow::CreateBoardWindow(QWidget *parent)
 
 }
 
-void CreateBoardWindow::loadOwnBoards(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID) {
+void CreateBoardWindow::loadOwnBoards(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName) {
 
     std::vector<std::pair<std::string, std::string>> boardVect;
-    boardVect = Utils::GetOwnBoards(host, user, password, dbName, UserID);
+    boardVect = Utils::GetOwnBoards(host, user, password, dbName);
     HomeScreen temp;
 
     for (const auto& board : boardVect ) {
@@ -94,13 +95,6 @@ void CreateBoardWindow::ClickOnBoardName (string boardID) {
 
 void CreateBoardWindow::on_pushButton_clicked()
 {
-    // if (boardCount > 300) {
-    //     QMessageBox* box = new QMessageBox();
-    //     box->setText("You own too many boards to create any more");
-    //     box->show();
-    //     return;
-    // }
-    //assuming not too many boards
     CreateBoardOrThread* createBoardWindow = new CreateBoardOrThread(this);
     createBoardWindow->show();
 }

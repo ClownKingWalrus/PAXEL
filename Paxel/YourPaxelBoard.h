@@ -24,7 +24,7 @@ private slots:
 private:
     int boardCount;
     Ui::CreateBoardWindow *ui;
-    void loadOwnBoards(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID); //loads the boards from the SQL
+    void loadOwnBoards(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName); //loads the boards from the SQL
     class QHBoxLayout* CreateBoardBanner(const std::string& boardID, const std::string& boardName); //Creates the boards variables for the ui
     QVBoxLayout* bannerLayout; //The banner layout pointer
     void ClickOnBoardName(std::string boardThreads); //Clicking on a board will send you to threads

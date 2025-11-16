@@ -81,7 +81,7 @@ HomeScreen::~HomeScreen()
 
 void HomeScreen::on_Profile_clicked()
 {
-    Profile* ProfileProfile = new Profile;
+    Profile* ProfileProfile = new Profile();
     hide();
     ProfileProfile->show();
 }

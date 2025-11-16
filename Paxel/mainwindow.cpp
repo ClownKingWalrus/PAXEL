@@ -4,7 +4,8 @@
 #include "ui_signup.h"
 #include "homescreen.h"
 #include "windowsettings.h"
-#include "interestselect.h"
+#include "../hdr/Utils.h"
+#include "../hdr/proc.h"
 #include <QPixmap>
 #include <QScreen>
 
@@ -31,9 +32,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Pool->setPixmap(scaledPixmap4);
 
     SignUp *SignUpSignUp = new SignUp;
-    HomeScreen *HomeScreenHomeScreen = new HomeScreen;
-   // DiscussionBoard *DiscussionBoardDiscussionBoard = new DiscussionBoard;
-   // DiscussionBoard *DiscussionBoardDiscussionBoard = new DiscussionBoard;
 
     connect(ui->SignUp1,SIGNAL(clicked(bool)),this,SLOT(hide()));
     connect(ui->SignUp1,SIGNAL(clicked(bool)),SignUpSignUp,SLOT(show()));
@@ -41,14 +39,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(SignUpSignUp->ui->Login2,SIGNAL(clicked(bool)),SignUpSignUp,SLOT(hide()));
     connect(SignUpSignUp->ui->Login2,SIGNAL(clicked(bool)),this,SLOT(show()));
 
-    connect(ui->Login1,SIGNAL(clicked(bool)),this,SLOT(hide()));
-    connect(ui->Login1,SIGNAL(clicked(bool)),HomeScreenHomeScreen,SLOT(show()));
-
-    // connect(HomeScreenHomeScreen->ui->LogOut,SIGNAL(clicked(bool)),HomeScreenHomeScreen,SLOT(hide()));
-    // connect(HomeScreenHomeScreen->ui->LogOut,SIGNAL(clicked(bool)),this,SLOT(show()));
-
-   // connect(HomeScreenHomeScreen->ui->pushButton_2,SIGNAL(clicked(bool)),this,SLOT(hide()));
-   // connect(HomeScreenHomeScreen->ui->pushButton_2,SIGNAL(clicked(bool)),DiscussionBoardDiscussionBoard,SLOT(show()));
+    QPushButton::connect(ui->Login1, &QPushButton::clicked, this, [this]() {
+        LoginButton();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -61,11 +54,15 @@ void MainWindow::showEvent(QShowEvent *event)
     QMainWindow::showEvent(event);
     centerOnScreen(this);
 }
-/*
-void MainWindow::on_interestPushButton_clicked()
-{
-    interestselect* InterestScreen = new interestselect;
-    //hide();
-    InterestScreen->show();
-}*/
+
+void MainWindow::LoginButton() {
+    if (Utils::Login(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), ui->lineEdit_2->text().toStdString())) {
+        std::cout << "+++Login Succeded+++\n";
+        HomeScreen* Homescreen = new HomeScreen();
+        Homescreen->show();
+        this->close();
+    } else {
+        return;
+    }
+}
 

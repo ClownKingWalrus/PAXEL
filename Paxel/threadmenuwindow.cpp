@@ -23,10 +23,9 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     createThread->setFont(QFont("MS Sans Serif", 32, QFont::Bold));
     createThread->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     createThread->setMinimumSize(QSize(20, 100));
-    std::string temp = std::to_string(proc::userID);
     //connect button with lambda
-    QPushButton::connect(createThread, &QPushButton::clicked, this, [this, temp]() {
-        CreateThreadButtonClicked(temp);
+    QPushButton::connect(createThread, &QPushButton::clicked, this, [this]() {
+        CreateThreadButtonClicked();
     });
 
     QScrollArea* scrollBoxMain = new QScrollArea();
@@ -58,7 +57,7 @@ ThreadBannerBox* ThreadMenuWindow::CreateThreadBanner(std::string userName, std:
     return bannerWidget;
 }
 
-void ThreadMenuWindow::CreateThreadButtonClicked(std::string uuid)
+void ThreadMenuWindow::CreateThreadButtonClicked()
 {
     if (boardIDT == "") {
         QMessageBox* box = new QMessageBox();
