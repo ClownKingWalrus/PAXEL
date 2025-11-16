@@ -32,6 +32,7 @@ Follow::Follow(QWidget *parent, string userID)
     vector<pair<string, string>> FolloweeList;
     vector<pair<string, string>> FollowingList;
 
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
 
     for (const auto& p : followerVect) {
         if (p.second == userID) {
@@ -44,7 +45,7 @@ Follow::Follow(QWidget *parent, string userID)
         }
     }
     for (const auto& f : FolloweeList) {
-        if (f.second != Utils::GetUserID()) {
+        if (f.second != std::to_string(userCred.second)) {
             ui->FollowButton->setText("- Unfollow");
         }
         else {
@@ -66,8 +67,8 @@ Follow::Follow(QWidget *parent, string userID)
     connect(ui->Followers, &QPushButton::clicked, this, [this, userID]() {
         Followers_clicked(userID);
     });
-    connect(ui->FollowButton, &QPushButton::clicked, this, [this, userID]() {
-        FollowButton_clicked(userID, Utils::GetUserID());
+    connect(ui->FollowButton, &QPushButton::clicked, this, [this, userID, userCred]() {
+        FollowButton_clicked(userID, std::to_string(userCred.second));
     });
 
 }

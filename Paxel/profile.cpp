@@ -3,7 +3,6 @@
 #include "mainwindow.h"
 #include "homescreen.h"
 #include "interestselect.h"
-#include "createboardorthread.h"
 #include "followers.h"
 #include "following.h"
 #include "../hdr/proc.h"
@@ -19,10 +18,13 @@ Profile::Profile(QWidget *parent, string userID)
 {
     ui->setupUi(this);
 
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip, proc::user, proc::password, proc::db, Utils::sessionID);
+    userID = std::to_string(userCred.second);
+
     vector<pair<string, string>> userVect;
     userVect = Utils::UserID(proc::ip, proc::user, proc::password, proc::db);
     for (const auto& u : userVect) {
-        if (u.second == Utils::GetUserID()) {
+        if (u.second == std::to_string(userCred.second)) {
             ui->UserName->setText(QString::fromStdString(u.first));
         }
     }
@@ -36,12 +38,12 @@ Profile::Profile(QWidget *parent, string userID)
     vector<pair<string, string>> FollowingList;
 
     for (const auto& p : followerVect) {
-        if (p.second == Utils::GetUserID()) {
+        if (p.second == std::to_string(userCred.second)) {
             FollowingList.push_back(p);
         }
     }
     for (const auto& p : followeeVect) {
-        if (p.second == Utils::GetUserID()) {
+        if (p.second == std::to_string(userCred.second)) {
             FolloweeList.push_back(p);
         }
     }
@@ -54,11 +56,11 @@ Profile::Profile(QWidget *parent, string userID)
         ui->Followers->setText(QString::number(FolloweeList.size()) + " Follower");
     }
 
-    connect(ui->Following, &QPushButton::clicked, this, [this, userID]() {
-        Following_clicked(Utils::GetUserID());
+    connect(ui->Following, &QPushButton::clicked, this, [this, userID, userCred]() {
+        Following_clicked(std::to_string(userCred.second));
     });
-    connect(ui->Followers, &QPushButton::clicked, this, [this, userID]() {
-        Followers_clicked(Utils::GetUserID());
+    connect(ui->Followers, &QPushButton::clicked, this, [this, userID, userCred]() {
+        Followers_clicked(std::to_string(userCred.second));
     });
 }
 

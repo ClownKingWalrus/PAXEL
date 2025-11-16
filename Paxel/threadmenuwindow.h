@@ -20,7 +20,7 @@ private:
     class QPushButton* createThread;
     Ui::ThreadMenuWindow *ui;
     class ThreadBannerBox* CreateThreadBanner(std::string userName, std::string threadName, std::string threadID);
-    void CreateThreadButtonClicked(std::string uuid);
+    void CreateThreadButtonClicked();
     std::string boardIDT;
 };
 

@@ -21,7 +21,7 @@ public:
     Ui::MainWindow *ui;
     void showEvent(QShowEvent *event);
 private slots:
-
+    void LoginButton();
 };
 
 #endif // MAINWINDOW_H

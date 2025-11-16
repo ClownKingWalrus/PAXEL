@@ -44,11 +44,11 @@
         });
 
         QPushButton::connect(likeButton, &QPushButton::clicked, this, [this, threadID]() {
-            OnClickLike(threadID, Utils::GetUserID());
+            OnClickLike(threadID);
         });
 
         QPushButton::connect(followThreadButton, &QPushButton::clicked, this, [this, threadID]() {
-            OnClickFollowThread(threadID, Utils::GetUserID());
+            OnClickFollowThread(threadID);
         });
 
         QHBoxLayout* bannerBox = new QHBoxLayout(this);
@@ -108,14 +108,14 @@
         replyThread->show();
     }
 
-    void ThreadBannerBox::OnClickLike(const QString& threadID, const std::string& userID) {
+    void ThreadBannerBox::OnClickLike(const QString& threadID) {
         //change button color call sql update
         std::cout << "Clicked++ \n";
-        Utils::ThreadLike(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString(), userID);
+        Utils::ThreadLike(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString());
     }
 
-    void ThreadBannerBox::OnClickFollowThread(const QString& threadID, const std::string& userID) {
-        Utils::ThreadFollow(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString(), userID);
+    void ThreadBannerBox::OnClickFollowThread(const QString& threadID) {
+        Utils::ThreadFollow(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString());
     }
 
     ///Place holder function, implement the profile opening method

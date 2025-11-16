@@ -2,64 +2,96 @@
 #include <vector>
 #include <utility>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
-#include "../hdr/proc.h"
 
 class Utils {
     public:
-    static std::string GetUserID() {
-        return "3";
-    }
+    static inline std::string sessionID = "";
          /******************************************************************************************************
          * @brief validates the users login info
-         * @details Once called this function takes the user and pass and checks to see if it's
-         *          a valid user it logs them in
-         * @return returns a vector of strings which are their interest
+         * @details once called a sql check is peformed user and pass, then it sets sessionID for session
+         * @return void
          ******************************************************************************************************/
-        static void Login(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UserName, std::string UserPassword) {
+        static bool Login(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UserName, std::string UserPassword) {
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
 
-            std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
-            UserPassword.clear(); //no except this cannot fail
-
             try {
-                
                 driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
                 connection = driver->connect(sqlIp, sqlUser, sqlPassword);
                 connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
-                
+
+                sql::PreparedStatement* pstmtgetSalt;
+                pstmtgetSalt = connection->prepareStatement("SELECT User.Salt FROM User WHERE Username = ?");
+                pstmtgetSalt->setString(1, UserName);
+                std::string salt;
+                sql::ResultSet* res1 = pstmtgetSalt->executeQuery();
+                if (res1->next()) {
+                    std::cout << "\ngot salt\n";
+                    salt = res1->getString("Salt");
+                } else {
+                    return false;
+                }
+
+
+                std::string hashedPass = picosha2::hash256_hex_string((UserPassword+salt));
+                std::cout << "\nhashed pass: " << hashedPass << "\n";
                 //create statement
-                sql::Statement* statement;
-                statement = connection->createStatement();
+                sql::PreparedStatement* statement;
                 //create a result object
                 sql::ResultSet* res;
 
                 //this statement should be optimized this is essentially a select * statement
-                res = statement->executeQuery("SELECT UserName, Salt FROM User");
-                int i = 0;
+                statement = connection->prepareStatement("SELECT User.Username, User.Password FROM User WHERE User.Username = ? AND User.Password = ?");
+                statement->setString(1, UserName);
+                statement->setString(2, hashedPass);
+                res = statement->executeQuery();
+                std::cout << "\nTEST1\n";
                 bool foundMatch = false;
-                while (res->next()) {
+                if (res->next()) {
                     std::string name = res->getString("Username");
-                    std::string pass = res->getString("Salt");
-                    if (name == UserName && pass == hashedPass) {
-                        //at this point we should call a function or implement some sort of functionailty here that actually logs the user in
-                        foundMatch = true;
-                        std::cout << "Login found matching user and pass\n";
-                    }
-                    i++;
-                }
-
-                if (foundMatch) {
-
+                    std::string pass = res->getString("Password");
+                    foundMatch = true;
+                    std::cout << "Login found matching user and pass\n";
                 } else {
-                    std::cout << "No Login found\n";
+                    std::cout << "no login found\n";
                 }
-                delete res;
+                std::cout << "\nTEST1\n";
+
+                UserPassword.clear(); //no except this cannot fail
+                sql::PreparedStatement* pstmt;
+
+                if (foundMatch) { //create a session token
+                    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+                    int min = 1000;
+                    int max = 999999999;
+                    int randomNumber = min + (std::rand() % (max - min + 1));
+                    std::string token = std::to_string(randomNumber);
+                    token += UserName;
+                    token = picosha2::hash256_hex_string(token);
+
+                    pstmt = connection->prepareStatement(
+                        "UPDATE User SET User.SessionID = ? WHERE User.Username = ?"
+                        );
+                    pstmt->setString(1, token);
+                    pstmt->setString(2, UserName);
+                    pstmt->execute();
+                    sessionID = token;
+                    delete res1;
+                    delete pstmtgetSalt;
+                    delete pstmt;
+                    delete res;
+                    delete statement;
+                    delete connection;
+                    return true;
+
+
+                }
+                delete res1;
+                delete pstmtgetSalt;
                 delete statement;
                 delete connection;
 
@@ -69,10 +101,15 @@ class Utils {
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
+            return false;
         }
 
-        static void AddInterest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
-                                std::vector<std::string> interestList, std::string userName) {
+        /******************************************************************************************************
+         * @brief validates if user is ALREADY logged in
+         * @details Once called a sql check for the session token is peformed
+         * @return returns the userName and UUID
+         ******************************************************************************************************/
+        static std::pair<std::string, int> SessionTokenCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string sessionToken) {
 
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
@@ -86,32 +123,65 @@ class Utils {
                 connection->setSchema(sqlDatabase);
 
                 sql::PreparedStatement* pstmtbdID = connection->prepareStatement(
-                    "SELECT UserID FROM User WHERE UserName = ?"
+                    "SELECT User.UserName, User.UserID FROM User WHERE SessionID = ?"
                     );
 
-                pstmtbdID->setString(1, userName);
+                pstmtbdID->setString(1, sessionToken);
                 sql::ResultSet* res1 = pstmtbdID->executeQuery();
-                int sqlUserID = 0;
+                std::string sqlUserName = "";
+                int sqlUUID = -1;
 
                 if (res1->next()) {
-                    sqlUserID = res1->getInt("UserID");
-                } else {
-                    return; //bad means no thread was created
+                    sqlUserName = res1->getString("UserName");
+                    sqlUUID = res1->getInt("UserID");
                 }
+
+                delete res1;
+                delete pstmtbdID;
+                delete connection;
+                std::pair<std::string, int> credentials;
+                credentials.first = sqlUserName;
+                credentials.second = sqlUUID;
+                return credentials;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            std::cerr << "\n\nFAILED TO GET USER CREDENTIALS\n\n";
+            return {"", -1};
+
+        }
+
+        static void AddInterest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
+                                std::vector<std::string> interestList) {
+
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try {
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                if (userCred.second == -1) {return;}
 
                 sql::PreparedStatement* pstmt2 = connection->prepareStatement(
                     "INSERT INTO UserInterests (UserID, InterestID) VALUES (?, ?)"
                     );
 
                 for (const auto& interestID : interestList) {
-                    pstmt2->setInt(1, sqlUserID);
+                    pstmt2->setInt(1, userCred.second);
                     pstmt2->setString(2, interestID);
                     pstmt2->executeUpdate(); //insert alot of interest if need be
                 }
 
-                delete res1;
                 delete pstmt2;
-                delete pstmtbdID;
                 delete connection;
             }
 
@@ -130,9 +200,6 @@ class Utils {
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
 
-            std::string hashedPass = picosha2::hash256_hex_string(UserPassword);
-            UserPassword.clear(); //no except this cannot fail
-
             try {
 
                 driver = sql::mysql::get_mysql_driver_instance();
@@ -145,8 +212,21 @@ class Utils {
                 sql::Statement* statement;
                 statement = connection->createStatement();
 
+                std::srand(static_cast<unsigned int>(std::time(nullptr)));
+                int min = 1000;
+                int max = 999999999;
+                int randomNumber = min + (std::rand() % (max - min + 1));
+
+                std::string salt = UserName;
+                salt += std::to_string(randomNumber);
+                salt += UserPassword;
+                salt = picosha2::hash256_hex_string(salt);
+
+                std::string hashedPass = picosha2::hash256_hex_string((UserPassword+salt));
+                UserPassword.clear(); //no except this cannot fail
+
                 sql::PreparedStatement* pstmt = connection->prepareStatement(
-                    "INSERT INTO User (Username, Salt, Email, Age, DayCreated) VALUES (?, ?, ?, ?, ?)" //use nullable values for ease of use
+                    "INSERT INTO User (Username, Password, Email, Age, DayCreated, Salt) VALUES (?, ?, ?, ?, ?, ?)" //use nullable values for ease of use
                     );
 
                 pstmt->setString(1, UserName);
@@ -154,7 +234,11 @@ class Utils {
                 pstmt->setString(3, Email);
                 pstmt->setInt(4, 1);
                 pstmt->setString(5, "2025-10-10");
+                pstmt->setString(6, salt);
                 pstmt->executeUpdate();
+                pstmt->clearParameters();
+                pstmt->clearAttributes();
+                hashedPass.clear();
 
                 delete pstmt;
                 delete statement;
@@ -168,11 +252,10 @@ class Utils {
             }
         }
 
-        //salt needs to be added but thats not a rn problem
-        static void CreateBoard(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string BoardName, std::vector<std::string> interestList, int UUID) {
+        static void CreateBoard(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string BoardName, std::vector<std::string> interestList) {
 
-            //set user ud
-            UUID = proc::userID;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
             try {
@@ -223,7 +306,7 @@ class Utils {
                 sql::PreparedStatement* pstmtO = connection->prepareStatement(
                     "INSERT INTO UserBoards (UserID, BoardID) VALUES (?, ?)" //use nullable values for ease of use
                     );
-                pstmtO->setInt(1, UUID);
+                pstmtO->setInt(1, userCred.second);
                 pstmtO->setInt(2, boardID);
                 pstmtO->executeUpdate();
 
@@ -244,8 +327,10 @@ class Utils {
 
         }
 
-        static void CreateThread(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string ThreadName, std::string BoardID, std::string UUID) {
-            std::cout << "Creating Thread\n\n";
+        static void CreateThread(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string ThreadName, std::string BoardID) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
             try {
@@ -267,7 +352,7 @@ class Utils {
                 pstmt->setString(1, ThreadName);
                 pstmt->setString(2, "2025-10-10");
                 pstmt->setString(3, BoardID);
-                pstmt->setString(4, UUID);
+                pstmt->setInt(4, userCred.second);
                 pstmt->executeUpdate();
                 std::cout << "1\n\n";
 
@@ -290,7 +375,7 @@ class Utils {
                     "INSERT INTO UserThreads (UserID, ThreadID) VALUES (?, ?)"
                     );
 
-                pstmt3->setString(1, UUID);
+                pstmt3->setInt(1, userCred.second);
                 pstmt3->setInt(2, threadID);
                 pstmt3->executeUpdate();
 
@@ -310,9 +395,6 @@ class Utils {
             }
 
         }
-
-
-
 
         static bool UsernameChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UN) {
             sql::mysql::MySQL_Driver* driver;
@@ -343,7 +425,7 @@ class Utils {
 
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(arg);
-                if (!res->next()) { //implies its true as if there is one that means we have a match
+                if (res->next()) { //implies its true as if there is one that means we have a match
                     delete res;
                     delete statement;
                     delete connection;
@@ -354,13 +436,11 @@ class Utils {
                 delete connection;
             }
             catch(sql::SQLException& e) {
-                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
-                std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
             }
-            return true; //assuming somthing failed we will return false
+            return false; //assuming somthing failed we will return false
         }
 
         static bool EmailChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string EM) {
@@ -446,7 +526,10 @@ class Utils {
             return  intrestVect;
         }
 
-        static void ThreadLike(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string userID) {
+        static void ThreadLike(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             try {
                 sql::mysql::MySQL_Driver* driver;
                 sql::Connection* connection;
@@ -474,7 +557,7 @@ class Utils {
                 query += " AND UserID = ";
 
                 std::string user = "'";
-                user += userID;
+                user += std::to_string(userCred.second);
                 user += "'";
 
                 query += user;
@@ -488,7 +571,7 @@ class Utils {
                     connection->close();
                 } else {
                     std::string query = "INSERT INTO LikeThreads (UserID, ThreadID) VALUES ('";
-                    query += userID;
+                    query += std::to_string(userCred.second);
                     query += "','";
                     query += threadID;
                     query += "')";
@@ -754,7 +837,10 @@ class Utils {
             return boardVect;
         }
 
-        static std::vector<std::pair<std::string, std::string>> GetOwnBoards(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int userID) {
+        static std::vector<std::pair<std::string, std::string>> GetOwnBoards(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             std::vector<std::pair<std::string, std::string>> boardVect;
             try {
                 sql::mysql::MySQL_Driver* driver;
@@ -774,7 +860,7 @@ class Utils {
                 sql::ResultSet* res;
 
                 // Adjust this query to match your actual table/column names
-                std::string query = "SELECT Board.BoardID, Board.BoardName FROM Board JOIN UserBoards ON Board.BoardID = UserBoards.BoardID Where UserBoards.UserID = '" + std::to_string(userID) + "'";
+                std::string query = "SELECT Board.BoardID, Board.BoardName FROM Board JOIN UserBoards ON Board.BoardID = UserBoards.BoardID Where UserBoards.UserID = '" + std::to_string(userCred.second) + "'";
                 res = statement->executeQuery(query);
 
                 // statement gets all the boards and loads them onto the window
@@ -797,7 +883,10 @@ class Utils {
             return boardVect;
         }
 
-        static bool UserInterestCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int sqlUserID, std::vector<std::string> interestList) {
+        static bool UserInterestCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::vector<std::string> interestList) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             sql::mysql::MySQL_Driver* driver;
             sql::Connection* connection;
             //std::string BN = test;
@@ -820,7 +909,7 @@ class Utils {
 
 
 
-                    std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(sqlUserID) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
+                    std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(userCred.second) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
 
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(arg);
@@ -916,6 +1005,8 @@ class Utils {
         ///gets comment information and sends it to sql
         static void CreateReply(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string commentName, std::string commentReply)
         {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             try
             {
                 sql::mysql::MySQL_Driver* driver;
@@ -938,7 +1029,7 @@ class Utils {
                 //placeholder for commentID - needs to be original
                 query += threadID;
                 query += "','";
-                query += GetUserID();
+                query += std::to_string(userCred.second);
                 query += "','";
                 query += commentName;
                 query += "','";
@@ -957,7 +1048,10 @@ class Utils {
             return;
         }
 
-        static void ThreadFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string userID) {
+        static void ThreadFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             try
             {
                 sql::mysql::MySQL_Driver* driver;
@@ -977,16 +1071,17 @@ class Utils {
                 sql::ResultSet* res;
 
                 std::string query = "SELECT * FROM UserThreads WHERE UserID = '";
-                query += userID;
+                query += std::to_string(userCred.second);
                 query += "' AND ThreadID = '";
                 query += threadID;
                 query += "'";
+                std::cout << "\nTest: " << query << "\n";
 
                 res = statement->executeQuery(query);
                 if (res->next())
                 {
                     std::string query = "DELETE FROM UserThreads WHERE UserID = '";
-                    query += userID;
+                    query += std::to_string(userCred.second);
                     query += "' AND ThreadID = '";
                     query += threadID;
                     query += "'";
@@ -997,7 +1092,7 @@ class Utils {
                 else
                 {
                     std::string query = "INSERT INTO UserThreads (UserID, ThreadID) VALUES ('";
-                    query += userID;
+                    query += std::to_string(userCred.second);
                     query += "','";
                     query += threadID;
                     query += "')";
@@ -1056,6 +1151,7 @@ class Utils {
             }
             return followerVect;
         }
+
         static std::vector<std::pair<std::string, std::string>> FolloweeProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID){
             std::vector<std::pair<std::string, std::string>> followeeVect;
             try {
@@ -1098,6 +1194,7 @@ class Utils {
             }
             return followeeVect;
         }
+
         static std::vector<std::pair<std::string, std::string>> UserID(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase){
             std::vector<std::pair<std::string, std::string>> userVect;
             try {
@@ -1140,7 +1237,9 @@ class Utils {
             }
             return userVect;
         }
+
         static void UserFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID) {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             try
             {
                 sql::mysql::MySQL_Driver* driver;
@@ -1160,7 +1259,7 @@ class Utils {
                 sql::ResultSet* res;
 
                 std::string query = "SELECT * FROM Following WHERE Follower = '";
-                query += GetUserID();
+                query += userCred.second;
                 query += "' AND Followee = '";
                 query += userID;
                 query += "'";
@@ -1169,7 +1268,7 @@ class Utils {
                 if (res->next())
                 {
                     std::string query = "DELETE FROM Following WHERE Follower = '";
-                    query += GetUserID();
+                    query += userCred.second;
                     query += "' AND Followee = '";
                     query += userID;
                     query += "'";
@@ -1180,7 +1279,7 @@ class Utils {
                 else
                 {
                     std::string query = "INSERT IGNORE INTO Following (Follower, Followee) VALUES('";
-                    query += GetUserID();
+                    query += userCred.second;
                     query += "','";
                     query += userID;
                     query += "')";

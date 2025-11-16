@@ -25,7 +25,7 @@ private slots:
 
 
 private:
-    void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID);
+    void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName);
     Ui::CreateBoardOrThread *ui;
     QVBoxLayout* bannerLayout; //The banner layout pointer
     void onInterestButtonClick(std::string InterestID);

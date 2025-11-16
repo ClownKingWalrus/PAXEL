@@ -14,7 +14,7 @@ CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
     ui->scrollAreaWidgetContents->setLayout(bannerLayout);
 
     //create Horzonatal boxes and return like 4 buttons per row
-    LoadInterest(proc::ip, proc::user, proc::password, proc::db, proc::userID);
+    LoadInterest(proc::ip, proc::user, proc::password, proc::db);
 }
 
 CreateBoardOrThread::~CreateBoardOrThread()
@@ -22,7 +22,7 @@ CreateBoardOrThread::~CreateBoardOrThread()
     delete ui;
 }
 
-void CreateBoardOrThread::LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName, int UserID) {
+void CreateBoardOrThread::LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName) {
 
     std::vector<std::pair<std::string, std::string>> boardVect;
     boardVect = Utils::GetInterestButtons(host, user, password, dbName);
@@ -151,7 +151,7 @@ void CreateBoardOrThread::on_pushButton_2_clicked()
     QMessageBox* box = new QMessageBox();
     box->setText("Creating board");
     box->show();
-    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), IntrestList, proc::userID);
+    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), IntrestList);
 
     if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
@@ -187,7 +187,7 @@ void CreateBoardOrThread::ThreadSumbit()
     QMessageBox* box = new QMessageBox();
     box->setText("Creating Thread");
     box->show();
-    Utils::CreateThread(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), boardID, std::to_string(proc::userID));
+    Utils::CreateThread(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), boardID);
 
     if (!Utils::ThreadNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
