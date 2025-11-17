@@ -2,6 +2,7 @@
 #include "ui_interestselect.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
+#include "mainwindow.h"
 #include <QMessageBox>
 
 
@@ -119,26 +120,32 @@ void interestselect::on_pushButton_clicked()
     }
 
 
-
-    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
+    std::cout << "\nPOP1\n";
+    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList, userName)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests not set");
         box->show();
         return;
     }
 
-    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList);
+    std::cout << "InterestList Size: " << IntrestList.size() << "\n";
+    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList, userName);
+
     std::cout << "passed 1\n";
     if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests set");
         box->show();
-        return;
+    } else {
+        std::cout << "Failed to set interest or somthign\n";
     }
-    std::cout << "passed 2\n";
-
-
-
+    QMessageBox* box = new QMessageBox();
+    box->setText("Please Login with your new credentials");
+    box->show();
+    MainWindow* mainWin = new MainWindow();
+    mainWin->show();
+    parentWidget()->close();
+    this->close();
 }
 
 
