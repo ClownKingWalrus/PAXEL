@@ -4,6 +4,7 @@
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
 #include "threadmenuwindow.h"
+#include "messagewindow.h"
 #include "YourPaxelBoard.h"
 
 #include <QTimer>
@@ -160,3 +161,22 @@ void HomeScreen::on_CreateBoardButton_clicked()
     CreateBoardWindow* newWin = new CreateBoardWindow(this);
     newWin->show();
 }
+
+void HomeScreen::on_messages_Button_clicked()
+{
+    MessageWindow* msgWindow = new MessageWindow(this);
+    msgWindow->show();
+}
+
+
+void HomeScreen::on_about_paxel_clicked()
+{
+    ClickOnBoardName("26");
+}
+
+
+void HomeScreen::on_help_Button_clicked()
+{
+    ClickOnBoardName("8");
+}
+

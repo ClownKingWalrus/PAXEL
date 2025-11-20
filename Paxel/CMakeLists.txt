@@ -54,6 +54,7 @@ qt_add_executable(Paxel
     following.h following.cpp following.ui
     profile.h profile.cpp profile.ui
     postreply.h postreply.cpp postreply.ui
+    messagewindow.h messagewindow.cpp messagewindow.ui
     utils.h utils.cpp
     windowsettings.h
     ${SOURCES}
