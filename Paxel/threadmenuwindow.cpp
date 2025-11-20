@@ -32,14 +32,39 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     followBoards->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     followBoards->setMinimumSize(QSize(20, 30));
 
-    reloadButton = new QPushButton("Reload");
-    reloadButton->setFont(QFont("MS Sans Serif", 16));
-    reloadButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    reloadButton->setMinimumSize(QSize(20, 30));
-
     ui->BackHome->setFont(QFont("MS Sans Serif", 20));
     ui->BackHome->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     ui->BackHome->setMinimumSize(QSize(20, 30));
+
+    followBoards->setStyleSheet(
+        "QPushButton {"
+        "   color: rgba(0,0,0);"
+        "   border: none;"
+        "   border-radius: 8px;"
+        "   background-color: rgb(0, 170, 245);"
+        "   font-family: 'MS Sans Serif';"
+        "   font-weight: bold;"
+        "   text-align: center;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: rgb(10, 180, 255);"
+        "}"
+        );
+
+    createThread->setStyleSheet(
+        "QPushButton {"
+        "   color: rgba(0,0,0);"
+        "   border: none;"
+        "   border-radius: 8px;"
+        "   background-color: rgb(0, 170, 245);"
+        "   font-family: 'MS Sans Serif';"
+        "   font-weight: bold;"
+        "   text-align: center;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: rgb(10, 180, 255);"
+        "}"
+        );
 
     QPushButton::connect(createThread, &QPushButton::clicked, this, [this]() {
         CreateThreadButtonClicked();
@@ -55,7 +80,6 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     scrollBoxMain->setLayout(vertLayout);
     ui->verticalLayout->addWidget(createThread);
     ui->verticalLayout->addWidget(followBoards);
-    ui->verticalLayout->addWidget(reloadButton);
     //call thread info from sql and stores it into the vector
     std::vector<std::vector<std::string>> threadVect;
     threadVect = Utils::ThreadUpdate(proc::ip, proc::user, proc::password, proc::db, boardID);
@@ -73,7 +97,20 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     for (int i = 0; i < boardfollowVect.size(); i++){
         if (boardfollowVect[i].first == boardID) {
             followBoards -> setText("- Unfollow Board");
-            followBoards -> setStyleSheet("background-color: rgb(48, 143, 145);");
+            followBoards->setStyleSheet(
+                "QPushButton {"
+                "   color: rgba(0,0,0);"
+                "   border: none;"
+                "   border-radius: 8px;"
+                "   background-color: rgb(24, 137, 186);"
+                "   font-family: 'MS Sans Serif';"
+                "   font-weight: bold;"
+                "   text-align: center;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgb(43, 164, 217);"
+                "}"
+                );
         }
     }
     resize(1000, 800);
@@ -85,7 +122,7 @@ ThreadMenuWindow::~ThreadMenuWindow()
 }
 
 ThreadBannerBox* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::string threadName, std::string threadID) { //userName is actually userID
-        //more styling options since qwidget and not just a QHBox
+    //more styling options since qwidget and not just a QHBox
     ThreadBannerBox* bannerWidget = new ThreadBannerBox(QString::fromStdString(userName), QString::fromStdString(threadName), QString::fromStdString(threadID), this);
     return bannerWidget;
 }
@@ -99,12 +136,12 @@ void ThreadMenuWindow::CreateThreadButtonClicked()
         return;
     }
     std::cout << "Can we work\n";
-    CreateBoardOrThread* createThreadWindow = new CreateBoardOrThread();
+    CreateBoardOrThread* createThreadWindow = new CreateBoardOrThread(this);
     createThreadWindow->isThread = true;
     createThreadWindow->boardID = boardIDT;
     createThreadWindow->ChangeToThreadWindow();
     createThreadWindow->show();
-    hide();
+    this->hide();
 }
 
 void ThreadMenuWindow::BoardsFollowClicked(std::string boardID) {
@@ -112,11 +149,37 @@ void ThreadMenuWindow::BoardsFollowClicked(std::string boardID) {
     QString currentText = followBoards->text();
     if (currentText == "+ Follow Board") {
         followBoards -> setText("- Unfollow Board");
-        followBoards -> setStyleSheet("background-color: rgb(48, 143, 145);");
+        followBoards->setStyleSheet(
+            "QPushButton {"
+            "   color: rgba(0,0,0);"
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(24, 137, 186);"
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(43, 164, 217);"
+            "}"
+            );
     }
     else if (currentText == "- Unfollow Board") {
         followBoards -> setText("+ Follow Board");
-        followBoards -> setStyleSheet("background-color: rgb(75, 222, 255);");
+        followBoards->setStyleSheet(
+            "QPushButton {"
+            "   color: rgba(0,0,0);"
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(0, 170, 245);"
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(10, 180, 255);"
+            "}"
+            );
     }
 }
 
@@ -128,9 +191,10 @@ void ThreadMenuWindow::on_BackHome_clicked()
     // this->close();
     if (!Utils::sessionID.empty()) {
         std::cout << "+++Login Succeded+++\n";
-        HomeScreen* Homescreen = new HomeScreen();
-        Homescreen->show();
         this->close();
+        if (parentWidget()) {
+            parentWidget()->show();
+        }
     } else {
         return;
     }
@@ -144,4 +208,3 @@ void ThreadMenuWindow::resizeEvent(QResizeEvent* event) {
     int newWidth = newSize.width();
     int newHeight = newSize.height();
 }
-

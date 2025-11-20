@@ -31,6 +31,7 @@ private:
     class QHBoxLayout* CreateBoardBanner(const std::string& boardID, const std::string& boardName); //Creates the boards variables for the ui
     QVBoxLayout* bannerLayout; //The banner layout pointer
     void ClickOnBoardName(std::string boardThreads); //Clicking on a board will send you to threads
+    void ClickID(std::string userID);
 };
 
 #endif // YOURPAXELBOARD_H

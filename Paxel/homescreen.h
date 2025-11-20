@@ -37,11 +37,7 @@ private slots:
     void on_help_Button_clicked();
     void on_Search_clicked();
     void on_Send_clicked();
-
-protected:
-    void resizeEvent(QResizeEvent* event) override;
-
-
+    void ClickID(string userID);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -51,6 +47,8 @@ private:
     QVBoxLayout* bannerLayout; //The banner layout pointer
     void ClickOnBoardName(string boardThreads); //Clicking on a board will send you to threads
 
+
 };
 
 #endif // HOMESCREEN_H
+

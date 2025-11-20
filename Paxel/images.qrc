@@ -14,5 +14,9 @@
         <file>Images/Paxel P.png</file>
         <file>Images/Question Mark.png</file>
         <file>Images/Text Bubble.png</file>
+        <file>Images/BlueBanner.png</file>
+        <file>Images/NotePad.png</file>
+        <file>Images/OrangeBanner.png</file>
+        <file>Images/Pencil.png</file>
     </qresource>
 </RCC>

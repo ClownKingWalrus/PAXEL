@@ -5,6 +5,8 @@
 #include <qevent.h>
 #include "replieswindow.h"
 #include "ProfilePicture.h"
+#include "profile.h"
+#include "follow.h"
 #include "postreply.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
@@ -164,6 +166,7 @@ using namespace std;
             QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
             profileButton->setIcon(icon);
             profileButton->setIconSize(profileButton->size());
+            profileButton->setText("");
             profileButton->setStyleSheet(
                 "QPushButton {"
                 "   color: rgba(0,0,0,0);"               /* hide text */
@@ -179,9 +182,24 @@ using namespace std;
                 "}"
                 );
         } else {
+            pix = QPixmap(":/pimages/Profile_Picture/BlankProf.png");
+            QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+            profileButton->setIcon(icon);
+            profileButton->setIconSize(profileButton->size());
+            profileButton->setText("");
             profileButton->setStyleSheet(
-                "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
-                "border-radius: 8px;"        // rounded corners
+                "QPushButton {"
+                "   color: rgba(0,0,0,0);"               /* hide text */
+                "   border: none;"
+                "   border-radius: 8px;"
+                "   background-color: rgb(35, 242, 24);" /* button background */
+                "   font-family: 'MS Sans Serif';"
+                "   font-weight: bold;"
+                "   text-align: center;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgb(50, 200, 30);"  /* hover color */
+                "}"
                 );
         }
     }
@@ -209,7 +227,16 @@ using namespace std;
     ///Place holder function, implement the profile opening method
     ///Already connected to button so do not remove this actual function just define it
     void ThreadBannerBox::OnClickProfile(const QString& userID) {
-
+        std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
+        if (userID == std::to_string(userCred.second)) {
+            Profile *userProf = new Profile(this);
+            userProf->show();
+        }
+        else {
+            Follow *otherProf = new Follow(this, userID.toStdString());
+            otherProf->show();
+        }
+        this->hide();
     }
 
     void ThreadBannerBox::loadReplies(const QString& threadID) {
@@ -248,10 +275,54 @@ using namespace std;
             QPushButton* pbCommentReply = new QPushButton(QString::fromStdString(replyField));
             QPushButton* pbReply = new QPushButton("R");
 
-            // Sizing
-            pbUserName->setMinimumWidth(140);
-            pbUserName->setMinimumHeight(60);
+            std::string tempName = userName;
+            int tempID = std::stoi(tempName);
+            QPixmap pix = ProfilePicture::CreatePixMapFromSql(tempID);
+            if (!pix.isNull()) {
+                QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+                pbUserName->setIcon(icon);
+                pbUserName->setIconSize(pbUserName->size());
+                pbUserName->setText("");
+                pbUserName->setStyleSheet(
+                    "QPushButton {"
+                    "   color: rgba(0,0,0,0);"               /* hide text */
+                    "   border: none;"
+                    "   border-radius: 8px;"
+                    "   background-color: rgb(35, 242, 24);" /* button background */
+                    "   font-family: 'MS Sans Serif';"
+                    "   font-weight: bold;"
+                    "   text-align: center;"
+                    "}"
+                    "QPushButton:hover {"
+                    "   background-color: rgb(50, 200, 30);"  /* hover color */
+                    "}"
+                    );
+            } else {
+                pix = QPixmap(":/pimages/Profile_Picture/BlankProf.png");
+                QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+                pbUserName->setIcon(icon);
+                pbUserName->setIconSize(pbUserName->size());
+                pbUserName->setText("");
+                pbUserName->setStyleSheet(
+                    "QPushButton {"
+                    "   color: rgba(0,0,0,0);"               /* hide text */
+                    "   border: none;"
+                    "   border-radius: 8px;"
+                    "   background-color: rgb(35, 242, 24);" /* button background */
+                    "   font-family: 'MS Sans Serif';"
+                    "   font-weight: bold;"
+                    "   text-align: center;"
+                    "}"
+                    "QPushButton:hover {"
+                    "   background-color: rgb(50, 200, 30);"  /* hover color */
+                    "}"
+                    );
+            }
+            pbUserName->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+            pbUserName->setFixedSize(140,60);
             pbUserName->setFlat(true);
+
+            // Sizing
 
             pbThreadCommentName->setMinimumHeight(60);
             pbThreadCommentName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -268,6 +339,10 @@ using namespace std;
             connect(pbReply, &QPushButton::clicked, this, [this, threadID, id]() {
                 PostReply* popup = new PostReply(this, threadID, QString::fromStdString(id));
                 popup->exec();
+            });
+
+            QPushButton::connect(pbUserName, &QPushButton::clicked, this, [this, userName]() {
+                OnClickProfile(QString::fromStdString(userName));
             });
 
 

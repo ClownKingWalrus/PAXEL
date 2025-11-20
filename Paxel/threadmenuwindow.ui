@@ -8,6 +8,8 @@
     <y>0</y>
     <width>676</width>
     <height>671</height>
+    <width>676</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +28,7 @@
          <x>0</x>
          <y>0</y>
          <width>662</width>
-         <height>599</height>
+         <height>591</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -59,6 +61,16 @@ QPushButton:hover {
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="BackHome">
+      <property name="styleSheet">
+       <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
+      </property>
       <property name="text">
        <string>Back </string>
       </property>

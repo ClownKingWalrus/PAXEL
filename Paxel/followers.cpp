@@ -3,6 +3,7 @@
 #include "follow.h"
 #include "following.h"
 #include "profile.h"
+#include "ProfilePicture.h"
 #include "../hdr/proc.h"
 #include "../hdr/Utils.h"
 
@@ -12,6 +13,7 @@
 #include <QObject>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QPixmap>
 #include <qevent.h>
 using namespace std;
 
@@ -33,6 +35,33 @@ Followers::Followers(QWidget *parent, string userID)
         }
     }
 
+    vector<pair<string, string>> followerVect;
+    vector<pair<string, string>> followeeVect;
+    followerVect = Utils::FollowerProfile(proc::ip, proc::user, proc::password, proc::db, userID);
+    followeeVect = Utils::FolloweeProfile(proc::ip, proc::user, proc::password, proc::db, userID);
+
+    vector<pair<string, string>> FolloweeList;
+    vector<pair<string, string>> FollowingList;
+
+    for (const auto& p : followerVect) {
+        if (p.first == userID) {
+            FollowingList.push_back(p);
+        }
+    }
+    for (const auto& b : followeeVect) {
+        if (b.first == userID) {
+            FolloweeList.push_back(b);
+        }
+    }
+    ui->Following->setText(QString::number(FollowingList.size()) + " Following");
+    if(FolloweeList.size() != 1) {
+        ui->Followers_2->setText(QString::number(FolloweeList.size()) + " Followers");
+    }
+    else {
+        ui->Followers_2->setText(QString::number(FolloweeList.size()) + " Follower");
+    }
+
+
     ui->Followers_2->setMinimumSize(100,50);
     ui->Following->setMinimumSize(100,50);
     ui->Back->setMinimumSize(15,10);
@@ -43,9 +72,6 @@ Followers::Followers(QWidget *parent, string userID)
     loadProfiles(proc::ip, proc::user, proc::password, proc::db, userID);
     connect(ui->Following, &QPushButton::clicked, this, [this, userID]() {
         Following_clicked(userID);
-    });
-    connect(ui->Back, &QPushButton::clicked, this, [this, userID]() {
-        Back_clicked(userID);
     });
     resize(1000, 800);
 }
@@ -64,7 +90,7 @@ void Followers::loadProfiles(const string& host, const string& user, const strin
 
     vector<pair<string,string>> FollowerList;
     for (int i = 0; i < followerVect.size(); i++) {
-        if(followeeVect[i].second == userID){
+        if(followeeVect[i].first == userID){
             FollowerList.push_back(followerVect[i]);
         }
     }
@@ -82,6 +108,56 @@ QHBoxLayout* Followers::CreateProfileBanner(const string& userID, const string& 
     IDfollower->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     Name->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
+
+
+    QPixmap pix = ProfilePicture::CreatePixMapFromSql(stoi(userID));
+    if (!pix.isNull()) {
+        QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        IDfollower->setIcon(icon);
+        IDfollower->setIconSize(IDfollower->size());
+        IDfollower->setText("");
+        IDfollower->setStyleSheet(
+            "QPushButton {"
+            "   color: rgba(0,0,0,0);"               /* hide text */
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(35, 242, 24);" /* button background */
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(50, 200, 30);"  /* hover color */
+            "}"
+            );
+    } else {
+        pix = QPixmap(":/pimages/Profile_Picture/BlankProf.png");
+        QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        IDfollower->setIcon(icon);
+        IDfollower->setIconSize(IDfollower->size());
+        IDfollower->setText("");
+        IDfollower->setStyleSheet(
+            "QPushButton {"
+            "   color: rgba(0,0,0,0);"               /* hide text */
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(35, 242, 24);" /* button background */
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(50, 200, 30);"  /* hover color */
+            "}"
+            );
+    }
+
+    IDfollower->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    Name->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    IDfollower->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    Name->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
     IDfollower->setMinimumSize(100,100);
     IDfollower->setFlat(true);
     IDfollower->setFont(QFont("MS Sans Serif", 20));
@@ -90,26 +166,21 @@ QHBoxLayout* Followers::CreateProfileBanner(const string& userID, const string& 
     Name->setFlat(true);
     Name->setFont(QFont("MS Sans Serif", 20));
 
-    bannerBox->addWidget(IDfollower, 1);
-    bannerBox->addWidget(Name, 3);
-
-    bannerBox->setContentsMargins(10, 5, 10, 5);
-    bannerBox->setSpacing(15);
-
-    bannerBox->setContentsMargins(10, 5, 10, 5);
-    bannerBox->setSpacing(15);
-
-    IDfollower->setStyleSheet(
-        "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
-        "border-radius: 8px;"        // rounded corners
-        );
-
     Name->setStyleSheet(
         "QPushButton { background-color: rgb(8, 136, 245); color: black; font-family: MS Sans Serif; font-weight: bold;}"  // blue
         "border-radius: 8px;"
         );
 
+    bannerBox->addWidget(IDfollower, 1);
+    bannerBox->addWidget(Name, 3);
+
+    bannerBox->setContentsMargins(10, 5, 10, 5);
+    bannerBox->setSpacing(15);
     QPushButton::connect(Name, &QPushButton::clicked, this, [this, userID]() {
+        onClicked(userID);
+    });
+
+    QPushButton::connect(IDfollower, &QPushButton::clicked, this, [this, userID]() {
         onClicked(userID);
     });
 
@@ -123,32 +194,26 @@ void Followers::onClicked(string userID) {
         FollowerProfile->show();
     }
     else {
-        Profile *UserProfile = new Profile;
+        Profile *UserProfile = new Profile(this);
         UserProfile->show();
-        }
-    hide();
+    }
+    this->hide();
 }
 
 void Followers::Following_clicked(string userID)
 {
     Following *FollowingList = new Following(this, userID);
-    hide();
+    this->hide();
     FollowingList->show();
 }
 
 
-void Followers::Back_clicked(string userID)
+void Followers::on_Back_clicked()
 {
-    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
-    if (userID != std::to_string(userCred.second)) {
-    Profile *UserProfile = new Profile(this, std::to_string(userCred.second));
-    UserProfile->show();
+    this->hide();
+    if (parentWidget()) {
+        parentWidget()->show();
     }
-    else {
-        Follow *OtherProfile = new Follow(this, userID);
-        OtherProfile->show();
-    }
-    hide();
 }
 
 void Followers::resizeEvent(QResizeEvent* event) {

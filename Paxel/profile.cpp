@@ -34,7 +34,7 @@ Profile::Profile(QWidget *parent, string userID)
     vector<pair<string, string>> userVect;
     userVect = Utils::UserID(proc::ip, proc::user, proc::password, proc::db);
     for (const auto& u : userVect) {
-        if (u.second == std::to_string(userCred.second)) {
+        if (u.second == to_string(userCred.second)) {
             ui->UserName->setText(QString::fromStdString(u.first));
         }
     }
@@ -48,12 +48,12 @@ Profile::Profile(QWidget *parent, string userID)
     vector<pair<string, string>> FollowingList;
 
     for (const auto& p : followerVect) {
-        if (p.second == std::to_string(userCred.second)) {
+        if (p.first == to_string(userCred.second)) {
             FollowingList.push_back(p);
         }
     }
     for (const auto& p : followeeVect) {
-        if (p.second == std::to_string(userCred.second)) {
+        if (p.first == to_string(userCred.second)) {
             FolloweeList.push_back(p);
         }
     }
@@ -67,10 +67,10 @@ Profile::Profile(QWidget *parent, string userID)
     }
 
     connect(ui->Following, &QPushButton::clicked, this, [this, userCred]() {
-        Following_clicked(std::to_string(userCred.second));
+        Following_clicked(to_string(userCred.second));
     });
     connect(ui->Followers, &QPushButton::clicked, this, [this, userCred]() {
-        Followers_clicked(std::to_string(userCred.second));
+        Followers_clicked(to_string(userCred.second));
     });
     resize(1000, 800);
 }
@@ -93,11 +93,12 @@ void Profile::on_Logout_clicked()
     }
 }
 
-void Profile::Back_clicked()
+void Profile::on_Back_clicked()
 {
-    HomeScreen* HS = new HomeScreen();
-    hide();
-    HS->show();
+    this->hide();
+    if(parentWidget()) {
+        parentWidget()->show();
+    }
 }
 
 
@@ -110,15 +111,15 @@ void Profile::on_AddInterestsProfile_clicked()
 void Profile::Followers_clicked(string userID)
 {
     Followers *FollowersList = new Followers(this, userID);
-    hide();
-    FollowersList -> show();
+    this->hide();
+    FollowersList->show();
 }
 
 void Profile::Following_clicked(string userID)
 {
     Following *FollowingList = new Following(this, userID);
-    hide();
-    FollowingList -> show();
+    this->hide();
+    FollowingList->show();
 }
 
 void Profile::resizeEvent(QResizeEvent* event) {

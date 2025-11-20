@@ -2,7 +2,9 @@
 #include "ui_YourPaxelBoard.h"
 #include "homescreen.h"
 #include "../hdr/Utils.h"
+#include "profile.h"
 #include "threadmenuwindow.h"
+#include "profilepicture.h"
 #include "createboardorthread.h"
 #include "../hdr/proc.h"
 
@@ -57,6 +59,31 @@ QHBoxLayout* CreateBoardWindow::CreateBoardBanner(const string& boardID, const s
     QPushButton* idButton = new QPushButton(QString::fromStdString(boardID));
     QPushButton* titleButton = new QPushButton(QString::fromStdString(boardName));
 
+    std::string userTemp = boardID; //not sure if touching the memory is dangroud this is a failsafe
+    int userID = Utils::GetUserIDFromBoardID(proc::ip, proc::user, proc::password, proc::db, std::stoi(userTemp));
+    //load the pixmap if it exist
+    QPixmap pix = ProfilePicture::CreatePixMapFromSql(userID);
+    if (!pix.isNull()) {
+        QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        idButton->setIcon(icon);
+        idButton->setIconSize(idButton->size());
+        idButton->setText("");
+        idButton->setStyleSheet(
+            "QPushButton {"
+            "   color: rgba(0,0,0,0);"               /* hide text */
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(35, 242, 24);" /* button background */
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(50, 200, 30);"  /* hover color */
+            "}"
+            );
+    }
+
     idButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     titleButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
@@ -65,11 +92,6 @@ QHBoxLayout* CreateBoardWindow::CreateBoardBanner(const string& boardID, const s
 
     titleButton->setMinimumSize(250, 45);
     titleButton->setFlat(true);
-
-    idButton->setStyleSheet(
-        "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
-        "border-radius: 8px;"        // rounded corners
-        );
 
     titleButton->setStyleSheet(
         "QPushButton { background-color: rgb(8, 136, 245); color: black; font-family: MS Sans Serif; font-weight: bold;}"  // blue
@@ -86,6 +108,11 @@ QHBoxLayout* CreateBoardWindow::CreateBoardBanner(const string& boardID, const s
         ClickOnBoardName(boardID);
     });
 
+    QPushButton::connect(idButton, &QPushButton::clicked, this, [this, userID]() {
+        ClickID(to_string(userID));
+    });
+
+
     return bannerBox;
 }
 
@@ -93,22 +120,27 @@ void CreateBoardWindow::ClickOnBoardName (string boardID) {
     ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
     threadList->show();
     hide();
-
 }
 
-void CreateBoardWindow::on_pushButton_clicked()
-{
-    CreateBoardOrThread* createBoardWindow = new CreateBoardOrThread();
+void CreateBoardWindow::ClickID(string userID) {
+    Profile *userProf = new Profile(this);
+    userProf->show();
+    hide();
+}
+
+void CreateBoardWindow::on_pushButton_clicked() {
+    CreateBoardOrThread* createBoardWindow = new CreateBoardOrThread(this);
     createBoardWindow->show();
-    this->close();
+    hide();
 }
 
 
 void CreateBoardWindow::on_HomeScreenButton_clicked()
 {
-    HomeScreen *HS = new HomeScreen;
-    hide();
-    HS -> show();
+    this->hide();
+    if (parentWidget()) {
+        parentWidget()->show();
+    }
 }
 
 void CreateBoardWindow::resizeEvent(QResizeEvent* event) {
@@ -119,4 +151,3 @@ void CreateBoardWindow::resizeEvent(QResizeEvent* event) {
     int newWidth = newSize.width();
     int newHeight = newSize.height();
 }
-

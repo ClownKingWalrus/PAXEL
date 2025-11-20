@@ -144,8 +144,8 @@ QPushButton:Hover {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>124</width>
-             <height>496</height>
+             <width>215</width>
+             <height>510</height>
             </rect>
            </property>
            <property name="sizePolicy">
