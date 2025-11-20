@@ -16,6 +16,9 @@ public:
     explicit CreateBoardWindow(QWidget *parent = nullptr);
     ~CreateBoardWindow();
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private slots:
     void on_pushButton_clicked();
 

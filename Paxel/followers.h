@@ -22,6 +22,9 @@ private slots:
     void Following_clicked(string userID);
     void Back_clicked(string userID);
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 public:
     Ui::Followers *ui;
 

@@ -31,6 +31,9 @@ private:
     void ClickOnProfile(std::string userID);
     void ClickOnReply(std::string userID);
     void endReply(void);
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // REPLIESWINDOW_H

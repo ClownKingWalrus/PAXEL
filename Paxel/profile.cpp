@@ -20,7 +20,6 @@ Profile::Profile(QWidget *parent, string userID)
 
     std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip, proc::user, proc::password, proc::db, Utils::sessionID);
     userID = std::to_string(userCred.second);
-
     vector<pair<string, string>> userVect;
     userVect = Utils::UserID(proc::ip, proc::user, proc::password, proc::db);
     for (const auto& u : userVect) {
@@ -56,12 +55,13 @@ Profile::Profile(QWidget *parent, string userID)
         ui->Followers->setText(QString::number(FolloweeList.size()) + " Follower");
     }
 
-    connect(ui->Following, &QPushButton::clicked, this, [this, userID, userCred]() {
+    connect(ui->Following, &QPushButton::clicked, this, [this, userCred]() {
         Following_clicked(std::to_string(userCred.second));
     });
-    connect(ui->Followers, &QPushButton::clicked, this, [this, userID, userCred]() {
+    connect(ui->Followers, &QPushButton::clicked, this, [this, userCred]() {
         Followers_clicked(std::to_string(userCred.second));
     });
+    resize(1000, 800);
 }
 
 Profile::~Profile()
@@ -84,9 +84,9 @@ void Profile::on_Logout_clicked()
 
 void Profile::Back_clicked()
 {
-    HomeScreen* HomescreenHomescreen = new HomeScreen;
+    HomeScreen* HS = new HomeScreen();
     hide();
-    HomescreenHomescreen->show();
+    HS->show();
 }
 
 
@@ -108,4 +108,13 @@ void Profile::Following_clicked(string userID)
     Following *FollowingList = new Following(this, userID);
     hide();
     FollowingList -> show();
+}
+
+void Profile::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
 }

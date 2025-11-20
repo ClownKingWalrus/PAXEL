@@ -5,6 +5,7 @@
 #include "../hdr/proc.h"
 #include "threadmenuwindow.h"
 #include "YourPaxelBoard.h"
+#include "followedboards.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -14,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QPixmap>
 #include <QPainter>
+#include <qevent.h>
 using namespace std;
 
 HomeScreen::HomeScreen(QWidget *parent) :
@@ -72,6 +74,12 @@ HomeScreen::HomeScreen(QWidget *parent) :
     ui->about_paxel->setIcon(buttonIcon5);
     ui->about_paxel->setIconSize(QSize(80, 80));
 
+
+    pair<string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
+    connect(ui -> BoardsFollowed, &QPushButton::clicked, this, [this, userCred]() {
+        BoardsFollowed_clicked(to_string(userCred.second));
+    });
+    resize(1000, 800);
 }
 
 HomeScreen::~HomeScreen()
@@ -143,7 +151,7 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
 void HomeScreen::ClickOnBoardName (string boardID) {
     ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
     threadList->show();
-
+    hide();
 }
 
 void HomeScreen::onScroll(int value)
@@ -159,4 +167,21 @@ void HomeScreen::on_CreateBoardButton_clicked()
 {
     CreateBoardWindow* newWin = new CreateBoardWindow(this);
     newWin->show();
+    hide();
+}
+
+void HomeScreen::BoardsFollowed_clicked(string userID)
+{
+    FollowedBoards* FB = new FollowedBoards(this, userID);
+    hide();
+    FB ->show();
+}
+
+void HomeScreen::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
 }

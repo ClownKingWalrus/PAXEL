@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
-    <height>688</height>
+    <width>676</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,8 +25,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>875</width>
-         <height>614</height>
+         <width>662</width>
+         <height>599</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -57,6 +57,13 @@ QPushButton:hover {
       </widget>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QPushButton" name="BackHome">
+      <property name="text">
+       <string>Back </string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -64,8 +71,8 @@ QPushButton:hover {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>899</width>
-     <height>25</height>
+     <width>676</width>
+     <height>18</height>
     </rect>
    </property>
   </widget>

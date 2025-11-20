@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>674</height>
+    <width>669</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,8 +96,7 @@ QPushButton:hover {
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 18pt &quot;MS Sans Serif&quot;;
-background-color: rgb(0, 0, 0);</string>
+         <string notr="true">font: 18pt &quot;MS Sans Serif&quot;;</string>
         </property>
         <property name="text">
          <string>UserName</string>
@@ -201,6 +200,16 @@ color: rgb(0, 0, 0);</string>
         </property>
         <property name="plainText">
          <string>Enter Profile Bio Here:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Reload">
+        <property name="styleSheet">
+         <string notr="true">font:  700 17pt &quot;MS Sans Serif&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Reload</string>
         </property>
        </widget>
       </item>

@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QString>
+#include <qevent.h>
 using namespace std;
 
 Follow::Follow(QWidget *parent, string userID)
@@ -23,6 +24,10 @@ Follow::Follow(QWidget *parent, string userID)
             ui->UserName->setText(QString::fromStdString(u.first));
         }
     }
+
+    ui->FollowButton->setFont(QFont("MS Sans Serif", 16, QFont::Bold));
+    ui->FollowButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    ui->FollowButton->setMinimumSize(QSize(20, 30));
 
     vector<pair<string, string>> followerVect;
     vector<pair<string, string>> followeeVect;
@@ -44,12 +49,10 @@ Follow::Follow(QWidget *parent, string userID)
             FolloweeList.push_back(b);
         }
     }
-    for (const auto& f : FolloweeList) {
-        if (f.second != std::to_string(userCred.second)) {
+
+    for (int i = 0; i < followerVect.size(); i++){
+        if ((followerVect[i].second == (std::to_string(userCred.second)) && (followeeVect[i].second == userID))) {
             ui->FollowButton->setText("- Unfollow");
-        }
-        else {
-            ui->FollowButton->setText("+ Follow");
         }
     }
 
@@ -67,9 +70,10 @@ Follow::Follow(QWidget *parent, string userID)
     connect(ui->Followers, &QPushButton::clicked, this, [this, userID]() {
         Followers_clicked(userID);
     });
-    connect(ui->FollowButton, &QPushButton::clicked, this, [this, userID, userCred]() {
-        FollowButton_clicked(userID, std::to_string(userCred.second));
+    connect(ui->FollowButton, &QPushButton::clicked, this, [this, userID]() {
+        FollowButton_clicked(userID);
     });
+    resize(1000, 800);
 
 }
 Follow::~Follow()
@@ -77,13 +81,14 @@ Follow::~Follow()
     delete ui;
 }
 
-void Follow::FollowButton_clicked(string userID, string userID2)
+void Follow::FollowButton_clicked(string userID)
 {
     QString currentText = ui->FollowButton->text();
     if(currentText == "+ Follow")
     {
         Utils::UserFollow(proc::ip, proc::user, proc::password, proc::db, userID);
-        ui->FollowButton->setText("- Unfollow");
+        ui -> FollowButton -> setText("- Unfollow");
+        ui -> FollowButton -> setStyleSheet("background-color: rgb(48, 143, 145);");
     }
     else if (currentText == "- Unfollow")
     {
@@ -107,4 +112,13 @@ void Follow::Following_clicked(string userID)
     Following *FollowingList = new Following(this, userID);
     hide();
     FollowingList -> show();
+}
+
+void Follow::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
 }

@@ -2,6 +2,7 @@
 #include <QPushButton>
 #include <QWidget>
 #include <QHBoxLayout>
+#include <qevent.h>
 #include "replieswindow.h"
 #include "postreply.h"
 #include "../hdr/Utils.h"
@@ -254,3 +255,4 @@ using namespace std;
         )");
         repliesLayout->addStretch();
     }
+

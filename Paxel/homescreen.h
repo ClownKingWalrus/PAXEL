@@ -30,13 +30,17 @@ public:
 private slots:
     void on_Profile_clicked(); //
     void onScroll(int value); // loads more boards as boxes are scrolled
-
     void on_CreateBoardButton_clicked();// allows the user to create boards onto the main paxel baord
+    void BoardsFollowed_clicked(string userID);
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
     void loadBoards(const string& host, const string& user, const string& password, const string& dbName); //loads the boards from the SQL
     QVBoxLayout* bannerLayout; //The banner layout pointer
     void ClickOnBoardName(string boardThreads); //Clicking on a board will send you to threads
+
 };
 
 #endif // HOMESCREEN_H

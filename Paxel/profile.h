@@ -29,6 +29,8 @@ private slots:
 public:
     Ui::Profile *ui;
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // PROFILE_H

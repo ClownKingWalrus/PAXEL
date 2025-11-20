@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>670</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,27 +18,11 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QLabel" name="Banner">
-      <property name="minimumSize">
-       <size>
-        <width>80</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>80</width>
-        <height>9999999</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>TextLabel</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
+    <item row="1" column="0" colspan="2">
      <widget class="QScrollArea" name="scrollArea">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(75, 222, 255);</string>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
@@ -47,40 +31,11 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>702</width>
-         <height>425</height>
+         <width>502</width>
+         <height>437</height>
         </rect>
        </property>
       </widget>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="pushButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>100</horstretch>
-        <verstretch>100</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>70</width>
-        <height>50</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton { font: 700 50pt &quot;MS Sans Serif&quot;;
-color: rgb(0, 0, 0);
-background-color: rgb(8, 136, 245);
-}
-
-QPushButton:Hover {
-background-color: rgb(18, 146, 255);
-}</string>
-      </property>
-      <property name="text">
-       <string>+</string>
-      </property>
      </widget>
     </item>
     <item row="0" column="0">
@@ -102,7 +57,7 @@ color: rgb(0, 0, 0);</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="2" column="0" colspan="3">
      <widget class="QPushButton" name="HomeScreenButton">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -137,6 +92,54 @@ background-color: rgb(18, 146, 255);
       </property>
      </widget>
     </item>
+    <item row="0" column="2" alignment="Qt::AlignmentFlag::AlignRight">
+     <widget class="QPushButton" name="pushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>100</horstretch>
+        <verstretch>100</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>70</width>
+        <height>50</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton { font: 700 50pt &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(8, 136, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(18, 146, 255);
+}</string>
+      </property>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLabel" name="Banner">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>9999999</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -144,8 +147,8 @@ background-color: rgb(18, 146, 255);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>17</height>
+     <width>670</width>
+     <height>18</height>
     </rect>
    </property>
   </widget>

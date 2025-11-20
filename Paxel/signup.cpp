@@ -4,6 +4,7 @@
 #include "../hdr/proc.h"
 #include <QRegularExpression>
 #include <QMessageBox>
+#include <qevent.h>
 #include "interestselect.h"
 
 SignUp::SignUp(QWidget *parent)
@@ -11,6 +12,7 @@ SignUp::SignUp(QWidget *parent)
     , ui(new Ui::SignUp)
 {
     ui->setupUi(this);
+    resize(1000, 800);
 }
 
 SignUp::~SignUp()
@@ -114,4 +116,13 @@ void SignUp::on_SignUp2_clicked()
 
 
     return;
+}
+
+void SignUp::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
 }

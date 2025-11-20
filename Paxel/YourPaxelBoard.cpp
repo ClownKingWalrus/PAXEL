@@ -8,6 +8,7 @@
 
 #include <QMessageBox>
 #include <QPainter>
+#include <qevent.h>
 
 CreateBoardWindow::CreateBoardWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,7 +22,7 @@ CreateBoardWindow::CreateBoardWindow(QWidget *parent)
     loadOwnBoards(proc::ip, proc::user, proc::password, proc::db);
 
     QPixmap pixmapHS4(":/images/Images/Paxel banner.png");
-    QPixmap scaledPixmapHS4 = pixmapHS4.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QPixmap scaledPixmapHS4 = pixmapHS4.scaled(150, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     QPainter painter(&scaledPixmapHS4);
     painter.setPen(Qt::black);
     painter.setFont(QFont("MS Sans Serif", 16, QFont::Bold));
@@ -29,6 +30,7 @@ CreateBoardWindow::CreateBoardWindow(QWidget *parent)
     painter.end();
     ui->Banner->setPixmap(scaledPixmapHS4);
 
+    resize(1000, 800);
 }
 
 void CreateBoardWindow::loadOwnBoards(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName) {
@@ -90,6 +92,7 @@ QHBoxLayout* CreateBoardWindow::CreateBoardBanner(const string& boardID, const s
 void CreateBoardWindow::ClickOnBoardName (string boardID) {
     ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
     threadList->show();
+    hide();
 
 }
 
@@ -97,11 +100,23 @@ void CreateBoardWindow::on_pushButton_clicked()
 {
     CreateBoardOrThread* createBoardWindow = new CreateBoardOrThread(this);
     createBoardWindow->show();
+    hide();
 }
 
 
 void CreateBoardWindow::on_HomeScreenButton_clicked()
 {
-    this->close();
+    HomeScreen *HS = new HomeScreen;
+    hide();
+    HS -> show();
+}
+
+void CreateBoardWindow::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
 }
 
