@@ -2,6 +2,7 @@
 #include "ui_messagewindow.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
+#include <QMessageBox>
 
 MessageWindow::MessageWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,12 +15,44 @@ MessageWindow::MessageWindow(QWidget *parent)
     //set the layout to be a verticle scroller
     scrollBoxMain->setLayout(vertLayout);
 
-    //call thread info from sql and stores it into the vector
-    //std::vector<std::vector<std::string>> DMVect;
-    //DMVect = Utils::DMHistory(proc::ip, proc::user, proc::password, proc::db, "5");
-    //DMVect = Utils::DMList(proc::ip, proc::user, proc::password, proc::db);
-
     ReloadInbox();
+
+    std::list<std::string> FollowingVect;
+    FollowingVect = Utils::FollowingList(proc::ip, proc::user, proc::password, proc::db);
+
+    int originalSize = FollowingVect.size();
+
+    for (int i = 0; i < originalSize; i++) {
+        QHBoxLayout* messageBanner = CreateInboxBanner(FollowingVect.front());
+        ui->verticalLayout_3->addLayout(messageBanner);
+        FollowingVect.pop_front();
+    }
+
+    setStyleSheet(R"(
+    QWidget {
+        font: 14pt "MS Sans Serif";
+    }
+
+    QPushButton {
+        background-color: rgb(0, 170, 245);
+        color: black;
+        border: 1px solid rgb(68, 68, 68);
+        border-radius: 8px;
+        padding: 6px 10px;
+    }
+
+    QPushButton:hover {
+        background-color: rgb(10, 190, 255);
+    }
+
+  QPlainTextEdit {
+        background-color: rgb(44, 44, 44);
+        color: black;
+        border: 1px solid rgb(68, 68, 68);
+        border-radius: 6px;
+        font: 14pt "MS Sans Serif";
+    }
+    )");
 }
 
 MessageWindow::~MessageWindow()
@@ -37,8 +70,8 @@ class QHBoxLayout* MessageWindow::CreateInboxBanner(std::string user)
 
     ///resizing buttons
     pbUser->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
-    pbUser->setFixedHeight(100);
-    pbUser->setFixedWidth(150);
+    pbUser->setFixedHeight(60);
+    pbUser->setFixedWidth(250);
     pbUser->setFlat(true);
 
     QPushButton::connect(pbUser, &QPushButton::clicked, this, [this, user]() {
@@ -49,7 +82,7 @@ class QHBoxLayout* MessageWindow::CreateInboxBanner(std::string user)
     return bannerBox;
 }
 
-class QHBoxLayout* MessageWindow::CreateDMBanner(std::string user, std::string msg)
+class QHBoxLayout* MessageWindow::CreateDMBanner(std::string user, std::string msg, std::string dateTime)
 {
     ///create HBox to store the banners content
     QHBoxLayout* bannerBox = new QHBoxLayout();
@@ -57,6 +90,7 @@ class QHBoxLayout* MessageWindow::CreateDMBanner(std::string user, std::string m
     ///creating buttons
     QPushButton* pbUser = new QPushButton(QString::fromStdString(user));
     QPushButton* pbMsg = new QPushButton(QString::fromStdString(msg));
+    QPushButton* pbDateTime = new QPushButton(QString::fromStdString(dateTime));
 
     ///resizing buttons
     pbUser->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
@@ -64,33 +98,46 @@ class QHBoxLayout* MessageWindow::CreateDMBanner(std::string user, std::string m
     pbUser->setFixedWidth(150);
     pbUser->setFlat(true);
 
-    pbMsg->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    pbMsg->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
     pbMsg->setFixedHeight(100);
-    pbMsg->setFixedWidth(150);
     pbMsg->setFlat(true);
+
+    pbDateTime->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+    pbDateTime->setFixedHeight(100);
+    pbDateTime->setFixedWidth(225);
+    pbDateTime->setFlat(true);
 
     bannerBox->addWidget(pbUser);
     bannerBox->addWidget(pbMsg);
+    bannerBox->addWidget(pbDateTime);
+
     return bannerBox;
 }
 
 void MessageWindow::ClickOnUserDM(std::string user)
 {
     std::vector<std::vector<std::string>> DMVect;
-    DMVect = Utils::DMHistory(proc::ip, proc::user, proc::password, proc::db, user);
+    DMVect = Utils::DMHistory(proc::ip, proc::user, proc::password, proc::db, Utils::UserLookup(proc::ip, proc::user, proc::password, proc::db, user));
 
     //conveniently deletes both the layout and widget inside for some reason
     while(!ui->verticalLayout->isEmpty())
         delete ui->verticalLayout->takeAt(0)->layout()->takeAt(0)->widget();
 
     for (int i = 0; i < DMVect.size(); i++) {
-        QHBoxLayout* messageBanner = CreateDMBanner(DMVect[i][0], DMVect[i][1]);
+        //make the datetime look a little better
+        DMVect[i][2].pop_back();
+        DMVect[i][2].pop_back();
+        DMVect[i][2].pop_back();
+        DMVect[i][2].insert(11,"\n");
+
+        QHBoxLayout* messageBanner = CreateDMBanner(DMVect[i][0], DMVect[i][1], DMVect[i][2]);
         ui->verticalLayout->addLayout(messageBanner);
     }
 
     ui->backButton->setVisible(true);
-    ui->followerBox->setVisible(false);
+    ui->scrollArea2->setVisible(false);
     selectedUser = user;
+    ui->selectedUser->setText(QString::fromStdString(selectedUser));
     mode = 1;
 }
 
@@ -106,8 +153,9 @@ void MessageWindow::ReloadInbox(void)
         ui->verticalLayout->addLayout(messageBanner);
         DMVect.pop_front();
     }
+
     ui->backButton->setVisible(false);
-    ui->followerBox->setVisible(true);
+    ui->scrollArea2->setVisible(true);
     selectedUser = "\0";
     mode = 0;
 }
@@ -143,9 +191,13 @@ void MessageWindow::on_sendButton_clicked()
         if (userID != "\0")
         {
             ui->textBox->setPlainText("");
-            ClickOnUserDM(userID);
+            ClickOnUserDM(text);
+            return;
         }
 
+        QMessageBox* box = new QMessageBox();
+        box->setText("User not found.");
+        box->show();
         return;
     }
 
@@ -153,7 +205,9 @@ void MessageWindow::on_sendButton_clicked()
     {
         if (selectedUser != "\0")
         {
-            Utils::SendDM(proc::ip, proc::user, proc::password, proc::db, selectedUser, text);
+            std::string msgRecipient = Utils::UserLookup(proc::ip, proc::user, proc::password, proc::db, selectedUser);
+
+            Utils::SendDM(proc::ip, proc::user, proc::password, proc::db, msgRecipient, text);
             ui->textBox->setPlainText("");
         }
 

@@ -26,7 +26,7 @@ private:
 
     Ui::MessageWindow *ui;
     class QHBoxLayout* CreateInboxBanner(std::string user);
-    class QHBoxLayout* CreateDMBanner(std::string user, std::string msg);
+    class QHBoxLayout* CreateDMBanner(std::string user, std::string msg, std::string dateTime);
     void ClickOnUserDM(std::string threadCommentName);
     void ClearLayout(QLayout *layout);
     void ReloadInbox(void);
