@@ -33,6 +33,12 @@ private slots:
 
     void on_CreateBoardButton_clicked();// allows the user to create boards onto the main paxel baord
 
+    void on_messages_Button_clicked();
+
+    void on_about_paxel_clicked();
+
+    void on_help_Button_clicked();
+
 private:
     void loadBoards(const string& host, const string& user, const string& password, const string& dbName); //loads the boards from the SQL
     QVBoxLayout* bannerLayout; //The banner layout pointer

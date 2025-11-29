@@ -1,4 +1,5 @@
 #include <iostream>
+#include <list>
 #include <vector>
 #include <utility>
 #include <vector>
@@ -1205,6 +1206,325 @@ class Utils {
             }
             return;
         }
+
+        static void SendDM(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string msgRecipient, std::string msg)
+        {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                time_t currentTime = time(0);
+                tm* time = localtime(&currentTime);
+
+                std::string query = "INSERT IGNORE INTO DMs (UserID1, UserID2, Message, DateTime) VALUES ('";
+                query += std::to_string(userCred.second);
+                query += "','";
+                query += msgRecipient;
+                query += "','";
+                query += msg;
+                query += "','";
+
+                query += std::to_string(1900 + time->tm_year);
+                query += "-";
+                query += std::to_string(1 + time->tm_mon);
+                query += "-";
+                query += std::to_string(time->tm_mday);
+                query += " ";
+                query += std::to_string(time->tm_hour);
+                query += ":";
+                query += std::to_string(time->tm_min);
+                query += ":";
+                query += std::to_string(time->tm_sec);
+                query += "')";
+
+                //query += "','1')";
+
+                std::cout << query;
+
+                statement->executeUpdate(query);
+                connection->close();
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return;
+        }
+
+        //all messages user has sent to another single user
+        static std::vector<std::vector<std::string>> DMHistory(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string User2)
+        {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+            std::vector<std::vector<std::string>> DMVect;
+
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT DMs.UserID1, DMs.Message, DMs.DateTime FROM DMs WHERE (DMs.UserID1 = ";
+                query += std::to_string(userCred.second);
+                query += " AND DMs.UserID2 = ";
+                query += User2;
+                query += ") OR (DMs.UserID1 = ";
+                query += User2;
+                query += " AND DMs.UserID2 = ";
+                query += std::to_string(userCred.second);
+                query += ")";
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    std::vector<std::string> tempVect;
+                    tempVect.push_back(UserIDLookup(sqlIp, sqlUser, sqlPassword, sqlDatabase, res->getString("UserID1")));
+                    tempVect.push_back(res->getString("Message"));
+                    tempVect.push_back(res->getString("DateTime"));
+                    DMVect.push_back(tempVect);
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return DMVect;
+        }
+
+        //all users current user has a message history with
+        static std::list<std::string> DMList(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase)
+        {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+            std::list<std::string> DMUsers;
+
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT DMs.UserID2 FROM DMs WHERE DMs.UserID1 = ";
+                query += std::to_string(userCred.second);
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    std::vector<std::string> tempVect;
+                    DMUsers.push_back(UserIDLookup(sqlIp, sqlUser, sqlPassword, sqlDatabase, res->getString("UserID2")));
+                }
+
+                query = "SELECT DMs.UserID1 FROM DMs WHERE DMs.UserID2 = ";
+                query += std::to_string(userCred.second);
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    std::vector<std::string> tempVect;
+                    DMUsers.push_back(UserIDLookup(sqlIp, sqlUser, sqlPassword, sqlDatabase, res->getString("UserID1")));
+                }
+
+                DMUsers.sort();
+                DMUsers.unique();
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return DMUsers;
+        }
+
+        //return the username of everyone user is following
+        static std::list<std::string> FollowingList(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase)
+        {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+            std::list<std::string> followList;
+
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT Following.Followee FROM Following WHERE Following.Follower = ";
+                query += std::to_string(userCred.second);
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    std::vector<std::string> tempVect;
+                    followList.push_back(UserIDLookup(sqlIp, sqlUser, sqlPassword, sqlDatabase, res->getString("Followee")));
+                }
+
+                followList.sort();
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return followList;
+        }
+
+        //checks if username exists and returns userid
+        static std::string UserLookup(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string username) {
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT User.UserID FROM User WHERE User.Username = '";
+                query += username;
+                query += "'";
+
+                res = statement->executeQuery(query);
+                if (res->next())
+                {
+                    return res->getString("UserID");
+                }
+                else
+                {
+                    return "\0";
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return "\0";
+        }
+
+        //checks if userid exists and returns username
+        static std::string UserIDLookup(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID) {
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT User.Username FROM User WHERE User.UserID = '";
+                query += userID;
+                query += "'";
+
+                res = statement->executeQuery(query);
+                if (res->next())
+                {
+                    return res->getString("Username");
+                }
+                else
+                {
+                    return "\0";
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return "\0";
+        }
+
         static std::vector<std::pair<std::string, std::string>> FollowerProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID){
             std::vector<std::pair<std::string, std::string>> followerVect;
             try {
