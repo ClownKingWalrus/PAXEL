@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 class ThreadBannerBox : public QWidget
 {
@@ -17,14 +18,18 @@ public:
     void OnClickFollowThread(const QString& threadID);
 signals:
 
-protected:
-    void resizeEvent(QResizeEvent* event) override; //since this is protected it needs to be protected here
-
 private:
     QPushButton* profileButton;
     QPushButton* threadButton;
     QPushButton* likeButton;
     QPushButton* followThreadButton;
+    QPushButton* replyToThreadButton;
+
+    QWidget* repliesBox;
+    QVBoxLayout* repliesLayout;
+    bool repliesVisible = false;
+    void loadReplies(const QString& threadID);
 };
 
 #endif // THREADBANNERBOX_H
+

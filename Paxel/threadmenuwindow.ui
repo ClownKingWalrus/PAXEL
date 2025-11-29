@@ -29,7 +29,31 @@
          <height>614</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout"/>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton { font: 700 10pt  &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);
+background-color: rgb(35, 193, 24);
+}
+
+QPushButton:hover {
+    background-color: rgb(55, 213, 44);   
+}</string>
+          </property>
+          <property name="text">
+           <string>Refresh</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
