@@ -8,6 +8,7 @@
 #include "../hdr/proc.h"
 #include <QPixmap>
 #include <QScreen>
+#include <qevent.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -42,6 +43,24 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton::connect(ui->Login1, &QPushButton::clicked, this, [this]() {
         LoginButton();
     });
+
+
+    QCheckBox* myCheckBox = ui -> checkBox;
+    myCheckBox->setStyleSheet("QCheckBox::indicator:checked { background-color: black; }"
+                              "QCheckBox::indicator {border: 1px solid black; }"
+                              "QCheckBox::indicator:unchecked {background-color: white;}");
+
+    connect(myCheckBox, &QCheckBox::checkStateChanged, this, [=](Qt::CheckState state) {
+        // Check if the checkbox is checked
+        if (state == Qt::Checked) {
+            // If it's checked, set the echo mode of the line edit to normal
+            ui->lineEdit_2->setEchoMode(QLineEdit::Normal);
+        }
+        else {
+            ui->lineEdit_2->setEchoMode(QLineEdit::Password);
+        }
+    });
+    resize(1000, 800);
 }
 
 MainWindow::~MainWindow()
@@ -66,3 +85,11 @@ void MainWindow::LoginButton() {
     }
 }
 
+void MainWindow::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
+}

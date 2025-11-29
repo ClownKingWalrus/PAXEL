@@ -24,6 +24,9 @@ private slots:
     void on_YesButton_clicked();
     void on_NoButton_clicked();
     void on_SignUp2_clicked();
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // SIGNUP_H

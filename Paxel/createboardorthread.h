@@ -24,12 +24,17 @@ private slots:
 
 
 
+    void on_pushButton_clicked();
+
 private:
     void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName);
     Ui::CreateBoardOrThread *ui;
     QVBoxLayout* bannerLayout; //The banner layout pointer
     void onInterestButtonClick(std::string InterestID);
     std::map<std::string, bool> interestButtonMap;
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // CREATEBOARDORTHREAD_H

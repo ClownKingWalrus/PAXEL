@@ -2,7 +2,9 @@
 #include "ui_createboardorthread.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
+#include "YourPaxelBoard.h"
 #include <QMessageBox>
+#include <qevent.h>
 
 CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +17,17 @@ CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
 
     //create Horzonatal boxes and return like 4 buttons per row
     LoadInterest(proc::ip, proc::user, proc::password, proc::db);
+
+    ui->pushButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->pushButton_2->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    ui->pushButton->setMinimumSize(150, 45);
+    ui->pushButton->setFlat(true);
+    ui->pushButton->setFont(QFont("MS Sans Serif", 20));
+
+    ui->pushButton_2->setMinimumSize(250, 45);
+    ui->pushButton_2->setFlat(true);
+    ui->pushButton_2->setFont(QFont("MS Sans Serif", 20));
 }
 
 CreateBoardOrThread::~CreateBoardOrThread()
@@ -84,6 +97,8 @@ void CreateBoardOrThread::LoadInterest(const std::string& host, const std::strin
     if (boardVect.size() % 4 != 0) {
         boardBanner->addLayout(boardBanner);
     }
+
+    resize(1000, 800);
 }
 
 void CreateBoardOrThread::onInterestButtonClick(std::string InterestID) {
@@ -197,6 +212,20 @@ void CreateBoardOrThread::ThreadSumbit()
     }
 }
 
+void CreateBoardOrThread::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
+}
 
 
+void CreateBoardOrThread::on_pushButton_clicked()
+{
+    CreateBoardWindow *BT = new CreateBoardWindow;
+    hide();
+    BT -> show();
+}
 

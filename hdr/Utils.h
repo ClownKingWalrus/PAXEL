@@ -938,7 +938,7 @@ class Utils {
 
 
 
-                    std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(userCred.second) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
+                std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(userCred.second) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
 
                     //this statement should be optimized this is essentially a select * statement
                     res = statement->executeQuery(arg);
@@ -1552,7 +1552,7 @@ class Utils {
                 while (res->next()) {
                     std::string Username = res->getString("Username");
                     std::string Follower = res->getString("Follower");
-                    followerVect.push_back(std::make_pair(Username, Follower));
+                    followerVect.push_back(std::make_pair(Follower, Username));
                 }
 
                 delete res;
@@ -1595,7 +1595,7 @@ class Utils {
                 while (res->next()) {
                     std::string Username = res->getString("Username");
                     std::string Followee = res->getString("Followee");
-                    followeeVect.push_back(std::make_pair(Username, Followee));
+                    followeeVect.push_back(std::make_pair(Followee, Username));
                 }
 
                 delete res;
@@ -1610,7 +1610,6 @@ class Utils {
             }
             return followeeVect;
         }
-
         static std::vector<std::pair<std::string, std::string>> UserID(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase){
             std::vector<std::pair<std::string, std::string>> userVect;
             try {
@@ -1675,7 +1674,7 @@ class Utils {
                 sql::ResultSet* res;
 
                 std::string query = "SELECT * FROM Following WHERE Follower = '";
-                query += userCred.second;
+                query += std::to_string(userCred.second);
                 query += "' AND Followee = '";
                 query += userID;
                 query += "'";
@@ -1684,7 +1683,7 @@ class Utils {
                 if (res->next())
                 {
                     std::string query = "DELETE FROM Following WHERE Follower = '";
-                    query += userCred.second;
+                    query += std::to_string(userCred.second);
                     query += "' AND Followee = '";
                     query += userID;
                     query += "'";
@@ -1695,7 +1694,7 @@ class Utils {
                 else
                 {
                     std::string query = "INSERT IGNORE INTO Following (Follower, Followee) VALUES('";
-                    query += userCred.second;
+                    query += std::to_string(userCred.second);
                     query += "','";
                     query += userID;
                     query += "')";
@@ -1711,5 +1710,111 @@ class Utils {
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
             return;
+        }
+        static void BoardFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try
+            {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "Connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT * FROM FollowedBoards WHERE UserID = '";
+                query += std::to_string(userCred.second);
+                query += "' AND BoardID = '";
+                query += boardID;
+                query += "'";
+                std::cout << "\nTest: " << query << "\n";
+
+                res = statement->executeQuery(query);
+                if (res->next())
+                {
+                    std::string query = "DELETE FROM FollowedBoards WHERE UserID = '";
+                    query += std::to_string(userCred.second);
+                    query += "' AND BoardID = '";
+                    query += boardID;
+                    query += "'";
+                    std::cout << "No longer following board" << std::endl;
+                    statement->executeUpdate(query);
+                    connection->close();
+                }
+                else
+                {
+                    std::string query = "INSERT IGNORE INTO FollowedBoards (UserID, BoardID) VALUES ('";
+                    query += std::to_string(userCred.second);
+                    query += "','";
+                    query += boardID;
+                    query += "')";
+                    std::cout << "Now following board" << std::endl;
+                    statement->executeUpdate(query);
+                    connection->close();
+                }
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return;
+        }
+        static std::vector<std::pair<std::string, std::string>> BoardFollowList(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID){
+            std::vector<std::pair<std::string, std::string>> boardfollowVect;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+            try {
+                sql::mysql::MySQL_Driver* driver;
+                sql::Connection* connection;
+
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+                std::cout << "connected to sql\n";
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT Board.BoardName, FollowedBoards.BoardID FROM Board INNER JOIN FollowedBoards ON FollowedBoards.BoardID = Board.BoardID WHERE UserID = '";
+                query += std::to_string(userCred.second);
+                query += "'";
+                std::cout << query << "\n";
+
+                res = statement->executeQuery(query);
+
+                while (res->next()) {
+                    std::string BoardName = res->getString("BoardName");
+                    std::string BoardID = res->getString("BoardID");
+                    boardfollowVect.push_back(std::make_pair(BoardID, BoardName));
+                }
+
+                delete res;
+                delete statement;
+                delete connection;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return boardfollowVect;
         }
     };

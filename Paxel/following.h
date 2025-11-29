@@ -19,6 +19,9 @@ public:
     explicit Following(QWidget *parent = nullptr, string userID = "");
     ~Following();
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private slots:
     void Followers_2_clicked(string userID);
     void Back_clicked(string userID);

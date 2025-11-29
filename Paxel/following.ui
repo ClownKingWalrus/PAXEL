@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>695</width>
-    <height>634</height>
+    <width>680</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Policy::Fixed</enum>
+         <enum>QSizePolicy::Policy::Minimum</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -51,7 +51,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
         </property>
         <property name="text">
          <string>Back</string>
@@ -64,7 +64,7 @@
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Policy::Fixed</enum>
+         <enum>QSizePolicy::Policy::Expanding</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -77,7 +77,7 @@
       <item alignment="Qt::AlignmentFlag::AlignHCenter">
        <widget class="QLabel" name="UserName">
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
         </property>
         <property name="text">
          <string>UserName</string>
@@ -89,6 +89,32 @@
       </item>
       <item>
        <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Policy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>160</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="styleSheet">
+         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
+        </property>
+        <property name="text">
+         <string>Reload</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
@@ -108,22 +134,6 @@
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <spacer name="horizontalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Policy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QPushButton" name="Followers_2">
         <property name="minimumSize">
          <size>
@@ -132,28 +142,19 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
         </property>
         <property name="text">
          <string>Followers</string>
         </property>
        </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Policy::Minimum</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item>
        <widget class="QPushButton" name="Following_2">
@@ -164,28 +165,19 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;Bahnschrift&quot;;</string>
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
         </property>
         <property name="text">
          <string>Following</string>
         </property>
        </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_7">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Policy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>60</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </item>
@@ -199,8 +191,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>681</width>
-         <height>548</height>
+         <width>666</width>
+         <height>566</height>
         </rect>
        </property>
       </widget>

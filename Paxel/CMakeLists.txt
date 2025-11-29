@@ -49,6 +49,7 @@ qt_add_executable(Paxel
     threadbannerbox.h threadbannerbox.cpp
     YourPaxelBoard.h YourPaxelBoard.cpp YourPaxelBoard.ui
     createboardorthread.h createboardorthread.cpp createboardorthread.ui
+    followedboards.h followedboards.cpp followedboards.ui
     follow.h follow.cpp follow.ui
     followers.h followers.cpp followers.ui
     following.h following.cpp following.ui

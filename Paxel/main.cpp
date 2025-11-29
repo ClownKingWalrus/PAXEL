@@ -1,4 +1,10 @@
 #include "mainwindow.h"
+#include "threadmenuwindow.h"
+#include "discussionboard.h"
+#include "homescreen.h"
+#include "replieswindow.h"
+#include "profile.h"
+#include "followers.h"
 #include "interestselect.h"
 #include "windowsettings.h"
 #include <QApplication>

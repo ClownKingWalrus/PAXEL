@@ -22,6 +22,9 @@ public:
     void showEvent(QShowEvent *event);
 private slots:
     void LoginButton();
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 };
 
 #endif // MAINWINDOW_H

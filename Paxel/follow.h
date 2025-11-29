@@ -20,8 +20,12 @@ public:
 
 public:
     Ui::Follow *ui;
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private slots:
-    void FollowButton_clicked(string userID, string userID2);
+    void FollowButton_clicked(string userID);
     void Followers_clicked(string userID);
     void Following_clicked(string userID);
 };

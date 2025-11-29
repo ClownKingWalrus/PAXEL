@@ -87,6 +87,7 @@ QHBoxLayout* DiscussionBoard::CreateBoardBanner(const string& boardID, const str
 void DiscussionBoard::ClickOnBoardName(std::string boardID) {
     ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
     threadList->show();
+    hide();
 
 }
 

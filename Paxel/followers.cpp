@@ -7,10 +7,12 @@
 #include "../hdr/Utils.h"
 
 #include <QScrollBar>
+#include <QLabel>
 #include <QPushButton>
 #include <QObject>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <qevent.h>
 using namespace std;
 
 Followers::Followers(QWidget *parent, string userID)
@@ -23,7 +25,11 @@ Followers::Followers(QWidget *parent, string userID)
     userVect = Utils::UserID(proc::ip, proc::user, proc::password, proc::db);
     for (const auto& u : userVect) {
         if (u.second == userID) {
+            QLabel* label = new QLabel();
             ui->UserName->setText(QString::fromStdString(u.first));
+            label->setAlignment(Qt::AlignCenter);
+            label->setMinimumSize(100,50);
+            label->setFont(QFont("MS Sans Serif", 20));
         }
     }
 
@@ -41,6 +47,7 @@ Followers::Followers(QWidget *parent, string userID)
     connect(ui->Back, &QPushButton::clicked, this, [this, userID]() {
         Back_clicked(userID);
     });
+    resize(1000, 800);
 }
 
 Followers::~Followers()
@@ -62,7 +69,7 @@ void Followers::loadProfiles(const string& host, const string& user, const strin
         }
     }
     for (const auto& followerprof : FollowerList) {
-        QHBoxLayout* ProfileBanner = CreateProfileBanner(followerprof.second, followerprof.first);
+        QHBoxLayout* ProfileBanner = CreateProfileBanner(followerprof.first, followerprof.second);
         ProfileLayout->addLayout(ProfileBanner);
     }
 }
@@ -72,20 +79,40 @@ QHBoxLayout* Followers::CreateProfileBanner(const string& userID, const string& 
     QPushButton* IDfollower = new QPushButton(QString::fromStdString(userID));
     QPushButton* Name = new QPushButton(QString::fromStdString(username));
 
+    IDfollower->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    Name->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
     IDfollower->setMinimumSize(100,100);
     IDfollower->setFlat(true);
+    IDfollower->setFont(QFont("MS Sans Serif", 20));
 
     Name->setMinimumSize(100,100);
     Name->setFlat(true);
+    Name->setFont(QFont("MS Sans Serif", 20));
 
     bannerBox->addWidget(IDfollower, 1);
     bannerBox->addWidget(Name, 3);
 
     bannerBox->setContentsMargins(10, 5, 10, 5);
     bannerBox->setSpacing(15);
+
+    bannerBox->setContentsMargins(10, 5, 10, 5);
+    bannerBox->setSpacing(15);
+
+    IDfollower->setStyleSheet(
+        "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
+        "border-radius: 8px;"        // rounded corners
+        );
+
+    Name->setStyleSheet(
+        "QPushButton { background-color: rgb(8, 136, 245); color: black; font-family: MS Sans Serif; font-weight: bold;}"  // blue
+        "border-radius: 8px;"
+        );
+
     QPushButton::connect(Name, &QPushButton::clicked, this, [this, userID]() {
         onClicked(userID);
     });
+
     return bannerBox;
 }
 
@@ -113,8 +140,8 @@ void Followers::Following_clicked(string userID)
 void Followers::Back_clicked(string userID)
 {
     std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
-    if (userID == std::to_string(userCred.second)) {
-    Profile *UserProfile = new Profile(this, userID);
+    if (userID != std::to_string(userCred.second)) {
+    Profile *UserProfile = new Profile(this, std::to_string(userCred.second));
     UserProfile->show();
     }
     else {
@@ -124,3 +151,11 @@ void Followers::Back_clicked(string userID)
     hide();
 }
 
+void Followers::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
+}

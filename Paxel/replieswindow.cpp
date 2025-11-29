@@ -126,6 +126,7 @@ QHBoxLayout* RepliesWindow::CreateBanner(std::string userName, std::string threa
 )");
 
     return bannerBox;
+    resize(1000, 800);
 
 }
 
@@ -182,4 +183,13 @@ void RepliesWindow::endReply(void)
     ui->replyBox->setPlainText("");
     ui->replySend->setVisible(false);
     ui->replyCancel->setVisible(false);
+}
+
+void RepliesWindow::resizeEvent(QResizeEvent* event) {
+    QMainWindow::resizeEvent(event);
+    QSize newSize = event->size();
+
+    // Access the width and height
+    int newWidth = newSize.width();
+    int newHeight = newSize.height();
 }

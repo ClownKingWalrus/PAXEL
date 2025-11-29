@@ -91,9 +91,6 @@ interestselect::~interestselect()
 }
 
 
-
-
-
 void interestselect::on_pushButton_clicked()
 {
     if (interestButtonMap.empty()) {
