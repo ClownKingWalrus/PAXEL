@@ -168,6 +168,8 @@ class Utils {
                                 std::vector<std::string> interestList) {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
+            std::cout << "FOREVER TOGETHJER\n";
+
             try {
 
                 if (userCred.second == -1) {return;}
@@ -175,6 +177,16 @@ class Utils {
                 sql::PreparedStatement* pstmt2 = connection->prepareStatement(
                     "INSERT INTO UserInterests (UserID, InterestID) VALUES (?, ?)"
                     );
+                sql::PreparedStatement* pstmt3 = connection->prepareStatement(
+                    "DELETE FROM UserInterests WHERE UserID = ? AND InterestID = ?"
+                    );
+
+                for (const auto& interestID : interestList) {
+                    pstmt3->setInt(1, userCred.second);
+                    pstmt3->setString(2, interestID);
+                    pstmt3->executeUpdate();
+                }
+                    
 
                 for (const auto& interestID : interestList) {
                     pstmt2->setInt(1, userCred.second);
@@ -183,6 +195,7 @@ class Utils {
                 }
 
                 delete pstmt2;
+                delete pstmt3;
             }
 
             catch(sql::SQLException& e) {
@@ -231,6 +244,54 @@ class Utils {
                 }
 
                 delete pstmt2;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+        }
+
+        //this function purely serves for CreateProfile as we dont generate session tokens until user logins
+        static void AddInterestTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
+                                std::vector<std::string> interestList) {
+
+            sql::mysql::MySQL_Driver* driver;
+            sql::Connection* connection;
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try {
+                driver = sql::mysql::get_mysql_driver_instance();
+
+                //simple test
+                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+                connection->setSchema(sqlDatabase);
+
+                sql::PreparedStatement* getUUID = connection->prepareStatement(
+                    "SELECT User.UserID FROM User WHERE User.Username = ?");
+                getUUID->setString(1, userCred.first);
+
+                delete getUUID;
+
+                if (userCred.second == -1) {
+                    return;
+                }
+
+                sql::PreparedStatement* pstmt2 = connection->prepareStatement(
+                    "INSERT INTO UserInterests (UserID, InterestID) VALUES (?, ?)"
+                    );
+
+                for (const auto& interestID : interestList) {
+                    pstmt2->setInt(1, userCred.second);
+                    pstmt2->setString(2, interestID);
+                    pstmt2->executeUpdate(); //insert alot of interest if need be
+                }
+
+                delete pstmt2;
+                delete connection;
             }
 
             catch(sql::SQLException& e) {
@@ -990,19 +1051,18 @@ class Utils {
                 int size = interestList.size();
                 for(int i = 0; i < size; i++) {
 
-
+                    bool testing = false;
 
                 std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(userCred.second) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
-
+                    std::cerr << arg << "\n";
                     //this statement should be optimized this is essentially a select * statement
                     res = statement->executeQuery(arg);
                     if (!res->next()) { //implies its true as if there is one that means we have a match
-                        delete res;
-                        delete statement;
-                        return true;
+                        testing = true;
                     }
                     delete res;
                     delete statement;
+                    return testing;
                 }
             }
             catch(sql::SQLException& e) {
