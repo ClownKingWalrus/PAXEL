@@ -118,7 +118,7 @@ void interestselect::on_pushButton_clicked()
 
 
     std::cout << "\nPOP1\n";
-    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList, userName)) {
+    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests not set");
         box->show();
@@ -126,7 +126,7 @@ void interestselect::on_pushButton_clicked()
     }
 
     std::cout << "InterestList Size: " << IntrestList.size() << "\n";
-    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList, userName);
+    Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList);
 
     std::cout << "passed 1\n";
     if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
@@ -136,13 +136,6 @@ void interestselect::on_pushButton_clicked()
     } else {
         std::cout << "Failed to set interest or somthign\n";
     }
-    QMessageBox* box = new QMessageBox();
-    box->setText("Please Login with your new credentials");
-    box->show();
-    MainWindow* mainWin = new MainWindow();
-    mainWin->show();
-    parentWidget()->close();
-    this->close();
 }
 
 
