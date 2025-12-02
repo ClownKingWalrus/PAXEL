@@ -117,7 +117,7 @@ QHBoxLayout* Followers::CreateProfileBanner(const string& userID, const string& 
 }
 
 void Followers::onClicked(string userID) {
-    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
     if (userID != std::to_string(userCred.second)) {
         Follow *FollowerProfile = new Follow(this, userID);
         FollowerProfile->show();
@@ -139,7 +139,7 @@ void Followers::Following_clicked(string userID)
 
 void Followers::Back_clicked(string userID)
 {
-    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
     if (userID != std::to_string(userCred.second)) {
     Profile *UserProfile = new Profile(this, std::to_string(userCred.second));
     UserProfile->show();

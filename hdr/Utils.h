@@ -7,23 +7,43 @@
 #include <ctime>
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
+#include <QByteArray>
 
 class Utils {
     public:
     static inline std::string sessionID = "";
+        static inline sql::mysql::MySQL_Driver* driver = nullptr;
+        static inline sql::Connection* connection = nullptr;
+
+        static void InitSql(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+            driver = sql::mysql::get_mysql_driver_instance();
+            connection = driver->connect(sqlIp, sqlUser, sqlPassword);
+            connection->setSchema(sqlDatabase);
+        }
+
+        static sql::Connection* GetConn() {
+            return connection;
+        }
+
+        static void Close() {
+            if (connection) {
+                try {
+                    connection->close();
+                } catch (...) {
+                    std::cerr << "error on closing connection\n";
+                }
+                delete connection;
+                connection = nullptr;
+            }
+        }
+
          /******************************************************************************************************
          * @brief validates the users login info
          * @details once called a sql check is peformed user and pass, then it sets sessionID for session
          * @return void
          ******************************************************************************************************/
         static bool Login(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UserName, std::string UserPassword) {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
-
             try {
-                driver = sql::mysql::get_mysql_driver_instance();
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 sql::PreparedStatement* pstmtgetSalt;
                 pstmtgetSalt = connection->prepareStatement("SELECT User.Salt FROM User WHERE Username = ?");
@@ -86,7 +106,6 @@ class Utils {
                     delete pstmt;
                     delete res;
                     delete statement;
-                    delete connection;
                     return true;
 
 
@@ -94,7 +113,6 @@ class Utils {
                 delete res1;
                 delete pstmtgetSalt;
                 delete statement;
-                delete connection;
 
             } 
             catch(sql::SQLException& e) {
@@ -111,17 +129,7 @@ class Utils {
          * @return returns the userName and UUID
          ******************************************************************************************************/
         static std::pair<std::string, int> SessionTokenCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string sessionToken) {
-
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
-
-
             try {
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 sql::PreparedStatement* pstmtbdID = connection->prepareStatement(
                     "SELECT User.UserName, User.UserID FROM User WHERE SessionID = ?"
@@ -139,7 +147,6 @@ class Utils {
 
                 delete res1;
                 delete pstmtbdID;
-                delete connection;
                 std::pair<std::string, int> credentials;
                 credentials.first = sqlUserName;
                 credentials.second = sqlUUID;
@@ -147,6 +154,7 @@ class Utils {
             }
 
             catch(sql::SQLException& e) {
+                std::cerr << "IN AUTHENTICATION : " << e.what() << std::endl;
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
@@ -158,17 +166,9 @@ class Utils {
 
         static void AddInterest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
                                 std::vector<std::string> interestList) {
-
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
             try {
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 if (userCred.second == -1) {return;}
 
@@ -183,7 +183,6 @@ class Utils {
                 }
 
                 delete pstmt2;
-                delete connection;
             }
 
             catch(sql::SQLException& e) {
@@ -198,15 +197,8 @@ class Utils {
         static void AddInterest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
                                 std::vector<std::string> interestList, std::string userName) {
 
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
-
             try {
-                driver = sql::mysql::get_mysql_driver_instance();
 
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 sql::PreparedStatement* getUUID = connection->prepareStatement(
                     "SELECT User.UserID FROM User WHERE User.Username = ?");
@@ -239,7 +231,6 @@ class Utils {
                 }
 
                 delete pstmt2;
-                delete connection;
             }
 
             catch(sql::SQLException& e) {
@@ -254,16 +245,8 @@ class Utils {
         static void CreateProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
                                   std::string UserName, std::string UserPassword, std::string Email) {
 
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
-
             try {
 
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 //create statement
                 sql::Statement* statement;
@@ -299,8 +282,6 @@ class Utils {
 
                 delete pstmt;
                 delete statement;
-                delete connection;
-
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -313,15 +294,8 @@ class Utils {
 
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
             try {
 
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 //create statement
                 sql::Statement* statement;
@@ -373,8 +347,6 @@ class Utils {
                 delete pstmtO;
                 delete res;
                 delete statement;
-                delete connection;
-
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -388,15 +360,7 @@ class Utils {
 
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 //create statement
                 sql::Statement* statement;
@@ -442,8 +406,6 @@ class Utils {
                 delete pstmt2;
                 delete pstmt3;
                 delete statement;
-                delete connection;
-
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -453,9 +415,201 @@ class Utils {
 
         }
 
+
+
+
+
+
+        static void SaveImageToSql(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, QByteArray byte) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //do a basic check
+                if (!LoadImageFromSql(sqlIp, sqlUser, sqlPassword, sqlDatabase).isNull()) {
+                    std::cerr << "Image already exist in DB\n";
+                    return;
+                }
+
+                //conver to std::istream
+                std::string blobStr(byte.constData(), byte.size());
+                std::istringstream blobStream(blobStr);
+
+                sql::PreparedStatement* pstmt = connection->prepareStatement(
+                    "INSERT INTO Image_Store (image_name, image_data, UserID) VALUES (?, ?, ?)" //use nullable values for ease of use
+                    );
+                pstmt->setString(1, "NotNeededField");
+                pstmt->setBlob(2, &blobStream);
+                pstmt->setInt(3, userCred.second);
+                pstmt->executeUpdate();
+                std::cout << "1\n\n";
+
+                delete pstmt;
+                delete statement;
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+        }
+
+
+
+
+        static QByteArray LoadImageFromSql(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+
+                sql::PreparedStatement* pstmt = connection->prepareStatement(
+                    "SELECT image_data FROM Image_Store WHERE UserID = ?" //use nullable values for ease of use
+                    );
+                pstmt->setInt(1, userCred.second);
+
+                sql::ResultSet* res = pstmt->executeQuery();
+                std::istream* imageBlob;
+
+                if (res->next()) {
+                    imageBlob = res->getBlob("image_data");
+                } else {
+                    return {}; //bad means no thread was created
+                }
+
+                const std::streamsize bufferSize = 4096;
+                std::vector<char> buffer(bufferSize);
+
+                QByteArray byte;
+                while (true) {
+                    imageBlob->read(buffer.data(), bufferSize);
+                    std::streamsize count = imageBlob->gcount();
+                    if (count > 0) {
+                        byte.append(buffer.data(), count);
+                    }
+                    if (count < bufferSize) {
+                        break; // reached end of blob
+                    }
+                }
+
+                delete pstmt;
+                delete statement;
+                return byte;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return {};
+        }
+
+
+
+        static QByteArray LoadImageFromSql(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int userID) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try {
+
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+
+                sql::PreparedStatement* pstmt = connection->prepareStatement(
+                    "SELECT image_data FROM Image_Store WHERE UserID = ?" //use nullable values for ease of use
+                    );
+                pstmt->setInt(1, userID);
+
+                sql::ResultSet* res = pstmt->executeQuery();
+                std::istream* imageBlob;
+
+                if (res->next()) {
+                    imageBlob = res->getBlob("image_data");
+                } else {
+                    return {}; //bad means no thread was created
+                }
+
+                const std::streamsize bufferSize = 4096;
+                std::vector<char> buffer(bufferSize);
+
+                QByteArray byte;
+                while (true) {
+                    imageBlob->read(buffer.data(), bufferSize);
+                    std::streamsize count = imageBlob->gcount();
+                    if (count > 0) {
+                        byte.append(buffer.data(), count);
+                    }
+                    if (count < bufferSize) {
+                        break; // reached end of blob
+                    }
+                }
+                std::cout << "IN UTIL++ \n" << byte.isNull() << "\n\n\n";
+
+                delete pstmt;
+                delete statement;
+                return byte;
+
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return {};
+        }
+
+
+        static int GetUserIDFromBoardID(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int BoardID) {
+
+
+            try {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+
+                sql::PreparedStatement* pstmt = connection->prepareStatement(
+                    "SELECT UserID FROM UserBoards WHERE BoardID = ?" //use nullable values for ease of use
+                    );
+                pstmt->setInt(1, BoardID);
+
+                sql::ResultSet* res = pstmt->executeQuery();
+                int userID;
+                if (res->next()) {
+                    userID = res->getInt("UserID");
+                }
+
+                delete res;
+                delete statement;
+                return userID;
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return -1;
+        }
+
+
+
+
+
+
         static bool UsernameChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UN) {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
+
 
             //set Username
             std::string UserName = UN;
@@ -465,12 +619,6 @@ class Utils {
             }
 
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 //create statement
                 sql::PreparedStatement* statement;
@@ -486,12 +634,10 @@ class Utils {
                 if (res->next()) { //implies its true as if there is one that means we have a match
                     delete res;
                     delete statement;
-                    delete connection;
                     return true;
                 }
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -502,8 +648,7 @@ class Utils {
         }
 
         static bool EmailChecker(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string EM) {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
+
 
             //initlize user and pass
             std::string Email = EM;
@@ -514,13 +659,6 @@ class Utils {
 
 
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -535,13 +673,10 @@ class Utils {
                 if (!res->next()) { //implies its true as if there is one that means we have a match
                         delete res;
                         delete statement;
-                        delete connection;
                         return true;
                     }
                 delete res;
                 delete statement;
-                delete connection;
-
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -557,15 +692,6 @@ class Utils {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -594,7 +720,6 @@ class Utils {
                 res = statement->executeQuery(query);
                 if (res->next()) {
                     std::cout << "User already liked\n";
-                    connection->close();
                 } else {
                     std::string query = "INSERT INTO LikeThreads (UserID, ThreadID) VALUES ('";
                     query += std::to_string(userCred.second);
@@ -603,13 +728,10 @@ class Utils {
                     query += "')";
                     std::cout << "LIKING: \n" << query << "\n";
                     statement->executeUpdate(query);
-                    connection->close();
 
                 }
                 delete res;
                 delete statement;
-                delete connection;
-
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -626,15 +748,7 @@ class Utils {
         static std::vector<std::vector<std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
             std::vector<std::vector<std::string>> threadVect;
             try {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
 
-            driver = sql::mysql::get_mysql_driver_instance();
-
-            //simple test
-            connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-            connection->setSchema(sqlDatabase);
-            std::cout << "connected to sql\n";
 
             //create statement
             sql::Statement* statement;
@@ -668,8 +782,6 @@ class Utils {
             }
             delete res;
             delete statement;
-            delete connection;
-
         }
         catch(sql::SQLException& e) {
             std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -683,15 +795,6 @@ class Utils {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             std::vector<std::pair<std::string, std::string>> boardVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::PreparedStatement* statement = connection->prepareStatement(
@@ -714,7 +817,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch (sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -726,8 +828,7 @@ class Utils {
         }
 
         static bool BoardNameCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string BoardName) {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
+
 
             //set Username
             std::string BN = BoardName;
@@ -737,13 +838,6 @@ class Utils {
             }
 
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-
                 //create statement
                 sql::Statement* statement;
                 statement = connection->createStatement();
@@ -757,12 +851,10 @@ class Utils {
                 if (!res->next()) { //implies its true as if there is one that means we have a match
                     delete res;
                     delete statement;
-                    delete connection;
                     return true;
                 }
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e) {
                 std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
@@ -775,8 +867,6 @@ class Utils {
         }
 
         static bool ThreadNameCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string ThreadName) {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
 
             //set Username
             std::string BN = ThreadName;
@@ -786,12 +876,6 @@ class Utils {
             }
 
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 //create statement
                 sql::Statement* statement;
@@ -806,12 +890,10 @@ class Utils {
                 if (!res->next()) { //implies its true as if there is one that means we have a match
                     delete res;
                     delete statement;
-                    delete connection;
                     return true;
                 }
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e) {
                 std::cout << "==============this error is not important but it is in UsernameChecker() in Utils.h\n";
@@ -826,15 +908,6 @@ class Utils {
         static std::vector<std::pair<std::string, std::string>> GetInterestButtons(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase) {
             std::vector<std::pair<std::string, std::string>> boardVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -855,7 +928,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch (sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -872,15 +944,7 @@ class Utils {
 
             std::vector<std::pair<std::string, std::string>> boardVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
 
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -901,7 +965,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch (sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
@@ -916,16 +979,7 @@ class Utils {
 
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
-            //std::string BN = test;
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 //create statement
                 sql::Statement* statement;
@@ -945,12 +999,10 @@ class Utils {
                     if (!res->next()) { //implies its true as if there is one that means we have a match
                         delete res;
                         delete statement;
-                        delete connection;
                         return true;
                     }
                     delete res;
                     delete statement;
-                    delete connection;
                 }
             }
             catch(sql::SQLException& e) {
@@ -965,16 +1017,7 @@ class Utils {
         //this function purely serves for CreateProfile as we dont generate session tokens until user logins
         static bool UserInterestCheck(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::vector<std::string> interestList, std::string userName) {
 
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* connection;
-            //std::string BN = test;
             try {
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
 
                 sql::PreparedStatement* getUUID = connection->prepareStatement(
                     "SELECT User.UserID FROM User WHERE User.Username = ?");
@@ -1013,12 +1056,10 @@ class Utils {
                 if (!res->next()) { //implies its true as if there is one that means we have a match
                     delete res;
                     delete statement;
-                    delete connection;
                     return true;
                 }
                 delete res;
                 delete statement;
-                delete connection;
                 }
             }
             catch(sql::SQLException& e) {
@@ -1033,15 +1074,6 @@ class Utils {
         static std::vector<std::vector<std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
             std::vector<std::vector<std::string>> commentVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1088,7 +1120,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
 
             }
             catch(sql::SQLException& e) {
@@ -1106,15 +1137,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1134,7 +1156,6 @@ class Utils {
                 query += "')";
 
                 statement->executeUpdate(query);
-                connection->close();
             }
             catch(sql::SQLException& e)
             {
@@ -1151,15 +1172,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1184,7 +1196,6 @@ class Utils {
                     query += "'";
                     std::cout << "No longer following" << std::endl;
                     statement->executeUpdate(query);
-                    connection->close();
                 }
                 else
                 {
@@ -1195,7 +1206,6 @@ class Utils {
                     query += "')";
                     std::cout << "Now following" << std::endl;
                     statement->executeUpdate(query);
-                    connection->close();
                 }
             }
             catch(sql::SQLException& e)
@@ -1213,15 +1223,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1258,7 +1259,6 @@ class Utils {
                 std::cout << query;
 
                 statement->executeUpdate(query);
-                connection->close();
             }
             catch(sql::SQLException& e)
             {
@@ -1277,15 +1277,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1314,7 +1305,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e)
             {
@@ -1333,15 +1323,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1372,7 +1353,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e)
             {
@@ -1391,15 +1371,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1420,7 +1391,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e)
             {
@@ -1435,15 +1405,6 @@ class Utils {
         static std::string UserLookup(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string username) {
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1467,7 +1428,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e)
             {
@@ -1482,15 +1442,6 @@ class Utils {
         static std::string UserIDLookup(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID) {
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1514,7 +1465,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
             catch(sql::SQLException& e)
             {
@@ -1528,15 +1478,6 @@ class Utils {
         static std::vector<std::pair<std::string, std::string>> FollowerProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID){
             std::vector<std::pair<std::string, std::string>> followerVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1557,7 +1498,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
 
             catch(sql::SQLException& e) {
@@ -1571,15 +1511,6 @@ class Utils {
         static std::vector<std::pair<std::string, std::string>> FolloweeProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID){
             std::vector<std::pair<std::string, std::string>> followeeVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1600,7 +1531,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
 
             catch(sql::SQLException& e) {
@@ -1613,15 +1543,6 @@ class Utils {
         static std::vector<std::pair<std::string, std::string>> UserID(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase){
             std::vector<std::pair<std::string, std::string>> userVect;
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1642,7 +1563,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
 
             catch(sql::SQLException& e) {
@@ -1657,15 +1577,6 @@ class Utils {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1689,7 +1600,6 @@ class Utils {
                     query += "'";
                     std::cout << "No longer following" << std::endl;
                     statement->executeUpdate(query);
-                    connection->close();
                 }
                 else
                 {
@@ -1700,7 +1610,6 @@ class Utils {
                     query += "')";
                     std::cout << "Now following" << std::endl;
                     statement->executeUpdate(query);
-                    connection->close();
                 }
             }
             catch(sql::SQLException& e)
@@ -1716,15 +1625,6 @@ class Utils {
 
             try
             {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "Connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1749,7 +1649,6 @@ class Utils {
                     query += "'";
                     std::cout << "No longer following board" << std::endl;
                     statement->executeUpdate(query);
-                    connection->close();
                 }
                 else
                 {
@@ -1760,7 +1659,6 @@ class Utils {
                     query += "')";
                     std::cout << "Now following board" << std::endl;
                     statement->executeUpdate(query);
-                    connection->close();
                 }
             }
             catch(sql::SQLException& e)
@@ -1775,15 +1673,6 @@ class Utils {
             std::vector<std::pair<std::string, std::string>> boardfollowVect;
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             try {
-                sql::mysql::MySQL_Driver* driver;
-                sql::Connection* connection;
-
-                driver = sql::mysql::get_mysql_driver_instance();
-
-                //simple test
-                connection = driver->connect(sqlIp, sqlUser, sqlPassword);
-                connection->setSchema(sqlDatabase);
-                std::cout << "connected to sql\n";
 
                 //create statement
                 sql::Statement* statement;
@@ -1807,7 +1696,6 @@ class Utils {
 
                 delete res;
                 delete statement;
-                delete connection;
             }
 
             catch(sql::SQLException& e) {

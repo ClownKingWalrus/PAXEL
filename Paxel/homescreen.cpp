@@ -7,6 +7,7 @@
 #include "messagewindow.h"
 #include "YourPaxelBoard.h"
 #include "followedboards.h"
+#include "ProfilePicture.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -35,7 +36,9 @@ HomeScreen::HomeScreen(QWidget *parent) :
     connect(ui->scrollArea->verticalScrollBar(), &QScrollBar::valueChanged,
             this, &HomeScreen::onScroll);
 
+    std::cerr << "testing\n";
     loadBoards(proc::ip, proc::user, proc::password, proc::db);
+    std::cerr << "testing\n";
 
     QPixmap pixmapHS1(":/images/Images/Home.png");
     QIcon buttonIcon1(pixmapHS1);
@@ -76,8 +79,8 @@ HomeScreen::HomeScreen(QWidget *parent) :
     ui->about_paxel->setIconSize(QSize(80, 80));
 
 
-    pair<string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
-    connect(ui -> BoardsFollowed, &QPushButton::clicked, this, [this, userCred]() {
+    pair<string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
+    connect(ui->BoardsFollowed, &QPushButton::clicked, this, [this, userCred]() {
         BoardsFollowed_clicked(to_string(userCred.second));
     });
     resize(1000, 800);
@@ -103,8 +106,9 @@ void HomeScreen::timefunction() {
 void HomeScreen::loadBoards(const string& host, const string& user, const string& password, const string& dbName) {
 
     vector<pair<string, string>> boardVect;
+    std::cerr << "BoardUpdate\n";
     boardVect = Utils::BoardUpdate(host, user, password, dbName);
-
+    std::cerr << "BoardUpdate\n";
     for (const auto& board : boardVect ) {
         QHBoxLayout* boardBanner = CreateBoardBanner(board.first, board.second);
         bannerLayout->addLayout(boardBanner);
@@ -117,6 +121,37 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
     QPushButton* idButton = new QPushButton(QString::fromStdString(boardID));
     QPushButton* titleButton = new QPushButton(QString::fromStdString(boardName));
 
+    //yoink the userID from board
+    std::string userTemp = boardID; //not sure if touching the memory is dangroud this is a failsafe
+    int userID = Utils::GetUserIDFromBoardID(proc::ip, proc::user, proc::password, proc::db, std::stoi(userTemp));
+    //load the pixmap if it exist
+    QPixmap pix = ProfilePicture::CreatePixMapFromSql(userID);
+    if (!pix.isNull()) {
+        QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        idButton->setIcon(icon);
+        idButton->setIconSize(idButton->size());
+        idButton->setStyleSheet(
+            "QPushButton {"
+            "   color: rgba(0,0,0,0);"               /* hide text */
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(35, 242, 24);" /* button background */
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(50, 200, 30);"  /* hover color */
+            "}"
+            );
+    } else {
+        idButton->setStyleSheet(
+            "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
+            "border-radius: 8px;"        // rounded corners
+            );
+    }
+
+
     idButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     titleButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
@@ -125,11 +160,6 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
 
     titleButton->setMinimumSize(250, 45);
     titleButton->setFlat(true);
-
-    idButton->setStyleSheet(
-        "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
-        "border-radius: 8px;"        // rounded corners
-        );
 
     titleButton->setStyleSheet(
         "QPushButton { background-color: rgb(8, 136, 245); color: black; font-family: MS Sans Serif; font-weight: bold;}"  // blue

@@ -37,7 +37,7 @@ Follow::Follow(QWidget *parent, string userID)
     vector<pair<string, string>> FolloweeList;
     vector<pair<string, string>> FollowingList;
 
-    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
 
     for (const auto& p : followerVect) {
         if (p.second == userID) {

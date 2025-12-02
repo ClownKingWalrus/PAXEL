@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/pimages">
+        <file>Profile_Picture/DRAGDROP.jpg</file>
+    </qresource>
+</RCC>

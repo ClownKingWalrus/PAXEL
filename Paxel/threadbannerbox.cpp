@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <qevent.h>
 #include "replieswindow.h"
+#include "ProfilePicture.h"
 #include "postreply.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
@@ -20,6 +21,8 @@ using namespace std;
         profileButton->setFixedSize(100,100);
         profileButton->setFlat(true);
         profileButton->setObjectName("profileButton");
+        userID = userName;
+        profileButton->setText("");
 
         threadButton = new QPushButton(threadName, this);
         threadButton->setMinimumHeight(125);
@@ -146,6 +149,33 @@ using namespace std;
             background-color: rgb(102, 102, 102);
         }
     )");
+        std::string tempName = userName.toStdString();
+        int tempID = std::stoi(tempName);
+        QPixmap pix = ProfilePicture::CreatePixMapFromSql(tempID);
+        if (!pix.isNull()) {
+            QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+            profileButton->setIcon(icon);
+            profileButton->setIconSize(profileButton->size());
+            profileButton->setStyleSheet(
+                "QPushButton {"
+                "   color: rgba(0,0,0,0);"               /* hide text */
+                "   border: none;"
+                "   border-radius: 8px;"
+                "   background-color: rgb(35, 242, 24);" /* button background */
+                "   font-family: 'MS Sans Serif';"
+                "   font-weight: bold;"
+                "   text-align: center;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgb(50, 200, 30);"  /* hover color */
+                "}"
+                );
+        } else {
+            profileButton->setStyleSheet(
+                "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
+                "border-radius: 8px;"        // rounded corners
+                );
+        }
     }
 
     ///Place holder function, implement the comment opening method

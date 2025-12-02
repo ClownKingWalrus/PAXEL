@@ -41,7 +41,7 @@ void FollowedBoards::loadBoards(const string& host, const string& user, const st
 
     vector<pair<string, string>> boardfollowVect;
     boardfollowVect = Utils::BoardFollowList(proc::ip, proc::user, proc::password, proc::db, boardID);
-    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
 
     for (const auto& FB : boardfollowVect) {
         QHBoxLayout* boardBanner = CreateBoardBanner(FB.first, FB.second);

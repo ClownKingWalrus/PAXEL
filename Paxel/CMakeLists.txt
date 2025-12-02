@@ -3,6 +3,7 @@ project(Paxel LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 #Sql find for cmake
 find_path(MYSQL_INCLUDE_DIR #Sets the var
@@ -17,6 +18,7 @@ find_library(MYSQL_LIB #Sets the var
 
 qt_add_resources(RESOURCES images.qrc)
 qt_add_resources(RESOURCES PaxelFont.qrc)
+qt_add_resources(RESOURCES ProfileImages.qrc)
 
 message(STATUS "MYSQL_INCLUDE_DIR = ${MYSQL_INCLUDE_DIR}")
 message(STATUS "MYSQL_LIB = ${MYSQL_LIB}")
@@ -56,6 +58,7 @@ qt_add_executable(Paxel
     profile.h profile.cpp profile.ui
     postreply.h postreply.cpp postreply.ui
     messagewindow.h messagewindow.cpp messagewindow.ui
+    profilepicture.h profilepicture.cpp
     utils.h utils.cpp
     windowsettings.h
     ${SOURCES}
@@ -74,6 +77,7 @@ target_link_libraries(Paxel
         ${MYSQL_LIB}
 )
 target_link_libraries(Paxel PRIVATE Qt6::Core Qt6::Widgets)
+target_link_libraries(Paxel PRIVATE Qt6::Widgets)
 
 include(GNUInstallDirs)
 
