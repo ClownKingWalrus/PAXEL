@@ -98,9 +98,9 @@ void CreateBoardWindow::ClickOnBoardName (string boardID) {
 
 void CreateBoardWindow::on_pushButton_clicked()
 {
-    CreateBoardOrThread* createBoardWindow = new CreateBoardOrThread(this);
+    CreateBoardOrThread* createBoardWindow = new CreateBoardOrThread();
     createBoardWindow->show();
-    hide();
+    this->close();
 }
 
 

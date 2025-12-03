@@ -172,8 +172,10 @@ void CreateBoardOrThread::on_pushButton_2_clicked()
         QMessageBox* box = new QMessageBox();
         box->setText("Board Created");
         box->show();
+        on_pushButton_clicked();
         return;
     }
+    on_pushButton_clicked();
 }
 
 void CreateBoardOrThread::ThreadSumbit()
@@ -224,8 +226,9 @@ void CreateBoardOrThread::resizeEvent(QResizeEvent* event) {
 
 void CreateBoardOrThread::on_pushButton_clicked()
 {
-    CreateBoardWindow *BT = new CreateBoardWindow;
+    CreateBoardWindow *BT = new CreateBoardWindow();
     hide();
-    BT -> show();
+    BT->show();
+    this->close();
 }
 
