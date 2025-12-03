@@ -1,2 +1,2 @@
-*.ui linguist-generated
-mysql-connector-c++-9.4.0-winx64/ linguist-generated
+*.ui linguist-generated=true
+mysql-connector-c++-9.4.0-winx64/** linguist-generated=true
