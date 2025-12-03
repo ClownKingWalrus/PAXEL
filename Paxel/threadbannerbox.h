@@ -29,6 +29,7 @@ private:
     QVBoxLayout* repliesLayout;
     bool repliesVisible = false;
     void loadReplies(const QString& threadID);
+    QString userID;
 };
 
 #endif // THREADBANNERBOX_H

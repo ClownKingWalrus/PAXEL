@@ -37,9 +37,9 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     reloadButton->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     reloadButton->setMinimumSize(QSize(20, 30));
 
-    ui -> BackHome ->setFont(QFont("MS Sans Serif", 20));
-    ui -> BackHome ->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    ui -> BackHome ->setMinimumSize(QSize(20, 30));
+    ui->BackHome->setFont(QFont("MS Sans Serif", 20));
+    ui->BackHome->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    ui->BackHome->setMinimumSize(QSize(20, 30));
 
     QPushButton::connect(createThread, &QPushButton::clicked, this, [this]() {
         CreateThreadButtonClicked();
@@ -61,7 +61,7 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
     threadVect = Utils::ThreadUpdate(proc::ip, proc::user, proc::password, proc::db, boardID);
 
     for (int i = 0; i < threadVect.size(); i++) {
-        ThreadBannerBox* threadBanner = CreateThreadBanner(threadVect[i][0], threadVect[i][1], threadVect[i][2]);
+        ThreadBannerBox* threadBanner = CreateThreadBanner(threadVect[i][0], threadVect[i][1], threadVect[i][2]); //user ID in front
         QHBoxLayout* temp = new QHBoxLayout();
         temp->addWidget(threadBanner);
         ui->verticalLayout->addLayout(temp);
@@ -69,7 +69,7 @@ ThreadMenuWindow::ThreadMenuWindow(QWidget *parent, std::string boardID)
 
     std:: vector<std::pair<std::string, std::string>> boardfollowVect;
     boardfollowVect = Utils::BoardFollowList(proc::ip, proc::user, proc::password, proc::db, boardID);
-    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::ip, Utils::sessionID);
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
     for (int i = 0; i < boardfollowVect.size(); i++){
         if (boardfollowVect[i].first == boardID) {
             followBoards -> setText("- Unfollow Board");
@@ -84,7 +84,7 @@ ThreadMenuWindow::~ThreadMenuWindow()
     delete ui;
 }
 
-ThreadBannerBox* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::string threadName, std::string threadID) {
+ThreadBannerBox* ThreadMenuWindow::CreateThreadBanner(std::string userName, std::string threadName, std::string threadID) { //userName is actually userID
         //more styling options since qwidget and not just a QHBox
     ThreadBannerBox* bannerWidget = new ThreadBannerBox(QString::fromStdString(userName), QString::fromStdString(threadName), QString::fromStdString(threadID), this);
     return bannerWidget;
@@ -122,9 +122,18 @@ void ThreadMenuWindow::BoardsFollowClicked(std::string boardID) {
 
 void ThreadMenuWindow::on_BackHome_clicked()
 {
-    HomeScreen *BackHome = new HomeScreen;
-    hide();
-    BackHome -> show();
+    // HomeScreen *BackHome = new HomeScreen();
+    // hide();
+    // BackHome->show();
+    // this->close();
+    if (!Utils::sessionID.empty()) {
+        std::cout << "+++Login Succeded+++\n";
+        HomeScreen* Homescreen = new HomeScreen();
+        Homescreen->show();
+        this->close();
+    } else {
+        return;
+    }
 }
 
 void ThreadMenuWindow::resizeEvent(QResizeEvent* event) {

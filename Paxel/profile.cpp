@@ -7,16 +7,27 @@
 #include "following.h"
 #include "../hdr/proc.h"
 #include "../hdr/Utils.h"
+#include "ProfilePicture.h"
 
 #include <QString>
 #include <QLabel>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QPixmap>
 Profile::Profile(QWidget *parent, string userID)
     : QMainWindow(parent)
     , ui(new Ui::Profile)
 {
     ui->setupUi(this);
+
+    //load the pixmap if it exist
+    QPixmap pix = ProfilePicture::CreatePixMapFromSql();
+    if (!pix.isNull()) {
+        this->ui->MainProfilePicture->setPixmap(pix.scaled(300, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else {
+        pix = QPixmap(":/pimages/Profile_Picture/DRAGDROP.jpg");
+        this->ui->MainProfilePicture->setPixmap(pix.scaled(300, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
 
     std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip, proc::user, proc::password, proc::db, Utils::sessionID);
     userID = std::to_string(userCred.second);

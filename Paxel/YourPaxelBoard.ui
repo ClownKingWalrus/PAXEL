@@ -32,7 +32,7 @@
          <x>0</x>
          <y>0</y>
          <width>502</width>
-         <height>437</height>
+         <height>434</height>
         </rect>
        </property>
       </widget>
@@ -148,7 +148,7 @@ background-color: rgb(18, 146, 255);
      <x>0</x>
      <y>0</y>
      <width>670</width>
-     <height>18</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
