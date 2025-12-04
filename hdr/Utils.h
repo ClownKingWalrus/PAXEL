@@ -806,6 +806,33 @@ class Utils {
          * @details calls sql and pulls 10
          * @return returns UserID, threadNam
          ******************************************************************************************************/
+        static int GetThreadLikes(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID)
+        {
+            try
+            {
+                sql::Statement* statement = connection->createStatement();
+                sql::ResultSet* res;
+
+                std::string query = "SELECT COUNT(*) AS LikeCount FROM LikeThreads WHERE ThreadID = '";
+                query += threadID;
+                query += "'";
+
+                res = statement->executeQuery(query);
+
+                int count = 0;
+                if (res->next())
+                    count = res->getInt("LikeCount");
+
+                delete res;
+                delete statement;
+                return count;
+            }
+            catch (sql::SQLException& e)
+            {
+                std::cerr << "SQL Error (GetThreadLikes): " << e.what() << std::endl;
+                return 0;   // safe fallback
+            }
+        }
         static std::vector<std::vector<std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
 
             std::vector<std::vector<std::string>> threadVect;
