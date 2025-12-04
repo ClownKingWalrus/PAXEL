@@ -8,6 +8,7 @@
 #include "YourPaxelBoard.h"
 #include "followedboards.h"
 #include "ProfilePicture.h"
+#include "follow.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -51,8 +52,8 @@ HomeScreen::HomeScreen(QWidget *parent) :
 
     QPixmap pixmapHS3(":/images/Images/Followers.png");
     QIcon buttonIcon2(pixmapHS3);
-    ui->Followers->setIcon(buttonIcon2);
-    ui->Followers->setIconSize(QSize(100, 100));
+    ui->Search->setIcon(buttonIcon2);
+    ui->Search->setIconSize(QSize(100, 100));
 
     QPixmap pixmapHS4(":/images/Images/Paxel banner.png");
     QPixmap scaledPixmapHS4 = pixmapHS4.scaled(350, 500, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -223,15 +224,21 @@ void HomeScreen::on_messages_Button_clicked()
     msgWindow->show();
 }
 
-
 void HomeScreen::on_about_paxel_clicked()
 {
     ClickOnBoardName("26");
 }
 
-
 void HomeScreen::on_help_Button_clicked()
 {
     ClickOnBoardName("8");
+}
+
+void HomeScreen::on_Search_clicked()
+{
+    std::string userID = Utils::UserLookup(proc::ip, proc::user, proc::password, proc::db, "PaxelDev");
+
+    Follow *SearchProfile = new Follow(this, userID);
+    SearchProfile->show();
 }
 
