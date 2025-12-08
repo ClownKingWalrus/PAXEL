@@ -18,6 +18,7 @@
 #include <QVBoxLayout>
 #include <QPixmap>
 #include <QPainter>
+#include <QMessageBox>
 #include <qevent.h>
 using namespace std;
 
@@ -26,6 +27,9 @@ HomeScreen::HomeScreen(QWidget *parent) :
     , ui(new Ui::HomeScreen)
 {
     ui->setupUi(this);
+
+    ui->UserSearch->setVisible(false);
+    ui->Send->setVisible(false);
 
     bannerLayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(bannerLayout);
@@ -236,9 +240,35 @@ void HomeScreen::on_help_Button_clicked()
 
 void HomeScreen::on_Search_clicked()
 {
-    std::string userID = Utils::UserLookup(proc::ip, proc::user, proc::password, proc::db, "PaxelDev");
+    if(ui->UserSearch->isVisible())
+    {
+        ui->UserSearch->setPlainText("");
+        ui->UserSearch->setVisible(false);
+        ui->Send->setVisible(false);
+    }
+    else
+    {
+        ui->UserSearch->setVisible(true);
+        ui->Send->setVisible(true);
+    }
+}
 
-    Follow *SearchProfile = new Follow(this, userID);
-    SearchProfile->show();
+
+void HomeScreen::on_Send_clicked()
+{
+    std::string text = ui->UserSearch->toPlainText().toStdString();
+    std::string userID = Utils::UserLookup(proc::ip, proc::user, proc::password, proc::db, text);
+
+    if (userID != "\0")
+    {
+        ui->UserSearch->setPlainText("");
+        Follow *SearchProfile = new Follow(this, userID);
+        SearchProfile->show();
+        return;
+    }
+
+    QMessageBox* box = new QMessageBox();
+    box->setText("User not found.");
+    box->show();
 }
 

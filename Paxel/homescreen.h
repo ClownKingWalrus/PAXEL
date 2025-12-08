@@ -36,6 +36,7 @@ private slots:
     void on_about_paxel_clicked();
     void on_help_Button_clicked();
     void on_Search_clicked();
+    void on_Send_clicked();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;

@@ -209,6 +209,22 @@ void MessageWindow::on_sendButton_clicked()
 
             Utils::SendDM(proc::ip, proc::user, proc::password, proc::db, msgRecipient, text);
             ui->textBox->setPlainText("");
+
+            //empty the messages
+            while(!ui->verticalLayout->isEmpty())
+            {
+                QLayout* hbox = ui->verticalLayout->takeAt(0)->layout();
+
+                while(!hbox->isEmpty())
+                {
+                    QWidget* button = hbox->takeAt(0)->widget();
+                    delete button;
+                }
+                delete hbox;
+            }
+
+            //reload
+            ClickOnUserDM(selectedUser);
         }
 
         return;
