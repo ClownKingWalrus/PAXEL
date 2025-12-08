@@ -34,6 +34,13 @@ using namespace std;
         likeButton->setMaximumSize(50,60);
         likeButton->setObjectName("likeButton");
 
+        likeCountLabel = new QLabel("0", this);
+        likeCountLabel->setAlignment(Qt::AlignCenter);
+        likeCountLabel->setStyleSheet("color: white; font-size: 14px;");
+        likeCountLabel->setMinimumWidth(30);
+        int initialLikes = Utils::GetThreadLikes(proc::ip, proc::user, proc::password, proc::db,threadID.toStdString());
+        likeCountLabel->setText(QString::number(initialLikes));
+
         followThreadButton = new QPushButton("F", this);
         followThreadButton->setMinimumSize(25,30);
         followThreadButton->setMaximumSize(50,60);
@@ -86,6 +93,7 @@ using namespace std;
         QVBoxLayout* rightButtons = new QVBoxLayout;
         rightButtons->setSpacing(6);
         rightButtons->addWidget(likeButton);
+        rightButtons->addWidget(likeCountLabel);
         rightButtons->addWidget(followThreadButton);
         rightButtons->addWidget(replyToThreadButton);
         rightButtons->addStretch();
@@ -190,6 +198,8 @@ using namespace std;
         //change button color call sql update
         std::cout << "Clicked++ \n";
         Utils::ThreadLike(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString());
+        int newLikes = Utils::GetThreadLikes(proc::ip, proc::user, proc::password, proc::db, threadID.toStdString());
+        likeCountLabel->setText(QString::number(newLikes));
     }
 
     void ThreadBannerBox::OnClickFollowThread(const QString& threadID) {

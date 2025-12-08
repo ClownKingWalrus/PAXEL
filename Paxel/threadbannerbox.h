@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -30,6 +31,8 @@ private:
     bool repliesVisible = false;
     void loadReplies(const QString& threadID);
     QString userID;
+
+    QLabel* likeCountLabel;
 };
 
 #endif // THREADBANNERBOX_H

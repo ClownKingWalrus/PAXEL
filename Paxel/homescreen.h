@@ -43,6 +43,9 @@ protected:
 
 
 
+protected:
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
     void loadBoards(const string& host, const string& user, const string& password, const string& dbName); //loads the boards from the SQL
     QVBoxLayout* bannerLayout; //The banner layout pointer
