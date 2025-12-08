@@ -28,6 +28,7 @@ private slots:
     void FollowButton_clicked(string userID);
     void Followers_clicked(string userID);
     void Following_clicked(string userID);
+    void BlockButton_clicked(string userID);
 };
 
 #endif // FOLLOW_H

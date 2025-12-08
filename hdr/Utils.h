@@ -807,7 +807,11 @@ class Utils {
          * @return returns UserID, threadNam
          ******************************************************************************************************/
         static std::vector<std::vector<std::string>> ThreadUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID) {
+
             std::vector<std::vector<std::string>> threadVect;
+            std::vector<std::string> blockedVect;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             try {
 
 
@@ -826,8 +830,22 @@ class Utils {
                 boardID += '\'';
             }
 
-            std::string query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.BoardID = ";
+            std::string query = "SELECT Blocked.UserID2 FROM Blocked WHERE Blocked.UserID1 = ";
+            query += std::to_string(userCred.second);
+
+            res = statement->executeQuery(query);
+            while (res->next()) {
+                blockedVect.push_back(res->getString("UserID2"));
+            }
+
+            query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.BoardID = ";
             query += boardID;
+
+            for(int i = 0; i < blockedVect.size(); i++)
+            {
+                query += " AND NOT Threads.UserID = ";
+                query += blockedVect[i];
+            }
 
             std::cout << query << "\n";
 
@@ -1132,7 +1150,11 @@ class Utils {
         }
 
         static std::vector<std::vector<std::string>> RepliesUpdate(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
+
             std::vector<std::vector<std::string>> commentVect;
+            std::vector<std::string> blockedVect;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
             try {
 
                 //create statement
@@ -1150,7 +1172,15 @@ class Utils {
                     threadID += '\'';
                 }
 
-                std::string query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.ThreadID = ";
+                std::string query = "SELECT Blocked.UserID2 FROM Blocked WHERE Blocked.UserID1 = ";
+                query += std::to_string(userCred.second);
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    blockedVect.push_back(res->getString("UserID2"));
+                }
+
+                query = "SELECT Threads.ThreadName, Threads.UserID, Threads.ThreadID FROM Threads WHERE Threads.ThreadID = ";
                 query += threadID;
 
                 //this statement should be optimized this is essentially a select * statement
@@ -1166,6 +1196,12 @@ class Utils {
 
                 query = "SELECT Comments.CommentName, Comments.UserID, Comments.CommentID, Comments.CommentReply FROM Comments WHERE Comments.ThreadID = ";
                 query += threadID;
+
+                for(int i = 0; i < blockedVect.size(); i++)
+                {
+                    query += " AND NOT Comments.UserID = ";
+                    query += blockedVect[i];
+                }
 
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(query);
@@ -1334,6 +1370,7 @@ class Utils {
         {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             std::vector<std::vector<std::string>> DMVect;
+            std::vector<std::string> blockedVect;
 
             try
             {
@@ -1344,12 +1381,34 @@ class Utils {
                 //create a result object
                 sql::ResultSet* res;
 
-                std::string query = "SELECT DMs.UserID1, DMs.Message, DMs.DateTime FROM DMs WHERE (DMs.UserID1 = ";
+                std::string query = "SELECT Blocked.UserID2 FROM Blocked WHERE Blocked.UserID1 = ";
+                query += std::to_string(userCred.second);
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    blockedVect.push_back(res->getString("UserID2"));
+                }
+
+                query = "SELECT DMs.UserID1, DMs.Message, DMs.DateTime, DMs.DmID FROM DMs WHERE (DMs.UserID1 = ";
                 query += std::to_string(userCred.second);
                 query += " AND DMs.UserID2 = ";
                 query += User2;
+
+                for(int i = 0; i < blockedVect.size(); i++)
+                {
+                    query += " AND NOT DMs.UserID2 = ";
+                    query += blockedVect[i];
+                }
+
                 query += ") OR (DMs.UserID1 = ";
                 query += User2;
+
+                for(int i = 0; i < blockedVect.size(); i++)
+                {
+                    query += " AND NOT DMs.UserID1 = ";
+                    query += blockedVect[i];
+                }
+
                 query += " AND DMs.UserID2 = ";
                 query += std::to_string(userCred.second);
                 query += ")";
@@ -1360,8 +1419,14 @@ class Utils {
                     tempVect.push_back(UserIDLookup(sqlIp, sqlUser, sqlPassword, sqlDatabase, res->getString("UserID1")));
                     tempVect.push_back(res->getString("Message"));
                     tempVect.push_back(res->getString("DateTime"));
+                    tempVect.push_back(res->getString("DmID"));
                     DMVect.push_back(tempVect);
                 }
+
+                std::sort(DMVect.begin(), DMVect.end(),
+                          [](const std::vector<std::string>& a, const std::vector<std::string>& b) {
+                    return a[3] < b[3];
+                });
 
                 delete res;
                 delete statement;
@@ -1380,6 +1445,7 @@ class Utils {
         {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
             std::list<std::string> DMUsers;
+            std::vector<std::string> blockedVect;
 
             try
             {
@@ -1390,8 +1456,22 @@ class Utils {
                 //create a result object
                 sql::ResultSet* res;
 
-                std::string query = "SELECT DMs.UserID2 FROM DMs WHERE DMs.UserID1 = ";
+                std::string query = "SELECT Blocked.UserID2 FROM Blocked WHERE Blocked.UserID1 = ";
                 query += std::to_string(userCred.second);
+
+                res = statement->executeQuery(query);
+                while (res->next()) {
+                    blockedVect.push_back(res->getString("UserID2"));
+                }
+
+                query = "SELECT DMs.UserID2 FROM DMs WHERE DMs.UserID1 = ";
+                query += std::to_string(userCred.second);
+
+                for(int i = 0; i < blockedVect.size(); i++)
+                {
+                    query += " AND NOT DMs.UserID2 = ";
+                    query += blockedVect[i];
+                }
 
                 res = statement->executeQuery(query);
                 while (res->next()) {
@@ -1401,6 +1481,12 @@ class Utils {
 
                 query = "SELECT DMs.UserID1 FROM DMs WHERE DMs.UserID2 = ";
                 query += std::to_string(userCred.second);
+
+                for(int i = 0; i < blockedVect.size(); i++)
+                {
+                    query += " AND NOT DMs.UserID1 = ";
+                    query += blockedVect[i];
+                }
 
                 res = statement->executeQuery(query);
                 while (res->next()) {
@@ -1533,6 +1619,56 @@ class Utils {
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
             return "\0";
+        }
+
+        static void BlockUser(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID) {
+
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+
+            try
+            {
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT * FROM Blocked WHERE UserID1 = '";
+                query += std::to_string(userCred.second);
+                query += "' AND UserID2 = '";
+                query += userID;
+                query += "'";
+                std::cout << "\nTest: " << query << "\n";
+
+                res = statement->executeQuery(query);
+                if (res->next())
+                {
+                    std::string query = "DELETE FROM Blocked WHERE UserID1 = '";
+                    query += std::to_string(userCred.second);
+                    query += "' AND UserID2 = '";
+                    query += userID;
+                    query += "'";
+                    std::cout << "No longer blocking" << std::endl;
+                    statement->executeUpdate(query);
+                }
+                else
+                {
+                    std::string query = "INSERT INTO Blocked (UserID1, UserID2) VALUES ('";
+                    query += std::to_string(userCred.second);
+                    query += "','";
+                    query += userID;
+                    query += "')";
+                    std::cout << "Now blocking" << std::endl;
+                    statement->executeUpdate(query);
+                }
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return;
         }
 
         static std::vector<std::pair<std::string, std::string>> FollowerProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID){

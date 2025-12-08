@@ -15,6 +15,57 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <item row="3" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="FollowButton">
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="mouseTracking">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>+ Follow</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="blockButton">
+          <property name="font">
+           <font>
+            <family>MS Sans Serif</family>
+            <pointsize>17</pointsize>
+           </font>
+          </property>
+          <property name="mouseTracking">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>+ Block</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="plainTextEdit">
+          <property name="styleSheet">
+           <string notr="true">font: 14pt &quot;MS Sans Serif&quot;;
+color: rgb(0, 0, 0);</string>
+          </property>
+          <property name="plainText">
+           <string>Enter Profile Bio Here:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
@@ -237,41 +288,6 @@ background-color: rgb(10, 180, 255);
          <string>Following</string>
         </property>
        </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="3" column="0">
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QPushButton" name="FollowButton">
-          <property name="font">
-           <font>
-            <family>MS Sans Serif</family>
-            <pointsize>17</pointsize>
-           </font>
-          </property>
-          <property name="mouseTracking">
-           <bool>true</bool>
-          </property>
-          <property name="text">
-           <string>+ Follow</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="plainTextEdit">
-          <property name="styleSheet">
-           <string notr="true">font: 14pt &quot;MS Sans Serif&quot;;
-color: rgb(0, 0, 0);</string>
-          </property>
-          <property name="plainText">
-           <string>Enter Profile Bio Here:</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </item>

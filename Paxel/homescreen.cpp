@@ -8,6 +8,7 @@
 #include "YourPaxelBoard.h"
 #include "followedboards.h"
 #include "ProfilePicture.h"
+#include "follow.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -17,6 +18,7 @@
 #include <QVBoxLayout>
 #include <QPixmap>
 #include <QPainter>
+#include <QMessageBox>
 #include <qevent.h>
 using namespace std;
 
@@ -25,6 +27,9 @@ HomeScreen::HomeScreen(QWidget *parent) :
     , ui(new Ui::HomeScreen)
 {
     ui->setupUi(this);
+
+    ui->UserSearch->setVisible(false);
+    ui->Send->setVisible(false);
 
     bannerLayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
     ui->scrollAreaWidgetContents->setLayout(bannerLayout);
@@ -51,8 +56,8 @@ HomeScreen::HomeScreen(QWidget *parent) :
 
     QPixmap pixmapHS3(":/images/Images/Followers.png");
     QIcon buttonIcon2(pixmapHS3);
-    ui->Followers->setIcon(buttonIcon2);
-    ui->Followers->setIconSize(QSize(100, 100));
+    ui->Search->setIcon(buttonIcon2);
+    ui->Search->setIconSize(QSize(100, 100));
 
     QPixmap pixmapHS4(":/images/Images/Paxel banner.png");
     QPixmap scaledPixmapHS4 = pixmapHS4.scaled(350, 500, Qt::KeepAspectRatio, Qt::SmoothTransformation);
@@ -223,15 +228,47 @@ void HomeScreen::on_messages_Button_clicked()
     msgWindow->show();
 }
 
-
 void HomeScreen::on_about_paxel_clicked()
 {
     ClickOnBoardName("26");
 }
 
-
 void HomeScreen::on_help_Button_clicked()
 {
     ClickOnBoardName("8");
+}
+
+void HomeScreen::on_Search_clicked()
+{
+    if(ui->UserSearch->isVisible())
+    {
+        ui->UserSearch->setPlainText("");
+        ui->UserSearch->setVisible(false);
+        ui->Send->setVisible(false);
+    }
+    else
+    {
+        ui->UserSearch->setVisible(true);
+        ui->Send->setVisible(true);
+    }
+}
+
+
+void HomeScreen::on_Send_clicked()
+{
+    std::string text = ui->UserSearch->toPlainText().toStdString();
+    std::string userID = Utils::UserLookup(proc::ip, proc::user, proc::password, proc::db, text);
+
+    if (userID != "\0")
+    {
+        ui->UserSearch->setPlainText("");
+        Follow *SearchProfile = new Follow(this, userID);
+        SearchProfile->show();
+        return;
+    }
+
+    QMessageBox* box = new QMessageBox();
+    box->setText("User not found.");
+    box->show();
 }
 

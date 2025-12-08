@@ -73,6 +73,9 @@ Follow::Follow(QWidget *parent, string userID)
     connect(ui->FollowButton, &QPushButton::clicked, this, [this, userID]() {
         FollowButton_clicked(userID);
     });
+    connect(ui->blockButton, &QPushButton::clicked, this, [this, userID]() {
+        BlockButton_clicked(userID);
+    });
     resize(1000, 800);
 
 }
@@ -97,6 +100,23 @@ void Follow::FollowButton_clicked(string userID)
             Utils::UserFollow(proc::ip, proc::user, proc::password, proc::db, userID);
             ui->FollowButton->setText("+ Follow");
         }
+    }
+}
+
+void Follow::BlockButton_clicked(string userID)
+{
+    QString currentText = ui->blockButton->text();
+
+    if(currentText == "+ Block")
+    {
+        Utils::BlockUser(proc::ip, proc::user, proc::password, proc::db, userID);
+        ui -> blockButton -> setText("- Unblock");
+        ui -> blockButton -> setStyleSheet("background-color: rgb(48, 143, 145);");
+    }
+    else if (currentText == "- Unblock")
+    {
+        Utils::BlockUser(proc::ip, proc::user, proc::password, proc::db, userID);
+        ui->blockButton->setText("+ Block");
     }
 }
 
