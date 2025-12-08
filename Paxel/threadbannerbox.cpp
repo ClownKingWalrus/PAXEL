@@ -38,6 +38,8 @@ using namespace std;
         likeCountLabel->setAlignment(Qt::AlignCenter);
         likeCountLabel->setStyleSheet("color: white; font-size: 14px;");
         likeCountLabel->setMinimumWidth(30);
+        int initialLikes = Utils::GetThreadLikes(proc::ip, proc::user, proc::password, proc::db,threadID.toStdString());
+        likeCountLabel->setText(QString::number(initialLikes));
 
         followThreadButton = new QPushButton("F", this);
         followThreadButton->setMinimumSize(25,30);
