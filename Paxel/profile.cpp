@@ -103,7 +103,7 @@ void Profile::Back_clicked()
 
 void Profile::on_AddInterestsProfile_clicked()
 {
-    interestselect* InterestScreen = new interestselect;
+    interestselect* InterestScreen = new interestselect();
     InterestScreen->show();
 }
 
