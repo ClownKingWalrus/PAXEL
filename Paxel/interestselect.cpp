@@ -116,13 +116,6 @@ void interestselect::on_pushButton_clicked()
         return;
     }
 
-    if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
-        QMessageBox* box = new QMessageBox();
-        box->setText("Interests not set");
-        box->show();
-        return;
-    }
-
     Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList);
 
     if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
