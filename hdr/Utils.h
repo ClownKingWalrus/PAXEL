@@ -1040,19 +1040,18 @@ class Utils {
                 int size = interestList.size();
                 for(int i = 0; i < size; i++) {
 
-
+                    bool testing = false;
 
                 std::string arg = "SELECT * FROM UserInterests WHERE UserInterests.UserID = '" + std::to_string(userCred.second) + "' AND UserInterests.InterestID = '" + interestList.at(i) + "'";
-
+                    std::cerr << arg << "\n";
                     //this statement should be optimized this is essentially a select * statement
                     res = statement->executeQuery(arg);
                     if (!res->next()) { //implies its true as if there is one that means we have a match
-                        delete res;
-                        delete statement;
-                        return true;
+                        testing = true;
                     }
                     delete res;
                     delete statement;
+                    return testing;
                 }
             }
             catch(sql::SQLException& e) {

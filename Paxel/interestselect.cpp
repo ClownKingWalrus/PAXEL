@@ -116,8 +116,6 @@ void interestselect::on_pushButton_clicked()
         return;
     }
 
-
-    std::cout << "\nPOP1\n";
     if (!Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests not set");
@@ -125,10 +123,8 @@ void interestselect::on_pushButton_clicked()
         return;
     }
 
-    std::cout << "InterestList Size: " << IntrestList.size() << "\n";
     Utils::AddInterest(proc::ip, proc::user, proc::password, proc::db, IntrestList);
 
-    std::cout << "passed 1\n";
     if (Utils::UserInterestCheck(proc::ip, proc::user, proc::password, proc::db, IntrestList)) {
         QMessageBox* box = new QMessageBox();
         box->setText("Interests set");
