@@ -177,6 +177,16 @@ class Utils {
                 sql::PreparedStatement* pstmt2 = connection->prepareStatement(
                     "INSERT INTO UserInterests (UserID, InterestID) VALUES (?, ?)"
                     );
+                sql::PreparedStatement* pstmt3 = connection->prepareStatement(
+                    "DELETE FROM UserInterests WHERE UserID = ? AND InterestID = ?"
+                    );
+
+                for (const auto& interestID : interestList) {
+                    pstmt3->setInt(1, userCred.Second);
+                    pstmt3->setString(2, interestID);
+                    pstmt3->executeUpdate();
+                }
+                    
 
                 for (const auto& interestID : interestList) {
                     pstmt2->setInt(1, userCred.second);
@@ -185,6 +195,7 @@ class Utils {
                 }
 
                 delete pstmt2;
+                delete pstmt3;
             }
 
             catch(sql::SQLException& e) {
