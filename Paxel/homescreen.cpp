@@ -3,12 +3,12 @@
 #include "profile.h"
 #include "../hdr/Utils.h"
 #include "../hdr/proc.h"
+#include "follow.h"
 #include "threadmenuwindow.h"
 #include "messagewindow.h"
 #include "YourPaxelBoard.h"
 #include "followedboards.h"
 #include "ProfilePicture.h"
-#include "follow.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -98,8 +98,8 @@ HomeScreen::~HomeScreen()
 
 void HomeScreen::on_Profile_clicked()
 {
-    Profile* ProfileProfile = new Profile();
-    hide();
+    Profile* ProfileProfile = new Profile(this);
+    this->hide();
     ProfileProfile->show();
 }
 void HomeScreen::timefunction() {
@@ -135,6 +135,7 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
         QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
         idButton->setIcon(icon);
         idButton->setIconSize(idButton->size());
+        idButton->setText("");
         idButton->setStyleSheet(
             "QPushButton {"
             "   color: rgba(0,0,0,0);"               /* hide text */
@@ -150,9 +151,24 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
             "}"
             );
     } else {
+        pix = QPixmap(":/pimages/Profile_Picture/BlankProf.png");
+        QIcon icon(pix.scaled(64, 64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        idButton->setIcon(icon);
+        idButton->setIconSize(idButton->size());
+        idButton->setText("");
         idButton->setStyleSheet(
-            "QPushButton { background-color: rgb(35, 242, 24); color: black; font-family: MS Sans Serif; font-weight: bold; }"  // green
-            "border-radius: 8px;"        // rounded corners
+            "QPushButton {"
+            "   color: rgba(0,0,0,0);"               /* hide text */
+            "   border: none;"
+            "   border-radius: 8px;"
+            "   background-color: rgb(35, 242, 24);" /* button background */
+            "   font-family: 'MS Sans Serif';"
+            "   font-weight: bold;"
+            "   text-align: center;"
+            "}"
+            "QPushButton:hover {"
+            "   background-color: rgb(50, 200, 30);"  /* hover color */
+            "}"
             );
     }
 
@@ -181,12 +197,29 @@ QHBoxLayout* HomeScreen::CreateBoardBanner(const string& boardID, const string& 
         ClickOnBoardName(boardID);
     });
 
+    QPushButton::connect(idButton, &QPushButton::clicked, this, [this, userID]() {
+        ClickID(to_string(userID));
+    });
+
     return bannerBox;
 }
 
 void HomeScreen::ClickOnBoardName (string boardID) {
     ThreadMenuWindow* threadList = new ThreadMenuWindow(this, boardID);
     threadList->show();
+    hide();
+}
+
+void HomeScreen::ClickID(string userID) {
+    std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
+    if (userID == std::to_string(userCred.second)) {
+        Profile *userProf = new Profile(this);
+        userProf->show();
+    }
+    else {
+        Follow *otherProf = new Follow(this, userID);
+        otherProf->show();
+    }
     hide();
 }
 
@@ -210,7 +243,7 @@ void HomeScreen::BoardsFollowed_clicked(string userID)
 {
     FollowedBoards* FB = new FollowedBoards(this, userID);
     hide();
-    FB ->show();
+    FB->show();
 }
 
 void HomeScreen::resizeEvent(QResizeEvent* event) {
@@ -262,8 +295,17 @@ void HomeScreen::on_Send_clicked()
     if (userID != "\0")
     {
         ui->UserSearch->setPlainText("");
-        Follow *SearchProfile = new Follow(this, userID);
-        SearchProfile->show();
+        std::pair<std::string,int> userCred = Utils::SessionTokenCheck(proc::ip,proc::user, proc::password, proc::db, Utils::sessionID);
+        if (userID == std::to_string(userCred.second)) {
+            Profile *userProf = new Profile(this);
+            userProf->show();
+            hide();
+        }
+        else {
+            Follow *otherProf = new Follow(this, userID);
+            otherProf->show();
+            hide();
+        }
         return;
     }
 
@@ -271,4 +313,3 @@ void HomeScreen::on_Send_clicked()
     box->setText("User not found.");
     box->show();
 }
-

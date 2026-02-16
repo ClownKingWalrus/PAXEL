@@ -31,6 +31,7 @@ private:
     class QHBoxLayout* CreateBoardBanner(const string& boardID, const string& boardName);
     QVBoxLayout* bannerLayout;
     void loadBoards(const string& host, const string& user, const string& password, const string& dbName, string boardID);
+    void ClickID(string userID);
 };
 
 #endif // FOLLOWEDBOARDS_H

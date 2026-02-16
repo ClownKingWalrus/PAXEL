@@ -20,7 +20,7 @@ public slots:
     void on_Logout_clicked();
 
 private slots:
-    void Back_clicked();
+    void on_Back_clicked();
     void Followers_clicked(string userID);
     void Following_clicked(string userID);
 

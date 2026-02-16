@@ -20,7 +20,7 @@ public:
 
 private slots:
     void Following_clicked(string userID);
-    void Back_clicked(string userID);
+    void on_Back_clicked();
 
 protected:
     void resizeEvent(QResizeEvent* event) override;

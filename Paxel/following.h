@@ -24,7 +24,7 @@ protected:
 
 private slots:
     void Followers_2_clicked(string userID);
-    void Back_clicked(string userID);
+    void on_Back_clicked();
 
 public:
     Ui::Following *ui;

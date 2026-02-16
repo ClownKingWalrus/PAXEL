@@ -37,7 +37,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="Home">
+       <widget class="QPushButton" name="Back">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -182,10 +182,22 @@ background-color: rgb(180, 10, 10);
          <font>
           <family>MS Sans Serif</family>
           <pointsize>17</pointsize>
+          <italic>false</italic>
+          <bold>true</bold>
          </font>
         </property>
         <property name="mouseTracking">
          <bool>true</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+font: 700 17pt &quot;MS Sans Serif&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(139, 0, 0); 
+}
+QPushButton:hover {
+background-color: rgb(178, 34, 34);
+}</string>
         </property>
         <property name="text">
          <string>Add Interests</string>
@@ -200,16 +212,6 @@ color: rgb(0, 0, 0);</string>
         </property>
         <property name="plainText">
          <string>Enter Profile Bio Here:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="Reload">
-        <property name="styleSheet">
-         <string notr="true">font:  700 17pt &quot;MS Sans Serif&quot;;</string>
-        </property>
-        <property name="text">
-         <string>Reload</string>
         </property>
        </widget>
       </item>

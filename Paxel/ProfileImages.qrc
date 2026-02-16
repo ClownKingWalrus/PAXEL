@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/pimages">
         <file>Profile_Picture/DRAGDROP.jpg</file>
+        <file>Profile_Picture/BlankProf.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,8 @@
     <y>0</y>
     <width>680</width>
     <height>653</height>
+    <width>680</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,6 +28,7 @@
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeType">
+         <enum>QSizePolicy::Policy::Minimum</enum>
          <enum>QSizePolicy::Policy::Minimum</enum>
         </property>
         <property name="sizeHint" stdset="0">
@@ -51,7 +54,14 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
         </property>
         <property name="text">
          <string>Back</string>
@@ -64,11 +74,11 @@
          <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeType">
-         <enum>QSizePolicy::Policy::Expanding</enum>
+         <enum>QSizePolicy::Policy::Minimum</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>40</width>
+          <width>320</width>
           <height>20</height>
          </size>
         </property>
@@ -77,6 +87,7 @@
       <item alignment="Qt::AlignmentFlag::AlignHCenter">
        <widget class="QLabel" name="UserName">
         <property name="styleSheet">
+         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
          <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
         </property>
         <property name="text">
@@ -97,29 +108,16 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>160</width>
+          <width>40</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;</string>
-        </property>
-        <property name="text">
-         <string>Reload</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Policy::Minimum</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -142,6 +140,14 @@
          </size>
         </property>
         <property name="styleSheet">
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
          <string notr="true">QPushButton { color: rgb(0, 0, 0);
 font:  700 17pt &quot;MS Sans Serif&quot;;
 background-color: rgb(0, 170, 245);
@@ -173,6 +179,14 @@ background-color: rgb(0, 170, 245);
 QPushButton:Hover {
 background-color: rgb(10, 180, 255);
 }</string>
+         <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
         </property>
         <property name="text">
          <string>Following</string>
@@ -192,7 +206,7 @@ background-color: rgb(10, 180, 255);
          <x>0</x>
          <y>0</y>
          <width>666</width>
-         <height>566</height>
+         <height>567</height>
         </rect>
        </property>
       </widget>

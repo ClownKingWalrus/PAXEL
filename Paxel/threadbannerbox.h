@@ -17,7 +17,7 @@ public:
     void OnClickBanner(const QString& threadName);
     void OnClickLike(const QString& threadID);
     void OnClickFollowThread(const QString& threadID);
-signals:
+
 
 private:
     QPushButton* profileButton;
@@ -36,4 +36,3 @@ private:
 };
 
 #endif // THREADBANNERBOX_H
-

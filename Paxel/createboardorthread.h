@@ -20,11 +20,9 @@ public:
     void ThreadSumbit();
     std::string boardID;
 private slots:
-    void on_pushButton_2_clicked();
+    void on_Back_clicked();
 
-
-
-    void on_pushButton_clicked();
+    void on_Submit_clicked();
 
 private:
     void LoadInterest(const std::string& host, const std::string& user, const std::string& password, const std::string& dbName);

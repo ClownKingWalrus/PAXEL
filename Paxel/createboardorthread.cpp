@@ -5,6 +5,8 @@
 #include "YourPaxelBoard.h"
 #include <QMessageBox>
 #include <qevent.h>
+#include <QPixmap>
+#include <QPainter>
 
 CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
     : QMainWindow(parent)
@@ -18,16 +20,28 @@ CreateBoardOrThread::CreateBoardOrThread(QWidget *parent)
     //create Horzonatal boxes and return like 4 buttons per row
     LoadInterest(proc::ip, proc::user, proc::password, proc::db);
 
-    ui->pushButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    ui->pushButton_2->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->Back->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->Submit->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    ui->pushButton->setMinimumSize(150, 45);
-    ui->pushButton->setFlat(true);
-    ui->pushButton->setFont(QFont("MS Sans Serif", 20));
+    ui->Back->setMinimumSize(150, 45);
+    ui->Back->setFlat(true);
+    ui->Back->setFont(QFont("MS Sans Serif", 20));
 
-    ui->pushButton_2->setMinimumSize(250, 45);
-    ui->pushButton_2->setFlat(true);
-    ui->pushButton_2->setFont(QFont("MS Sans Serif", 20));
+    ui->Submit->setMinimumSize(250, 45);
+    ui->Submit->setFlat(true);
+    ui->Submit->setFont(QFont("MS Sans Serif", 20));
+
+    ui->Title->setMinimumSize(250,250);
+    ui->Title->setPlaceholderText("Enter Title...");
+    ui->Title->setFont(QFont("MS Sans Serif", 20));
+
+    QPixmap pixmap1(":/images/Images/NotePad.png");
+    QPixmap scaledPixmap1 = pixmap1.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    ui->NotePad->setPixmap(scaledPixmap1);
+
+    QPixmap pixmap2(":/images/Images/Pencil.png");
+    QPixmap scaledPixmap2 = pixmap2.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    ui->Pencil->setPixmap(scaledPixmap2);
 }
 
 CreateBoardOrThread::~CreateBoardOrThread()
@@ -109,15 +123,18 @@ void CreateBoardOrThread::ChangeToThreadWindow() {
     std::cout << "Change to Threads Window Called\n\n\n";
     ui->verticalLayout_2->removeWidget(ui->scrollArea);
     ui->scrollArea->deleteLater();
-    QLineEdit* lineEdit = new QLineEdit("Enter Description...");
+    QLineEdit* lineEdit = new QLineEdit();
+    lineEdit->setPlaceholderText("Enter Description...");
+    lineEdit->setMinimumSize(250,250);
+    lineEdit->setFont(QFont("MS Sans Serif", 20));
     ui->verticalLayout_2->addWidget(lineEdit);
-    ui->pushButton_2->disconnect(ui->pushButton_2, &QPushButton::clicked, this, &CreateBoardOrThread::on_pushButton_2_clicked);//unbinding
-    ui->pushButton_2->connect(ui->pushButton_2, &QPushButton::clicked, this, &CreateBoardOrThread::ThreadSumbit);// this is called binding functions gamers, used in game dev btw
+    ui->Submit->disconnect(ui->Submit, &QPushButton::clicked, this, &CreateBoardOrThread::on_Submit_clicked);//unbinding
+    ui->Submit->connect(ui->Submit, &QPushButton::clicked, this, &CreateBoardOrThread::ThreadSumbit);// this is called binding functions gamers, used in game dev btw
     std::cout << "Did it Bind????\n\n\n";
     this->isThread = true;
 }
 
-void CreateBoardOrThread::on_pushButton_2_clicked()
+void CreateBoardOrThread::on_Submit_clicked()
 {
     if (interestButtonMap.empty()) {
         QMessageBox* box = new QMessageBox();
@@ -142,21 +159,21 @@ void CreateBoardOrThread::on_pushButton_2_clicked()
         return;
     }
 
-    if (ui->lineEdit->text().isEmpty()) {
+    if (ui->Title->text().isEmpty()) {
         QMessageBox* box = new QMessageBox();
         box->setText("Please insert a title");
         box->show();
         return;
     }
 
-    if (ui->lineEdit->text().size() <= 2) {
+    if (ui->Title->text().size() <= 2) {
         QMessageBox* box = new QMessageBox();
         box->setText("Title must be atleast 3 characters long");
         box->show();
         return;
     }
 
-    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
+    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->Title->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
         box->setText("BoardName Already Taken");
         box->show();
@@ -166,35 +183,40 @@ void CreateBoardOrThread::on_pushButton_2_clicked()
     QMessageBox* box = new QMessageBox();
     box->setText("Creating board");
     box->show();
-    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), IntrestList);
+    Utils::CreateBoard(proc::ip, proc::user, proc::password, proc::db, ui->Title->text().toStdString(), IntrestList);
 
-    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
+    CreateBoardWindow *BT = new CreateBoardWindow();
+    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->Title->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
         box->setText("Board Created");
         box->show();
-        on_pushButton_clicked();
+        hide();
+        BT->show();
+        this->close();
         return;
     }
-    on_pushButton_clicked();
+    hide();
+    BT->show();
+    this->close();
 }
 
 void CreateBoardOrThread::ThreadSumbit()
 {
-    if (ui->lineEdit->text().isEmpty()) {
+    if (ui->Title->text().isEmpty()) {
         QMessageBox* box = new QMessageBox();
         box->setText("Please insert a title");
         box->show();
         return;
     }
 
-    if (ui->lineEdit->text().size() <= 2) {
+    if (ui->Title->text().size() <= 2) {
         QMessageBox* box = new QMessageBox();
         box->setText("Title must be atleast 3 characters long");
         box->show();
         return;
     }
 
-    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
+    if (!Utils::BoardNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->Title->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
         box->setText("Thread Title Already Taken");
         box->show();
@@ -204,9 +226,9 @@ void CreateBoardOrThread::ThreadSumbit()
     QMessageBox* box = new QMessageBox();
     box->setText("Creating Thread");
     box->show();
-    Utils::CreateThread(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString(), boardID);
+    Utils::CreateThread(proc::ip, proc::user, proc::password, proc::db, ui->Title->text().toStdString(), boardID);
 
-    if (!Utils::ThreadNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->lineEdit->text().toStdString())) {
+    if (!Utils::ThreadNameCheck(proc::ip, proc::user, proc::password, proc::db, ui->Title->text().toStdString())) {
         QMessageBox* box = new QMessageBox();
         box->setText("Thread Created");
         box->show();
@@ -223,12 +245,12 @@ void CreateBoardOrThread::resizeEvent(QResizeEvent* event) {
     int newHeight = newSize.height();
 }
 
-
-void CreateBoardOrThread::on_pushButton_clicked()
+void CreateBoardOrThread::on_Back_clicked()
 {
-    CreateBoardWindow *BT = new CreateBoardWindow();
-    hide();
-    BT->show();
-    this->close();
+    this->hide();
+    if (parentWidget()) {
+        parentWidget()->show();
+    }
 }
+
 

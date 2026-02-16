@@ -19,16 +19,26 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="4" column="0">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="Submit">
+      <property name="styleSheet">
+       <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
+      </property>
       <property name="text">
-       <string>Sumbit</string>
+       <string>Submit</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="Interest">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -64,7 +74,7 @@ color: rgb(0, 0, 0);</string>
            <x>0</x>
            <y>0</y>
            <width>657</width>
-           <height>138</height>
+           <height>139</height>
           </rect>
          </property>
         </widget>
@@ -75,27 +85,48 @@ color: rgb(0, 0, 0);</string>
     <item row="1" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="label">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="NotePad">
+          <property name="text">
+           <string>NotePad</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>40</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font: 20pt &quot;MS Sans Serif&quot;;
 color: rgb(0, 0, 0);</string>
-        </property>
-        <property name="text">
-         <string>Title</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
-       </widget>
+          </property>
+          <property name="text">
+           <string>Title</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="Pencil">
+          <property name="text">
+           <string>Pencil</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit"/>
+       <widget class="QLineEdit" name="Title"/>
       </item>
       <item>
        <spacer name="verticalSpacer">
@@ -116,7 +147,17 @@ color: rgb(0, 0, 0);</string>
      </layout>
     </item>
     <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="Back">
+      <property name="styleSheet">
+       <string notr="true">QPushButton { color: rgb(0, 0, 0);
+font:  700 17pt &quot;MS Sans Serif&quot;;
+background-color: rgb(0, 170, 245);
+}
+
+QPushButton:Hover {
+background-color: rgb(10, 180, 255);
+}</string>
+      </property>
       <property name="text">
        <string>Back</string>
       </property>
@@ -130,7 +171,7 @@ color: rgb(0, 0, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>673</width>
-     <height>17</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
