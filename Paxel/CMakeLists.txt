@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.19)
 project(Paxel LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
@@ -105,13 +108,27 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(
-  goggletesting
-  goggletesting.cpp
+#file(GLOB CONFIGURE_DEPENDS TESTSOURCES
+#   ../UnitTest/*.cpp
+#)
+
+add_executable(goggletesting
+  ../UnitTest/Test_Login.cpp
+  ${RESOURCES}
+  #goggletesting.cpp
+  #${TESTSOURCES} Does not work, i do not know why
 )
-target_link_libraries(
-  goggletesting
-  GTest::gtest_main
+
+target_include_directories(goggletesting PRIVATE
+    ../hdr
+    ${MYSQL_INCLUDE_DIR}
+)
+
+target_link_libraries(goggletesting PRIVATE
+    GTest::gtest_main
+    Qt6::Core
+    Qt6::Widgets
+    ${MYSQL_LIB}
 )
 
 include(GoogleTest)
