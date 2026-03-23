@@ -96,7 +96,9 @@ void SignUp::on_SignUp2_clicked()
     box->setText("Attempting to create Paxel Account");
     box->show();
 
-    Utils::CreateProfile(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString(), ui->lineEditPassword->text().toStdString(), ui->lineEditEmail->text().toStdString());
+    if (Utils::CreateProfile(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString(), ui->lineEditPassword->text().toStdString(), ui->lineEditEmail->text().toStdString())) {
+        return;
+    }
 
     if (Utils::UsernameChecker(proc::ip, proc::user, proc::password, proc::db, ui->lineEditUserName->text().toStdString())) {
         QMessageBox* box = new QMessageBox();

@@ -8,6 +8,8 @@
 #include "picosha2.h" // Sha256 hasher https://github.com/okdshin/PicoSHA2
 #include "../mysql-connector-c++-9.4.0-winx64/include/mysql/jdbc.h"
 #include <QByteArray>
+#include <QRegularExpression>
+#include <QString>
 
 class Utils {
     public:
@@ -45,13 +47,26 @@ class Utils {
         static bool Login(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string UserName, std::string UserPassword) {
             try {
 
+                //if userName is empty
+                if (UserEmptyCheck(UserName)) {
+                    return false;
+                }
+
+                if (PassEmptyCheck(UserPassword)) {
+                    return false;
+                }
+
+                if (!UserLengthCheck(UserName)) {
+                    return false;
+                }
+
                 sql::PreparedStatement* pstmtgetSalt;
                 pstmtgetSalt = connection->prepareStatement("SELECT User.Salt FROM User WHERE Username = ?");
                 pstmtgetSalt->setString(1, UserName);
                 std::string salt;
                 sql::ResultSet* res1 = pstmtgetSalt->executeQuery();
                 if (res1->next()) {
-                    std::cout << "\ngot salt\n";
+                    //std::cout << "\ngot salt\n";
                     salt = res1->getString("Salt");
                 } else {
                     return false;
@@ -59,7 +74,7 @@ class Utils {
 
 
                 std::string hashedPass = picosha2::hash256_hex_string((UserPassword+salt));
-                std::cout << "\nhashed pass: " << hashedPass << "\n";
+                //std::cout << "\nhashed pass: " << hashedPass << "\n";
                 //create statement
                 sql::PreparedStatement* statement;
                 //create a result object
@@ -70,17 +85,17 @@ class Utils {
                 statement->setString(1, UserName);
                 statement->setString(2, hashedPass);
                 res = statement->executeQuery();
-                std::cout << "\nTEST1\n";
+                //std::cout << "\nTEST1\n";
                 bool foundMatch = false;
                 if (res->next()) {
                     std::string name = res->getString("Username");
                     std::string pass = res->getString("Password");
                     foundMatch = true;
-                    std::cout << "Login found matching user and pass\n";
+                    //std::cout << "Login found matching user and pass\n";
                 } else {
-                    std::cout << "no login found\n";
+                    //std::cout << "no login found\n";
                 }
-                std::cout << "\nTEST1\n";
+                //std::cout << "\nTEST1\n";
 
                 UserPassword.clear(); //no except this cannot fail
                 sql::PreparedStatement* pstmt;
@@ -110,6 +125,7 @@ class Utils {
 
 
                 }
+                delete res;
                 delete res1;
                 delete pstmtgetSalt;
                 delete statement;
@@ -119,6 +135,46 @@ class Utils {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return false;
+        }
+
+        //seperate test helpers
+
+        static bool UserLengthCheck(const std::string& UserName) {
+            if (UserName.length() < 20) {
+                return true;
+            }
+            return false;
+        }
+
+        static bool PassEmptyCheck(const std::string& UserPassword) {
+            if (UserPassword.empty()) {
+                return true;
+            }
+            return false;
+        }
+
+        static bool UserEmptyCheck(const std::string& UserName) {
+            if (UserName.empty()) {
+                return true;
+            }
+            return false;
+        }
+
+        static bool EmailEmptyCheck(const std::string& Email) {
+            if (Email.empty()) {
+                return true;
+            }
+            return false;
+        }
+
+        static bool EmailRegexChecker(const std::string& Email) {
+            QRegularExpression regex("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b", QRegularExpression::CaseInsensitiveOption);
+            QString str = QString::fromStdString(Email);
+
+            if (regex.match(str).hasMatch()) {
+                return true;
             }
             return false;
         }
@@ -168,7 +224,7 @@ class Utils {
                                 std::vector<std::string> interestList) {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
 
-            std::cout << "FOREVER TOGETHJER\n";
+            //std::cout << "FOREVER TOGETHJER\n";
 
             try {
 
@@ -303,10 +359,31 @@ class Utils {
         }
 
 
-        static void CreateProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
+        static bool CreateProfile(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
                                   std::string UserName, std::string UserPassword, std::string Email) {
 
             try {
+
+                //basic test
+                if (UserEmptyCheck(UserName)) {
+                    return false;
+                }
+
+                if (PassEmptyCheck(UserPassword)) {
+                    return false;
+                }
+
+                if (!UserLengthCheck(UserName)) {
+                    return false;
+                }
+
+                if (!EmailRegexChecker(Email)) {
+                    return false;
+                }
+
+                if (EmailEmptyCheck(Email)) {
+                    return false;
+                }
 
 
                 //create statement
@@ -343,12 +420,14 @@ class Utils {
 
                 delete pstmt;
                 delete statement;
+                return true;
             }
             catch(sql::SQLException& e) {
                 std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
+            return false;
         }
 
         static void CreateBoard(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,std::string BoardName, std::vector<std::string> interestList) {
@@ -377,7 +456,7 @@ class Utils {
                 pstmtbdID->setString(1, BoardName);
                 sql::ResultSet* res = pstmtbdID->executeQuery();
                 int boardID = 0;
-                std::cout << "2\n\n";
+                //std::cout << "2\n\n";
 
                 if (res->next()) {
                     boardID = res->getInt("BoardID");
@@ -436,7 +515,7 @@ class Utils {
                 pstmt->setString(3, BoardID);
                 pstmt->setInt(4, userCred.second);
                 pstmt->executeUpdate();
-                std::cout << "1\n\n";
+                //std::cout << "1\n\n";
 
                 sql::PreparedStatement* pstmt2 = connection->prepareStatement(
                     "SELECT ThreadID FROM Threads WHERE ThreadName = ?"
@@ -445,7 +524,7 @@ class Utils {
                 pstmt2->setString(1, ThreadName);
                 sql::ResultSet* res = pstmt2->executeQuery();
                 int threadID = 0;
-                std::cout << "2\n\n";
+                //std::cout << "2\n\n";
 
                 if (res->next()) {
                     threadID = res->getInt("ThreadID");
@@ -492,7 +571,7 @@ class Utils {
                 statement = connection->createStatement();
                 //do a basic check
                 if (!LoadImageFromSql(sqlIp, sqlUser, sqlPassword, sqlDatabase).isNull()) {
-                    std::cerr << "Image already exist in DB\n";
+                    //std::cerr << "Image already exist in DB\n";
                     return;
                 }
 
@@ -507,7 +586,7 @@ class Utils {
                 pstmt->setBlob(2, &blobStream);
                 pstmt->setInt(3, userCred.second);
                 pstmt->executeUpdate();
-                std::cout << "1\n\n";
+                //std::cout << "1\n\n";
 
                 delete pstmt;
                 delete statement;
@@ -616,7 +695,7 @@ class Utils {
                         break; // reached end of blob
                     }
                 }
-                std::cout << "IN UTIL++ \n" << byte.isNull() << "\n\n\n";
+                //std::cout << "IN UTIL++ \n" << byte.isNull() << "\n\n\n";
 
                 delete pstmt;
                 delete statement;
@@ -775,19 +854,19 @@ class Utils {
 
                 query += user;
 
-                std::cout << query << "\n";
+                //std::cout << query << "\n";
 
                 //this statement should be optimized this is essentially a select * statement
                 res = statement->executeQuery(query);
                 if (res->next()) {
-                    std::cout << "User already liked\n";
+                    //std::cout << "User already liked\n";
                 } else {
                     std::string query = "INSERT INTO LikeThreads (UserID, ThreadID) VALUES ('";
                     query += std::to_string(userCred.second);
                     query += "','";
                     query += threadID;
                     query += "')";
-                    std::cout << "LIKING: \n" << query << "\n";
+                    //std::cout << "LIKING: \n" << query << "\n";
                     statement->executeUpdate(query);
 
                 }
@@ -874,7 +953,7 @@ class Utils {
                 query += blockedVect[i];
             }
 
-            std::cout << query << "\n";
+            //std::cout << query << "\n";
 
             //this statement should be optimized this is essentially a select * statement
             res = statement->executeQuery(query);
@@ -1307,7 +1386,7 @@ class Utils {
                 query += "' AND ThreadID = '";
                 query += threadID;
                 query += "'";
-                std::cout << "\nTest: " << query << "\n";
+                //std::cout << "\nTest: " << query << "\n";
 
                 res = statement->executeQuery(query);
                 if (res->next())
@@ -1317,7 +1396,7 @@ class Utils {
                     query += "' AND ThreadID = '";
                     query += threadID;
                     query += "'";
-                    std::cout << "No longer following" << std::endl;
+                    //std::cout << "No longer following" << std::endl;
                     statement->executeUpdate(query);
                 }
                 else
@@ -1327,7 +1406,7 @@ class Utils {
                     query += "','";
                     query += threadID;
                     query += "')";
-                    std::cout << "Now following" << std::endl;
+                   //std::cout << "Now following" << std::endl;
                     statement->executeUpdate(query);
                 }
             }
@@ -1379,7 +1458,7 @@ class Utils {
 
                 //query += "','1')";
 
-                std::cout << query;
+                //std::cout << query;
 
                 statement->executeUpdate(query);
             }
@@ -1665,7 +1744,7 @@ class Utils {
                 query += "' AND UserID2 = '";
                 query += userID;
                 query += "'";
-                std::cout << "\nTest: " << query << "\n";
+                //std::cout << "\nTest: " << query << "\n";
 
                 res = statement->executeQuery(query);
                 if (res->next())
@@ -1675,7 +1754,7 @@ class Utils {
                     query += "' AND UserID2 = '";
                     query += userID;
                     query += "'";
-                    std::cout << "No longer blocking" << std::endl;
+                    //std::cout << "No longer blocking" << std::endl;
                     statement->executeUpdate(query);
                 }
                 else
@@ -1685,7 +1764,7 @@ class Utils {
                     query += "','";
                     query += userID;
                     query += "')";
-                    std::cout << "Now blocking" << std::endl;
+                    //std::cout << "Now blocking" << std::endl;
                     statement->executeUpdate(query);
                 }
             }
@@ -1860,7 +1939,7 @@ class Utils {
                 query += "' AND BoardID = '";
                 query += boardID;
                 query += "'";
-                std::cout << "\nTest: " << query << "\n";
+                //std::cout << "\nTest: " << query << "\n";
 
                 res = statement->executeQuery(query);
                 if (res->next())
@@ -1870,7 +1949,7 @@ class Utils {
                     query += "' AND BoardID = '";
                     query += boardID;
                     query += "'";
-                    std::cout << "No longer following board" << std::endl;
+                    //std::cout << "No longer following board" << std::endl;
                     statement->executeUpdate(query);
                 }
                 else
@@ -1880,7 +1959,7 @@ class Utils {
                     query += "','";
                     query += boardID;
                     query += "')";
-                    std::cout << "Now following board" << std::endl;
+                    //std::cout << "Now following board" << std::endl;
                     statement->executeUpdate(query);
                 }
             }
@@ -1907,7 +1986,7 @@ class Utils {
                 std::string query = "SELECT Board.BoardName, FollowedBoards.BoardID FROM Board INNER JOIN FollowedBoards ON FollowedBoards.BoardID = Board.BoardID WHERE UserID = '";
                 query += std::to_string(userCred.second);
                 query += "'";
-                std::cout << query << "\n";
+                //std::cout << query << "\n";
 
                 res = statement->executeQuery(query);
 
