@@ -220,6 +220,88 @@ class Utils {
 
         }
 
+        static bool CheckDeleteInterestsTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabas, std::vector<std::string> interestList) {
+
+            bool retVal = true;
+            try {
+
+            int size = interestList.size();
+
+            for (int i = 0; i < size; i++/*const auto& interestID : interestList*/) {
+
+                //std::cout<<"Interest List Size = "<<interestList.size()
+                retVal = false;
+                sql::ResultSet* res;
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //std::string curVal = interestList.pop_back();
+                std::string interestID = interestList.back();
+                interestList.pop_back();
+                //std::cout<<"Interest ID = "<<interestID<<std::endl;
+                std::string query = "SELECT InterestID FROM UserInterests WHERE UserID = 65 AND InterestID = " + interestID;
+                //std::cout<<"query is: "<<query<<std::endl;
+
+                res = statement->executeQuery(query);
+                res->next();
+                //std::cout<<"RESULT IS "<<res->getInt("InterestID")<<std::endl;
+                if(res->getInt("InterestID") == std::stoi(interestID)) {
+                    retVal = true;
+                }
+            }
+            sql::Statement* stm;
+            stm = connection->createStatement();
+            stm->executeUpdate("DELETE FROM UserInterests WHERE UserID = 65 AND InterestID = 3");
+            stm->executeUpdate("DELETE FROM UserInterests WHERE UserID = 65 AND InterestID = 2");
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return retVal;
+        }
+
+        static void AddInterestTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::vector<std::string> interestList, std::string userID)
+        {
+
+            try
+            {
+                int userIDInt = std::stoi(userID);
+
+                if (userIDInt == -1) {return;}
+
+                sql::PreparedStatement* pstmt2 = connection->prepareStatement(
+                    "INSERT INTO UserInterests (UserID, InterestID) VALUES (?, ?)"
+                    );
+                sql::PreparedStatement* pstmt3 = connection->prepareStatement(
+                    "DELETE FROM UserInterests WHERE UserID = ? AND InterestID = ?"
+                    );
+
+                for (const auto& interestID : interestList) {
+                    pstmt3->setInt(1, userIDInt);
+                    pstmt3->setString(2, interestID);
+                    pstmt3->executeUpdate();
+                }
+                    
+
+                for (const auto& interestID : interestList) {
+                    pstmt2->setInt(1, userIDInt);
+                    pstmt2->setString(2, interestID);
+                    pstmt2->executeUpdate(); //insert alot of interest if need be
+                }
+
+                delete pstmt2;
+                delete pstmt3;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+
+        }
+
         static void AddInterest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase,
                                 std::vector<std::string> interestList) {
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
@@ -242,7 +324,7 @@ class Utils {
                     pstmt3->setString(2, interestID);
                     pstmt3->executeUpdate();
                 }
-                    
+
 
                 for (const auto& interestID : interestList) {
                     pstmt2->setInt(1, userCred.second);
@@ -1357,6 +1439,15 @@ class Utils {
                 query += commentReply;
                 query += "')";
 
+                //std::cout<<"This is the comment name: "<<commentName<<std::endl;
+                //std::cout<<"This is the comment length: "<<commentName.length()<<std::endl;
+
+                if(commentName.length() == 0) {
+                    std::cout<<"The comment is empty"<<std::endl;
+                    return;
+                }
+
+
                 statement->executeUpdate(query);
             }
             catch(sql::SQLException& e)
@@ -1366,9 +1457,12 @@ class Utils {
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
             return;
-        }
+            }
 
-        static bool FindGoogleTestReply(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int commentResponse) {
+
+
+
+        static bool FindGoogleTestReply(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string commentResponse) {
 
             try {
 
@@ -1378,15 +1472,12 @@ class Utils {
                 //create a result object
                 sql::ResultSet* res;
 
-                if(commentResponse == 30) {
+                if(commentResponse != "") {
                     std::string query = "SELECT DISTINCT CommentName FROM Comments WHERE UserID = 65 AND CommentName = 'Test Comment 2' AND CommentReply = 30";
-                    //std::cout<<query<<std::endl;
+
                     res = statement->executeQuery(query);
                     res->next();
-                    //std::cout<<res->getString("CommentName")<<std::endl;
-                    //std::cout<<statement<<std::endl;
-                    //statement->executeUpdate(query);
-                    //std::cout<<res->getString("CommentName")<<std::endl;
+
                     std::string name = res->getString("CommentName");
 
                     statement->executeUpdate("DELETE FROM Comments WHERE UserID = 65 AND CommentName = 'Test Comment 2'");
@@ -1429,7 +1520,7 @@ class Utils {
             return false;
         }
 
-        static void CreateReplyTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string commentName, std::string commentReply)
+        static bool CreateReplyTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string commentName, std::string commentReply, std::string userID)
         {
             try
             {
@@ -1444,12 +1535,17 @@ class Utils {
                 //placeholder for commentID - needs to be original
                 query += threadID;
                 query += "','";
-                query += "65";
+                query += userID;
                 query += "','";
                 query += commentName;
                 query += "','";
                 query += commentReply;
                 query += "')";
+
+                if(commentName.length() == 0) {
+                    std::cout<<"The comment is empty"<<std::endl;
+                    return false;
+                }
 
                 statement->executeUpdate(query);
             }
@@ -1459,7 +1555,7 @@ class Utils {
                 std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
                 std::cerr << "SQLState: " << e.getSQLState() << std::endl;
             }
-            return;
+            return true;
         }
 
         static void ThreadFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
