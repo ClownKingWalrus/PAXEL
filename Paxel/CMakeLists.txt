@@ -116,6 +116,7 @@ add_executable(goggletesting
   ../UnitTest/Test_Login.cpp
   ../UnitTest/Test_SignupPage.cpp
   ${RESOURCES}
+  ../UnitTest/Test_Replies.cpp
   #goggletesting.cpp
   #${TESTSOURCES} Does not work, i do not know why
 )

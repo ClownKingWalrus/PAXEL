@@ -1368,6 +1368,100 @@ class Utils {
             return;
         }
 
+        static bool FindGoogleTestReply(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, int commentResponse) {
+
+            try {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                if(commentResponse == 30) {
+                    std::string query = "SELECT DISTINCT CommentName FROM Comments WHERE UserID = 65 AND CommentName = 'Test Comment 2' AND CommentReply = 30";
+                    //std::cout<<query<<std::endl;
+                    res = statement->executeQuery(query);
+                    res->next();
+                    //std::cout<<res->getString("CommentName")<<std::endl;
+                    //std::cout<<statement<<std::endl;
+                    //statement->executeUpdate(query);
+                    //std::cout<<res->getString("CommentName")<<std::endl;
+                    std::string name = res->getString("CommentName");
+
+                    statement->executeUpdate("DELETE FROM Comments WHERE UserID = 65 AND CommentName = 'Test Comment 2'");
+                    delete res;
+                    delete statement;
+
+
+                    if(name == "Test Comment 2") {
+                        return true;
+                    } else {
+                        return false;
+                    }
+
+                } else {
+                    std::string query = "SELECT DISTINCT CommentName FROM Comments WHERE UserID = 65 AND CommentName = 'Test Comment 1'";
+                    //std::cout<<query<<std::endl;
+                    res = statement->executeQuery(query);
+                    //std::cout<<statement<<std::endl;
+                    statement->executeQuery(query);
+                    res->next();
+                    //std::cout<<res->getString("CommentName")<<std::endl;
+                    std::string name = res->getString("CommentName");
+
+                    statement->executeUpdate("DELETE FROM Comments WHERE UserID = 65 AND CommentName = 'Test Comment 1'");
+                    delete res;
+                    delete statement;
+
+                    if(name == "Test Comment 1") {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return false;
+        }
+
+        static void CreateReplyTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID, std::string commentName, std::string commentReply)
+        {
+            try
+            {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "INSERT INTO Comments (ThreadID, UserID, CommentName, CommentReply) VALUES ('";
+                //placeholder for commentID - needs to be original
+                query += threadID;
+                query += "','";
+                query += "65";
+                query += "','";
+                query += commentName;
+                query += "','";
+                query += commentReply;
+                query += "')";
+
+                statement->executeUpdate(query);
+            }
+            catch(sql::SQLException& e)
+            {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return;
+        }
+
         static void ThreadFollow(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string threadID) {
 
             std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
