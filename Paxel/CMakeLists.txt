@@ -115,6 +115,8 @@ enable_testing()
 add_executable(goggletesting
   ../UnitTest/Test_Login.cpp
   ../UnitTest/Test_SignupPage.cpp
+  ../UnitTest/Test_Messages.cpp
+  ../UnitTest/Test_Search.cpp
   ${RESOURCES}
   #goggletesting.cpp
   #${TESTSOURCES} Does not work, i do not know why
