@@ -2007,4 +2007,92 @@ class Utils {
             }
             return boardfollowVect;
         }
+        static bool UserFollowTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string userID){
+            std::vector<std::pair<std::string, std::string>> userFollowTest;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+            try {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT Following.Follower, Following.Followee FROM User INNER JOIN Following WHERE Following.Follower = '";
+                query += std::to_string(userCred.second);
+                query += "' AND Following.Followee = '";
+                query += userID;
+                query += "'";
+                //std::cout << query << "\n";
+
+                res = statement->executeQuery(query);
+
+                while (res->next()) {
+                    std::string Follower = res->getString("Follower");
+                    std::string Followee = res->getString("Followee");
+                    userFollowTest.push_back(std::make_pair(Follower, Followee));
+
+                    for (int i = 0; i < userFollowTest.size(); i++) {
+                        if ((userFollowTest[i].first == std::to_string(userCred.second)) && (userFollowTest[1].second == userID)) {
+                            return true;
+                        }
+                    }
+                }
+
+                delete res;
+                delete statement;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return false;
+        }
+        static bool BoardFollowTest(std::string sqlIp, std::string sqlUser, std::string sqlPassword, std::string sqlDatabase, std::string boardID){
+            std::vector<std::pair<std::string, std::string>> boardfollowTest;
+            std::pair<std::string,int> userCred = SessionTokenCheck(sqlIp,sqlUser, sqlPassword, sqlDatabase, sessionID);
+            try {
+
+                //create statement
+                sql::Statement* statement;
+                statement = connection->createStatement();
+
+                //create a result object
+                sql::ResultSet* res;
+
+                std::string query = "SELECT FollowedBoards.UserID, FollowedBoards.BoardID FROM Board INNER JOIN FollowedBoards WHERE FollowedBoards.UserID = '";
+                query += std::to_string(userCred.second);
+                query += "' AND FollowedBoards.BoardID = '";
+                query += boardID;
+                query += "'";
+                //std::cout << query << "\n";
+
+                res = statement->executeQuery(query);
+
+                while (res->next()) {
+                    std::string UserID = res->getString("UserID");
+                    std::string BoardID = res->getString("BoardID");
+                    boardfollowTest.push_back(std::make_pair(UserID, BoardID));
+
+                    for (int i = 0; i < boardfollowTest.size(); i++) {
+                        if ((boardfollowTest[i].first == std::to_string(userCred.second)) && (boardfollowTest[i].second == boardID)) {
+                            return true;
+                        }
+                    }
+                }
+
+                delete res;
+                delete statement;
+            }
+
+            catch(sql::SQLException& e) {
+                std::cerr << "Error connecting to MySQL: " << e.what() << std::endl;
+                std::cerr << "MySQL error code: " << e.getErrorCode() << std::endl;
+                std::cerr << "SQLState: " << e.getSQLState() << std::endl;
+            }
+            return false;
+        }
     };
